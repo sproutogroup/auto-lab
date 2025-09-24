@@ -1,0 +1,86 @@
+]
+[WebSocket] Broadcasting to all 1 clients in room dashboard_updates
+[WebSocket] ✅ Broadcast successful for dashboard:stats_updated to dashboard_updates
+[WebSocket] ============= BROADCAST END =============
+info: Broadcast to room dashboard_updates: dashboard:stats_updated (1 clients) {"service":"dealership-management","timestamp":"2025-07-30T11:30:45.994Z"}
+[WebSocket] Vehicle deletion broadcast complete for vehicle 277
+Vehicle deletion broadcast complete for vehicle 277
+info: Request completed {"duration":273,"ip":"10.81.11.92","method":"DELETE","requestId":"0xo7901hb","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:30:45.995Z","url":"/api/vehicles/277","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":null,"username":null}
+11:30:45 AM [express] DELETE /api/vehicles/277 200 in 274ms :: {"message":"Vehicle deleted successful…
+info: Admin audit event {"action":"page_access","bypass_reason":"admin_role","ip":"10.81.5.64","page_key":"vehicle-master","service":"dealership-management","timestamp":"2025-07-30T11:30:46.041Z","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","user_id":8,"username":"Rizwan"}
+info: Request completed {"duration":1,"ip":"10.81.5.64","method":"POST","requestId":"2ifh33th5","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:30:46.192Z","url":"/api/admin/audit-log","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:30:46 AM [express] POST /api/admin/audit-log 200 in 2ms :: {"success":true,"message":"Audit log re…
+[Dashboard API] *** FETCHING DASHBOARD STATS *** - Request by user Rizwan at 11:30:46 AM
+info: Request completed {"duration":178,"ip":"10.81.0.58","method":"GET","requestId":"kvbe0qdp1","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:30:46.287Z","url":"/api/vehicles","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:30:46 AM [express] GET /api/vehicles 200 in 179ms :: [{"id":273,"stock_number":"AL254102","departm…
+info: Request completed {"duration":96,"ip":"10.81.5.64","method":"GET","requestId":"sst2qn6zl","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:30:46.629Z","url":"/api/vehicles","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:30:46 AM [express] GET /api/vehicles 304 in 97ms :: [{"id":273,"stock_number":"AL254102","departme…
+[Dashboard API] Stock Summary: { totalVehicles: '47', totalValue: '2407156.95', totalMakes: 9 }
+[Dashboard API] Monthly Sales: { thisMonth: '32', thisMonthValue: 1734036, grossProfit: 156592.7 }
+[Dashboard API] Query duration: 585ms
+info: Request completed {"duration":585,"ip":"10.81.11.92","method":"GET","requestId":"u5qiimgey","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:30:46.778Z","url":"/api/dashboard/stats","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:30:46 AM [express] GET /api/dashboard/stats 200 in 586ms :: {"stockSummary":{"totalValue":"2407156…
+[Dashboard API] *** FETCHING DASHBOARD STATS *** - Request by user Rizwan at 11:30:46 AM
+[Dashboard API] Stock Summary: { totalVehicles: '47', totalValue: '2407156.95', totalMakes: 9 }
+[Dashboard API] Monthly Sales: { thisMonth: '32', thisMonthValue: 1734036, grossProfit: 156592.7 }
+[Dashboard API] Query duration: 571ms
+info: Request completed {"duration":571,"ip":"10.81.0.58","method":"GET","requestId":"gjxgz2kzg","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:30:47.466Z","url":"/api/dashboard/stats","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:30:47 AM [express] GET /api/dashboard/stats 200 in 572ms :: {"stockSummary":{"totalValue":"2407156…
+info: Admin audit event {"action":"page_access","bypass_reason":"admin_role","ip":"10.81.0.58","page_key":"dashboard","service":"dealership-management","timestamp":"2025-07-30T11:30:49.230Z","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","user_id":8,"username":"Rizwan"}
+info: Request completed {"duration":0,"ip":"10.81.0.58","method":"POST","requestId":"io8pheamn","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:30:49.314Z","url":"/api/admin/audit-log","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:30:49 AM [express] POST /api/admin/audit-log 200 in 1ms :: {"success":true,"message":"Audit log re…
+info: Socket _jtsDe76J-RLkE4WAAAB joined room: dashboard_updates {"service":"dealership-management","timestamp":"2025-07-30T11:30:49.346Z"}
+info: Socket _jtsDe76J-RLkE4WAAAB joined room: vehicle_updates {"service":"dealership-management","timestamp":"2025-07-30T11:30:49.453Z"}
+info: Admin audit event {"action":"page_access","bypass_reason":"admin_role","ip":"10.81.0.58","page_key":"dashboard","service":"dealership-management","timestamp":"2025-07-30T11:30:51.252Z","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","user_id":8,"username":"Rizwan"}
+info: Request completed {"duration":1,"ip":"10.81.0.58","method":"POST","requestId":"vczyq57df","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:30:51.344Z","url":"/api/admin/audit-log","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:30:51 AM [express] POST /api/admin/audit-log 200 in 3ms :: {"success":true,"message":"Audit log re…
+[Dashboard API] *** FETCHING DASHBOARD STATS *** - Request by user Rizwan at 11:31:43 AM
+[Dashboard API] Stock Summary: { totalVehicles: '47', totalValue: '2407156.95', totalMakes: 9 }
+[Dashboard API] Monthly Sales: { thisMonth: '32', thisMonthValue: 1734036, grossProfit: 156592.7 }
+[Dashboard API] Query duration: 653ms
+info: Request completed {"duration":653,"ip":"10.81.0.58","method":"GET","requestId":"zeurte816","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:31:43.789Z","url":"/api/dashboard/stats","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:31:43 AM [express] GET /api/dashboard/stats 200 in 654ms :: {"stockSummary":{"totalValue":"2407156…
+[Dashboard API] *** FETCHING DASHBOARD STATS *** - Request by user Rizwan at 11:32:36 AM
+[Dashboard API] Stock Summary: { totalVehicles: '47', totalValue: '2407156.95', totalMakes: 9 }
+[Dashboard API] Monthly Sales: { thisMonth: '32', thisMonthValue: 1734036, grossProfit: 156592.7 }
+[Dashboard API] Query duration: 781ms
+info: Request completed {"duration":783,"ip":"10.81.0.58","method":"GET","requestId":"01zoxtsr2","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:32:37.432Z","url":"/api/dashboard/stats","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:32:37 AM [express] GET /api/dashboard/stats 200 in 782ms :: {"stockSummary":{"totalValue":"2407156…
+[Dashboard API] *** FETCHING DASHBOARD STATS *** - Request by user Rizwan at 11:33:19 AM
+[Dashboard API] Stock Summary: { totalVehicles: '47', totalValue: '2407156.95', totalMakes: 9 }
+[Dashboard API] Monthly Sales: { thisMonth: '32', thisMonthValue: 1734036, grossProfit: 156592.7 }
+[Dashboard API] Query duration: 684ms
+info: Request completed {"duration":684,"ip":"10.81.0.58","method":"GET","requestId":"9acph7z0x","service":"dealership-management","statusCode":200,"timestamp":"2025-07-30T11:33:20.226Z","url":"/api/dashboard/stats","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":8,"username":"Rizwan"}
+11:33:20 AM [express] GET /api/dashboard/stats 200 in 685ms :: {"stockSummary":{"totalValue":"2407156…
+error: Request failed {"duration":1,"ip":"10.81.0.58","method":"GET","requestId":"sdr1mr2i7","service":"dealership-management","statusCode":401,"timestamp":"2025-07-30T11:33:44.625Z","url":"/api/dashboard/stats","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":null,"username":null}
+error: Request error {"duration":1,"ip":"10.81.0.58","method":"GET","service":"dealership-management","statusCode":401,"timestamp":"2025-07-30T11:33:44.625Z","url":"/api/dashboard/stats","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+11:33:44 AM [express] GET /api/dashboard/stats 401 in 2ms :: {"message":"Authentication required"}
+error: Request failed {"duration":0,"ip":"10.81.0.58","method":"POST","requestId":"d6t0lro9l","service":"dealership-management","statusCode":401,"timestamp":"2025-07-30T11:33:47.138Z","url":"/api/admin/audit-log","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":null,"username":null}
+error: Request error {"duration":0,"ip":"10.81.0.58","method":"POST","service":"dealership-management","statusCode":401,"timestamp":"2025-07-30T11:33:47.138Z","url":"/api/admin/audit-log","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+11:33:47 AM [express] POST /api/admin/audit-log 401 in 1ms :: {"message":"Authentication required"}
+error: Request failed {"duration":1,"ip":"10.81.11.92","method":"GET","requestId":"gapi6tu8g","service":"dealership-management","statusCode":401,"timestamp":"2025-07-30T11:33:47.140Z","url":"/api/vehicles/sold","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":null,"username":null}
+error: Request error {"duration":1,"ip":"10.81.11.92","method":"GET","service":"dealership-management","statusCode":401,"timestamp":"2025-07-30T11:33:47.140Z","url":"/api/vehicles/sold","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+11:33:47 AM [express] GET /api/vehicles/sold 401 in 1ms :: {"message":"Authentication required"}
+[WebSocket] ============= BROADCAST START =============
+[WebSocket] broadcast - Room: all_users, Event: user:offline, Clients: 0
+[WebSocket] broadcast - Room clients: []
+[WebSocket] broadcast - Payload: {
+  "event": "user:offline",
+  "data": {
+    "user_id": 8,
+    "username": "Rizwan",
+    "role": "admin"
+  },
+  "timestamp": "2025-07-30T11:34:32.406Z"
+}
+[WebSocket] Active rooms: []
+[WebSocket] ⚠️  WARNING: No clients in room all_users to receive user:offline event
+[WebSocket] Available rooms and their sizes:
+[WebSocket] Broadcasting to room all_users excluding user 8 sockets: []
+[WebSocket] ✅ Broadcast successful for user:offline to all_users
+[WebSocket] ============= BROADCAST END =============
+info: Broadcast to room all_users: user:offline (0 clients) {"service":"dealership-management","timestamp":"2025-07-30T11:34:32.406Z"}
+info: User disconnected: Rizwan (8) - Socket: _jtsDe76J-RLkE4WAAAB - Reason: transport close {"service":"dealership-management","timestamp":"2025-07-30T11:34:32.406Z"}
+error: Request failed {"duration":0,"ip":"10.81.6.172","method":"GET","requestId":"uu0st4zf0","service":"dealership-management","statusCode":401,"timestamp":"2025-07-30T11:46:42.334Z","url":"/api/auth/user","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":null,"username":null}
+error: Request error {"duration":1,"ip":"10.81.6.172","method":"GET","service":"dealership-management","statusCode":401,"timestamp":"2025-07-30T11:46:42.335Z","url":"/api/auth/user","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+11:46:42 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Not authenticated"}

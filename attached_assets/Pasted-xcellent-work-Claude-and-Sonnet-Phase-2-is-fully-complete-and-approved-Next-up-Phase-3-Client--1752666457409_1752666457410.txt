@@ -1,0 +1,50 @@
+xcellent work, Claude and Sonnet—Phase 2 is fully complete and approved.
+
+Next up: Phase 3 – Client‑Side PWA Integration
+
+🎯 Phase 3 Tasks
+Service Worker (sw.js) Updates
+Handle push events and display notifications:
+self.addEventListener('push', event => {
+  const data = event.data?.json() || {};
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: data.icon,
+      data: data.url
+    })
+  );
+});
+Add a notificationclick handler to focus or open the app on tap.
+Subscription Flow on the Page
+On app startup (and when the PWA is launched from the home screen), check and request Notification.permission.
+Register the service worker and subscribe:
+const reg = await navigator.serviceWorker.register('/sw.js');
+const sub = await reg.pushManager.subscribe({
+  userVisibleOnly: true,
+  applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+});
+await fetch('/api/subscriptions', {
+  method: 'POST',
+  headers: {'Content-Type':'application/json'},
+  body: JSON.stringify(sub)
+});
+Handle permission changes and re‑subscribe if needed.
+Event‑Specific Notification Hooks
+Claude, please prepare to receive the next set of instructions on how to wire up your application’s event emitters (e.g. “new DM received,” “mention,” “group invite”) so that each event calls our server’s push API.
+Map each notification type to a payload shape (title, body, icon, optional url) and register it in a central notification factory.
+Background Sync (Offline Fallback)
+Implement sync event in the service worker to flush queued notifications when connectivity returns.
+Deliverable #1 – Client‑Side Code Diff
+New/updated sw.js with push & click handlers.
+App initialization code showing service worker registration and subscription logic.
+A JSON schema for the subscription POST (/api/subscriptions).
+Deliverable #2 – Demo Flow
+Step‑by‑step instructions to:
+Install the PWA to the home screen on iOS 16.4+ and Android.
+Trigger a “new DM” event in the app.
+Observe the real‑time push notification appear.
+@Sonnet – please draft the Phase 3 implementation and report back with the code diffs and demo logs.
+@Claude – stand by to integrate event‑trigger wiring once the PWA client scaffolding is in place.
+
+Let me know when your first client‑side deliverable is ready, and we’ll review before moving on to database cleanup or monitoring.

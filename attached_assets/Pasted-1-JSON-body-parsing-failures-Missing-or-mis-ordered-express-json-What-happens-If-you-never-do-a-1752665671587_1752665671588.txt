@@ -1,0 +1,72 @@
+1. JSON‐body parsing failures
+
+Missing or mis‐ordered express.json()
+What happens: If you never do
+app.use(express.json());
+(or if you do it after you register your routes) Express won’t parse incoming JSON. A malformed or unexpectedly un‐parsed JSON payload will throw a SyntaxError inside the JSON parser, and the default Express error handler will turn that into a bare “400 Bad Request” with an empty body.
+How to fix:
+In your main server file, before any app.post() or app.use(requireAuth) calls, add:
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+Restart the server and re‑run your curl, making sure to include:
+-H "Content-Type: application/json"
+Add a one‑off log immediately under the parser to confirm it’s firing:
+app.use((req, res, next) => {
+  console.log("Body parser saw:", req.headers["content-type"], req.body);
+  next();
+});
+2. Route not actually being hit
+
+Wrong mount path
+What happens: If you do something like
+const router = express.Router();
+router.post("/debug/send-test-push", …);
+app.use("/api", router);
+then the actual path is /api/debug/send-test-push, not /debug/send-test-push. Hitting the wrong URL often yields 404—but if you have any other middleware (e.g. a body‐parser or validation) set to reject unknown routes, you can get a silent 400 instead.
+How to fix:
+Grep your code for where router.post(...) lives and see if it’s nested under a app.use("/api", ...).
+Add a minimal “hello‐world” route at the very top of your file to confirm reachability:
+app.post("/ping", (req, res) => res.json({ pong: true }));
+curl -X POST http://localhost:5000/ping to make sure the server is up and listening where you think it is.
+3. Authentication/Authorization middleware swallowing errors
+
+What happens: A faulty requireAuth could be short‑circuiting the request (e.g. checking for a CSRF token in the body or headers and returning 400 if it’s missing) before your handler ever runs.
+How to fix:
+Temporarily remove or bypass requireAuth on your debug route.
+Add a quick unconditional handler:
+app.post("/debug/send-test-push", (req, res) => {
+  return res.json({ reached: true });
+});
+If that works, you know the guard middleware is the culprit. Inspect it for any if (!req.body._csrf)-style checks or other early res.status(400).end() calls.
+4. Testing WebPushService in isolation
+
+Even once we get the endpoint accepting your JSON, it’s wise to unit‑test the actual push logic separately:
+
+// scripts/testWebPush.js
+import WebPushService from "../server/services/webPushService";
+import storage from "../server/storage";
+
+async function smokeTest() {
+  const sub = await storage.getPushSubscriptionById(1);
+  await WebPushService.sendWebPush(sub, {
+    title: "🚀 Smoke test",
+    body: "Payload works!"
+  });
+  console.log("Test push sent.");
+}
+
+smokeTest().catch(err => {
+  console.error("Smoke test failed:", err);
+  process.exit(1);
+});
+Run it with:
+
+node --loader ts-node/esm scripts/testWebPush.js
+If you see detailed errors here, you know the problem is in your push code and not the HTTP layer.
+
+Next Steps
+Verify JSON parsing by adding app.use(express.json()) at the top and sending the proper Content-Type.
+Confirm route bindings with a bare‐bones /ping endpoint.
+Isolate requireAuth to see whether it’s rejecting the route.
+Unit‐test your WebPushService directly to ensure your VAPID config and web-push.sendNotification() are all wired up.
+Once your endpoint reliably reaches your handler and logs the incoming body, and your unit test confirms the push code works, we’ll have knocked out the root cause and can finish Phase 2’s retry and cleanup logic. Let me know what you discover!

@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="#dc2626"/>
+  
+  <!-- Car silhouette -->
+  <path d="M128 256L144 224H368L384 256L400 288H384V320H352V288H160V320H128V288H112L128 256Z" fill="white"/>
+  
+  <!-- Car wheels -->
+  <circle cx="176" cy="304" r="16" fill="white"/>
+  <circle cx="336" cy="304" r="16" fill="white"/>
+  
+  <!-- Car windows -->
+  <rect x="160" y="240" width="48" height="32" rx="4" fill="#dc2626"/>
+  <rect x="304" y="240" width="48" height="32" rx="4" fill="#dc2626"/>
+  
+  <!-- AUTOLAB text -->
+  <text x="256" y="400" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="white">AUTOLAB</text>
+  
+  <!-- Speedometer icon -->
+  <circle cx="256" cy="160" r="48" fill="white" opacity="0.9"/>
+  <circle cx="256" cy="160" r="40" fill="#dc2626"/>
+  <path d="M256 120L276 160L256 200L236 160Z" fill="white"/>
+  <circle cx="256" cy="160" r="8" fill="white"/>
+</svg>

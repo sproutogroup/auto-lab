@@ -1,0 +1,912 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autolab UK - Dealer Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#fef2f2",
+                100: "#fee2e2",
+                200: "#fecaca",
+                300: "#fca5a5",
+                400: "#f87171",
+                500: "#ef4444",
+                600: "#dc2626",
+                700: "#b91c1c",
+                800: "#991b1b",
+                900: "#7f1d1d",
+              },
+              gray: {
+                50: "#f8fafc",
+                100: "#f1f5f9",
+                200: "#e2e8f0",
+                300: "#cbd5e1",
+                400: "#94a3b8",
+                500: "#64748b",
+                600: "#475569",
+                700: "#334155",
+                800: "#1e293b",
+                900: "#0f172a",
+              },
+            },
+            fontFamily: {
+              inter: ["Inter", "system-ui", "sans-serif"],
+            },
+            boxShadow: {
+              glass: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+              card: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+              premium:
+                "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+            },
+            backdropBlur: {
+              xs: "2px",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        font-family: "Inter", system-ui, sans-serif;
+      }
+
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .premium-card {
+        background: linear-gradient(145deg, #ffffff, #f8fafc);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .premium-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .sidebar-collapsed {
+        width: 64px;
+      }
+
+      .sidebar-expanded {
+        width: 240px;
+      }
+
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+
+      .nav-item:hover {
+        background: rgba(220, 38, 38, 0.1);
+        border-left: 3px solid #dc2626;
+      }
+
+      .nav-item.active {
+        background: rgba(220, 38, 38, 0.15);
+        border-left: 3px solid #dc2626;
+        color: #dc2626;
+      }
+
+      .metric-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid rgba(226, 232, 240, 0.5);
+      }
+
+      .loading-shimmer {
+        background: linear-gradient(
+          90deg,
+          #f1f5f9 25%,
+          #e2e8f0 50%,
+          #f1f5f9 75%
+        );
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      .brand-gradient {
+        background: linear-gradient(135deg, #1a1a1a 0%, #374151 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-inter">
+    <!-- @COMPONENT: DealerManagementSystem -->
+    <div class="flex h-screen overflow-hidden">
+      <!-- @COMPONENT: Sidebar [collapsible: boolean, activeSection: string] -->
+      <aside
+        id="sidebar"
+        class="sidebar-expanded bg-white shadow-premium border-r border-gray-200 transition-all duration-300 ease-in-out flex flex-col"
+      >
+        <!-- Sidebar Header -->
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-700 rounded-lg flex items-center justify-center shadow-lg"
+              >
+                <i class="fas fa-car text-white text-sm"></i>
+              </div>
+              <span
+                id="brand-text"
+                class="text-xl font-bold text-gray-900 brand-gradient"
+                >Autolab UK</span
+              >
+            </div>
+            <button
+              id="sidebar-toggle"
+              class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <i class="fas fa-chevron-left text-gray-500 text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="flex-1 overflow-y-auto py-4">
+          <div class="space-y-1 px-3">
+            <!-- @STATE: activeNavItem:string = 'dashboard' -->
+            <a
+              href="#dashboard"
+              class="nav-item active flex items-center px-3 py-2.5 text-sm font-medium rounded-lg"
+            >
+              <i class="fas fa-chart-line w-5 h-5 mr-3"></i>
+              <span class="nav-text">Dashboard</span>
+            </a>
+
+            <!-- Stock Management Section -->
+            <div class="pt-4 pb-2">
+              <h3
+                class="nav-text px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+              >
+                Stock Management
+              </h3>
+            </div>
+            <a
+              href="#vehicle-master"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-car w-5 h-5 mr-3"></i>
+              <span class="nav-text">Vehicle Master</span>
+            </a>
+            <a
+              href="#stock-summary"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-clipboard-list w-5 h-5 mr-3"></i>
+              <span class="nav-text">Stock Summary</span>
+            </a>
+            <a
+              href="#current-stock"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-warehouse w-5 h-5 mr-3"></i>
+              <span class="nav-text">Current Stock</span>
+            </a>
+            <a
+              href="#stock-age"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-clock w-5 h-5 mr-3"></i>
+              <span class="nav-text">Stock Age</span>
+            </a>
+            <a
+              href="#bought-vehicles"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-shopping-cart w-5 h-5 mr-3"></i>
+              <span class="nav-text">Bought Vehicles</span>
+            </a>
+
+            <!-- CRM Section -->
+            <div class="pt-4 pb-2">
+              <h3
+                class="nav-text px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+              >
+                CRM
+              </h3>
+            </div>
+            <a
+              href="#customers"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-users w-5 h-5 mr-3"></i>
+              <span class="nav-text">Customers</span>
+            </a>
+            <a
+              href="#leads"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-user-plus w-5 h-5 mr-3"></i>
+              <span class="nav-text">Leads</span>
+            </a>
+            <a
+              href="#appointments"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-calendar-check w-5 h-5 mr-3"></i>
+              <span class="nav-text">Appointments</span>
+            </a>
+            <a
+              href="#tasks"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-tasks w-5 h-5 mr-3"></i>
+              <span class="nav-text">Tasks</span>
+            </a>
+
+            <!-- Documents Section -->
+            <div class="pt-4 pb-2">
+              <h3
+                class="nav-text px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+              >
+                Documents
+              </h3>
+            </div>
+            <a
+              href="#purchase-invoice"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-file-invoice w-5 h-5 mr-3"></i>
+              <span class="nav-text">Purchase Invoice</span>
+            </a>
+            <a
+              href="#sales-invoice"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-receipt w-5 h-5 mr-3"></i>
+              <span class="nav-text">Sales Invoice</span>
+            </a>
+            <a
+              href="#collection-forms"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-file-contract w-5 h-5 mr-3"></i>
+              <span class="nav-text">Collection Forms</span>
+            </a>
+            <a
+              href="#pdf-templates"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-file-pdf w-5 h-5 mr-3"></i>
+              <span class="nav-text">PDF Templates</span>
+            </a>
+
+            <!-- Management Section -->
+            <div class="pt-4 pb-2">
+              <h3
+                class="nav-text px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+              >
+                Management
+              </h3>
+            </div>
+            <a
+              href="#calendar"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-calendar w-5 h-5 mr-3"></i>
+              <span class="nav-text">Calendar</span>
+            </a>
+            <a
+              href="#schedule"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-calendar-alt w-5 h-5 mr-3"></i>
+              <span class="nav-text">Schedule</span>
+            </a>
+            <a
+              href="#job-history"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-history w-5 h-5 mr-3"></i>
+              <span class="nav-text">Job History</span>
+            </a>
+            <a
+              href="#reports"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-chart-bar w-5 h-5 mr-3"></i>
+              <span class="nav-text">Reports</span>
+            </a>
+            <a
+              href="#users"
+              class="nav-item flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700"
+            >
+              <i class="fas fa-user-cog w-5 h-5 mr-3"></i>
+              <span class="nav-text">Users</span>
+            </a>
+          </div>
+        </nav>
+      </aside>
+      <!-- @END_COMPONENT: Sidebar -->
+
+      <!-- Main Content Area -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- @COMPONENT: Header [user: User, searchQuery: string] -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <h1 class="text-2xl font-semibold text-gray-900">
+                Welcome, admin
+              </h1>
+              <span class="text-sm text-gray-500">Wednesday, 25 June 2024</span>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <!-- Search Bar -->
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                >
+                  <i class="fas fa-search text-gray-400 text-sm"></i>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  class="pl-10 pr-4 py-2 w-80 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                />
+              </div>
+
+              <!-- Notifications -->
+              <button
+                class="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <i class="fas fa-bell text-lg"></i>
+                <span
+                  class="absolute top-1 right-1 w-2 h-2 bg-primary-600 rounded-full"
+                ></span>
+              </button>
+
+              <!-- User Menu -->
+              <div class="relative">
+                <button
+                  class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <div
+                    class="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center"
+                  >
+                    <span class="text-white text-sm font-medium">A</span>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700"
+                    >Admin User</span
+                  >
+                  <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                </button>
+              </div>
+
+              <!-- Settings -->
+              <button
+                class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <i class="fas fa-cog text-lg"></i>
+              </button>
+            </div>
+          </div>
+        </header>
+        <!-- @END_COMPONENT: Header -->
+
+        <!-- @COMPONENT: MainContent [activeSection: string] -->
+        <main class="flex-1 overflow-auto bg-gray-50 p-6">
+          <!-- @COMPONENT: Dashboard -->
+          <div class="space-y-6">
+            <!-- Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Stock Summary Card -->
+              <div
+                class="premium-card metric-card rounded-xl p-6 col-span-1 lg:col-span-1"
+              >
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">
+                    Stock Summary
+                  </h3>
+                  <div class="p-2 bg-primary-50 rounded-lg">
+                    <i class="fas fa-chart-bar text-primary-600"></i>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500">TOTAL VALUE</span>
+                    <span class="text-xs text-gray-500">VEHICLES</span>
+                    <span class="text-xs text-gray-500">MAKES</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-2xl font-bold text-gray-900"
+                      >£3,353,129.88</span
+                    >
+                    <span class="text-2xl font-bold text-gray-900">70</span>
+                    <span class="text-2xl font-bold text-gray-900">11</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Weekly Sales Card -->
+              <div class="premium-card metric-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">
+                    Weekly Sales
+                  </h3>
+                  <div class="p-2 bg-green-50 rounded-lg">
+                    <i class="fas fa-trending-up text-green-600"></i>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500">THIS WEEK</span>
+                    <span class="text-xs text-gray-500">TOTAL VALUE</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-2xl font-bold text-gray-900">0</span>
+                    <span class="text-2xl font-bold text-gray-900">£0</span>
+                  </div>
+                  <div
+                    class="flex justify-between items-center pt-2 border-t border-gray-100"
+                  >
+                    <span class="text-xs text-gray-500">LAST WEEK</span>
+                    <span class="text-2xl font-bold text-gray-900">£0</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Month-to-Date Sales Card -->
+              <div class="premium-card metric-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">
+                    Month-to-Date Sales
+                  </h3>
+                  <div class="p-2 bg-blue-50 rounded-lg">
+                    <i class="fas fa-calendar-month text-blue-600"></i>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500">THIS MONTH</span>
+                    <span class="text-xs text-gray-500">TOTAL VALUE</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-2xl font-bold text-gray-900">17</span>
+                    <span class="text-2xl font-bold text-gray-900"
+                      >£1,192,528.8</span
+                    >
+                  </div>
+                  <div
+                    class="flex justify-between items-center pt-2 border-t border-gray-100"
+                  >
+                    <span class="text-xs text-gray-500">GROSS PROFIT</span>
+                    <span class="text-2xl font-bold text-green-600"
+                      >£30,186,341</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Secondary Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <!-- Bought Summary -->
+              <div class="premium-card metric-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">
+                    Bought Summary (MTD)
+                  </h3>
+                  <div class="p-2 bg-purple-50 rounded-lg">
+                    <i class="fas fa-shopping-bag text-purple-600"></i>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <div class="flex justify-between">
+                    <span class="text-xs text-gray-500">NO. UNITS</span>
+                    <span class="text-xs text-gray-500">PX UNITS</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-xl font-bold text-gray-900">16</span>
+                    <span class="text-xl font-bold text-gray-900">3</span>
+                  </div>
+                  <div
+                    class="flex justify-between pt-2 border-t border-gray-100"
+                  >
+                    <span class="text-xs text-gray-500">PX VALUE</span>
+                    <span class="text-xs text-gray-500">TOTAL VALUE</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-lg font-bold text-gray-900">£97,000</span>
+                    <span class="text-lg font-bold text-gray-900"
+                      >£519,699</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Car Incoming -->
+              <div class="premium-card metric-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">
+                    Cars Incoming
+                  </h3>
+                  <div class="p-2 bg-orange-50 rounded-lg">
+                    <i class="fas fa-truck text-orange-600"></i>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <div class="text-3xl font-bold text-gray-900">4</div>
+                  <div
+                    class="flex justify-between items-center pt-2 border-t border-gray-100"
+                  >
+                    <span class="text-xs text-gray-500">TOTAL VALUE</span>
+                    <span class="text-lg font-bold text-gray-900"
+                      >£237,274.8</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500">ESTIMATED</span>
+                    <span class="text-lg font-bold text-gray-900"
+                      >£59,318.7</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Finance Sales -->
+              <div class="premium-card metric-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">
+                    Finance Sales
+                  </h3>
+                  <div class="p-2 bg-emerald-50 rounded-lg">
+                    <i class="fas fa-credit-card text-emerald-600"></i>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <div class="flex justify-between">
+                    <span class="text-xs text-gray-500">PENDING</span>
+                    <span class="text-xs text-gray-500">FUNDING VALUE</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-2xl font-bold text-gray-900">6</span>
+                    <span class="text-2xl font-bold text-gray-900"
+                      >£277,596.76</span
+                    >
+                  </div>
+                  <div
+                    class="flex justify-between items-center pt-2 border-t border-gray-100"
+                  >
+                    <span class="text-xs text-gray-500">AVERAGE FINANCE</span>
+                    <span class="text-lg font-bold text-gray-900"
+                      >£46,266.127</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Add-On Products -->
+              <div class="premium-card metric-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-gray-600">
+                    Add-On Products (MTD)
+                  </h3>
+                  <div class="p-2 bg-indigo-50 rounded-lg">
+                    <i class="fas fa-plus-circle text-indigo-600"></i>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <div class="flex justify-between">
+                    <span class="text-xs text-gray-500">QUANTITY</span>
+                    <span class="text-xs text-gray-500">0</span>
+                    <span class="text-xs text-gray-500">0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detailed Analytics -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Stock by Make -->
+              <div class="premium-card metric-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="text-lg font-semibold text-gray-900">
+                    Stock by Make
+                  </h3>
+                  <div class="p-2 bg-gray-50 rounded-lg">
+                    <i class="fas fa-car text-gray-600"></i>
+                  </div>
+                </div>
+                <div class="space-y-4">
+                  <!-- @MAP: stockByMake.map(item => ( -->
+                  <div
+                    class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div
+                        class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"
+                      >
+                        <i class="fas fa-car text-gray-600 text-sm"></i>
+                      </div>
+                      <span class="font-medium text-gray-900">Land Rover</span>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-sm font-semibold text-gray-900">
+                        31 units
+                      </div>
+                      <div class="text-xs text-gray-500">£1,819,058</div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div
+                        class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"
+                      >
+                        <i class="fas fa-car text-gray-600 text-sm"></i>
+                      </div>
+                      <span class="font-medium text-gray-900">Mercedes</span>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-sm font-semibold text-gray-900">
+                        11 units
+                      </div>
+                      <div class="text-xs text-gray-500">£765,423</div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div
+                        class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"
+                      >
+                        <i class="fas fa-car text-gray-600 text-sm"></i>
+                      </div>
+                      <span class="font-medium text-gray-900">Audi</span>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-sm font-semibold text-gray-900">
+                        9 units
+                      </div>
+                      <div class="text-xs text-gray-500">£318,952</div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div
+                        class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"
+                      >
+                        <i class="fas fa-car text-gray-600 text-sm"></i>
+                      </div>
+                      <span class="font-medium text-gray-900">BMW</span>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-sm font-semibold text-gray-900">
+                        7 units
+                      </div>
+                      <div class="text-xs text-gray-500">£287,643</div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div
+                        class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"
+                      >
+                        <i class="fas fa-car text-gray-600 text-sm"></i>
+                      </div>
+                      <span class="font-medium text-gray-900">Porsche</span>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-sm font-semibold text-gray-900">
+                        4 units
+                      </div>
+                      <div class="text-xs text-gray-500">£98,071</div>
+                    </div>
+                  </div>
+                  <!-- @END_MAP )) -->
+                </div>
+              </div>
+
+              <!-- Sales by Make & Recent Purchases -->
+              <div class="space-y-6">
+                <!-- Sales by Make -->
+                <div class="premium-card metric-card rounded-xl p-6">
+                  <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                      Sales by Make
+                    </h3>
+                    <div class="p-2 bg-green-50 rounded-lg">
+                      <i class="fas fa-chart-pie text-green-600"></i>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm font-medium text-gray-700"
+                        >Land Rover</span
+                      >
+                      <span class="text-sm font-bold text-gray-900"
+                        >12 sold</span
+                      >
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm font-medium text-gray-700"
+                        >Audi</span
+                      >
+                      <span class="text-sm font-bold text-gray-900"
+                        >4 sold</span
+                      >
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm font-medium text-gray-700"
+                        >Porsche</span
+                      >
+                      <span class="text-sm font-bold text-gray-900"
+                        >1 sold</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Last 10 Vehicles Bought -->
+                <div class="premium-card metric-card rounded-xl p-6">
+                  <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                      Last 10 Vehicles Bought
+                    </h3>
+                    <div class="p-2 bg-blue-50 rounded-lg">
+                      <i class="fas fa-history text-blue-600"></i>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <!-- @MAP: recentPurchases.map(vehicle => ( -->
+                    <div
+                      class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <span class="text-sm text-gray-700">Audi Q8 Sline</span>
+                      <span class="text-sm font-semibold text-gray-900"
+                        >£40,922.8</span
+                      >
+                    </div>
+                    <div
+                      class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <span class="text-sm text-gray-700"
+                        >Land Rover Sport</span
+                      >
+                      <span class="text-sm font-semibold text-gray-900"
+                        >£64,000</span
+                      >
+                    </div>
+                    <div
+                      class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <span class="text-sm text-gray-700">Audi S3</span>
+                      <span class="text-sm font-semibold text-gray-900"
+                        >£16,843.8</span
+                      >
+                    </div>
+                    <div
+                      class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <span class="text-sm text-gray-700"
+                        >Land Rover Sport</span
+                      >
+                      <span class="text-sm font-semibold text-gray-900"
+                        >£24,000</span
+                      >
+                    </div>
+                    <!-- @END_MAP )) -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- @END_COMPONENT: Dashboard -->
+        </main>
+        <!-- @END_COMPONENT: MainContent -->
+      </div>
+    </div>
+    <!-- @END_COMPONENT: DealerManagementSystem -->
+
+    <script>
+      // TODO: Replace with React state management
+      (function () {
+        // Sidebar toggle functionality
+        const sidebar = document.getElementById("sidebar");
+        const sidebarToggle = document.getElementById("sidebar-toggle");
+        const brandText = document.getElementById("brand-text");
+        const navTexts = document.querySelectorAll(".nav-text");
+        let isCollapsed = false;
+
+        sidebarToggle.addEventListener("click", function () {
+          isCollapsed = !isCollapsed;
+
+          if (isCollapsed) {
+            sidebar.classList.remove("sidebar-expanded");
+            sidebar.classList.add("sidebar-collapsed");
+            brandText.style.display = "none";
+            navTexts.forEach((text) => (text.style.display = "none"));
+            sidebarToggle
+              .querySelector("i")
+              .classList.remove("fa-chevron-left");
+            sidebarToggle.querySelector("i").classList.add("fa-chevron-right");
+          } else {
+            sidebar.classList.remove("sidebar-collapsed");
+            sidebar.classList.add("sidebar-expanded");
+            brandText.style.display = "block";
+            navTexts.forEach((text) => (text.style.display = "block"));
+            sidebarToggle
+              .querySelector("i")
+              .classList.remove("fa-chevron-right");
+            sidebarToggle.querySelector("i").classList.add("fa-chevron-left");
+          }
+        });
+
+        // Navigation item click handlers
+        const navItems = document.querySelectorAll(".nav-item");
+        navItems.forEach((item) => {
+          item.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Remove active class from all items
+            navItems.forEach((navItem) => navItem.classList.remove("active"));
+
+            // Add active class to clicked item
+            this.classList.add("active");
+
+            // TODO: Implement React Router navigation
+            console.log("Navigate to:", this.getAttribute("href"));
+          });
+        });
+
+        // Card hover effects with premium animations
+        const cards = document.querySelectorAll(".premium-card");
+        cards.forEach((card) => {
+          card.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-4px) scale(1.02)";
+            this.style.boxShadow = "0 20px 60px rgba(0, 0, 0, 0.15)";
+          });
+
+          card.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0) scale(1)";
+            this.style.boxShadow = "0 8px 32px rgba(0, 0, 0, 0.1)";
+          });
+        });
+
+        // TODO: Implement real-time data updates with React Query
+        // TODO: Add form validation with React Hook Form and Zod
+        // TODO: Integrate with Express.js backend API
+        // TODO: Add session-based authentication
+      })();
+    </script>
+  </body>
+</html>

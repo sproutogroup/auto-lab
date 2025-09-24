@@ -1,0 +1,18 @@
+error: Request failed {"duration":1,"ip":"127.0.0.1","method":"GET","requestId":"zwcqokv31","service":"dealership-management","statusCode":401,"timestamp":"2025-07-15T10:39:43.190Z","url":"/api/auth/user","userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36","userId":null,"username":null}
+error: Request error {"duration":4,"ip":"127.0.0.1","method":"GET","service":"dealership-management","statusCode":401,"timestamp":"2025-07-15T10:39:43.193Z","url":"/api/auth/user","userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/118.0.5993.88 Safari/537.36"}
+10:39:43 AM [express] GET /api/auth/user 401 in 4ms :: {"message":"Not authenticated"}
+Service Worker requested from: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+Service Worker path: /home/runner/workspace/client/public/sw.js
+Service Worker exists: true
+Serving service worker file
+error: Request failed {"duration":0,"ip":"10.81.10.38","method":"GET","requestId":"4pprszc11","service":"dealership-management","statusCode":401,"timestamp":"2025-07-15T10:39:46.717Z","url":"/api/auth/user","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","userId":null,"username":null}
+error: Request error {"duration":1,"ip":"10.81.10.38","method":"GET","service":"dealership-management","statusCode":401,"timestamp":"2025-07-15T10:39:46.718Z","url":"/api/auth/user","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+10:39:46 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Not authenticated"}
+Service Worker requested from: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+Service Worker path: /home/runner/workspace/client/public/sw.js
+Service Worker exists: true
+Serving service worker file
+Service Worker requested from: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+Service Worker path: /home/runner/workspace/client/public/sw.js
+Service Worker exists: true
+Serving service worker file

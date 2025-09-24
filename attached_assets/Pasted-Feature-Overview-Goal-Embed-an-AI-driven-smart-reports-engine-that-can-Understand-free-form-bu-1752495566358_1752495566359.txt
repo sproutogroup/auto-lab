@@ -1,0 +1,85 @@
+Feature Overview
+
+Goal: Embed an AI-driven “smart reports” engine that can:
+Understand free-form, business-domain questions (e.g. “Show me this month’s top-selling regions.”)
+Fetch & analyze live data from the DMS
+Generate textual insights, summaries, and structured reports
+Render charts and tables on demand
+Allow drill-downs and follow-ups via chat-style interface
+2. High-Level Architecture
+
+UI Layer
+On the Reports page, add a chat widget / query bar
+“Ask AI” button to fire a query
+Report canvas area for text + charts + tables
+Backend Service (“AI Orchestrator”)
+Accepts user NL queries
+Validates & sanitizes inputs
+Maps queries to data-fetch operations (SQL or API calls)
+Builds prompt templates
+Calls OpenAI API
+Parses responses, structures JSON (e.g. { text, charts: [...], tables: [...] })
+Data Access Layer
+Reuses existing DMS database models/ORM
+Exposes endpoints for common aggregations (sales by date, top SKUs, margins, etc.)
+Visualization Engine
+Renders charts (bar, line, pie) via your chosen library (e.g. Chart.js / D3)
+Maps AI JSON instructions to chart configs
+3. OpenAI Integration
+
+Model Selection: gpt-4 (or latest high-capability model) for deep analysis; fallback gpt-3.5-turbo for quick responses
+Prompt Engineering:
+You are an analytics assistant for a dealer management system. 
+Given these data excerpts: {“revenue_by_region”: […], “sales_trends”: […]}, answer the question: “{user_query}”.
+Provide:
+  1. A brief summary of insights
+  2. Top 3 recommendations
+  3. If requested, generate markdown tables or JSON chart specs.
+Security:
+Never send raw PII.
+Enforce length limits.
+Cache repeated queries for cost control.
+Error Handling:
+Gracefully degrade to “we can’t answer that right now.”
+Log API errors + user query + timestamp.
+4. User Flows & Stories
+
+Ad-hoc Query
+User: “What were our top-performing products in Q2?”
+System:
+Parses “top-performing products” → calls /api/sales/top-products?start=2025-04-01&end=2025-06-30
+Receives data → injects into prompt
+Calls OpenAI → displays:
+Text summary
+Bar chart of top 5 SKUs
+Scheduled Report Generation
+User: “Email me a weekly summary of inventory turnover.”
+System:
+Stores a schedule (cron: Mon 8:00)
+Runs orchestrator automatically
+Renders PDF/HTML and emails.
+5. UI/UX Requirements
+
+Chat Widget:
+History of Q&A
+“Regenerate” & “Refine” buttons
+Report Builder:
+Drag-and-drop metrics
+Save templates
+Output Formats:
+On-screen (HTML + SVG)
+Export CSV / PDF / PowerPoint
+6. Non-Functional & Operational
+
+Performance:
+Aim for < 2s responses on cached queries; < 5s uncached
+Scalability:
+Queue long jobs; use async workers
+Logging & Analytics:
+Track query types, latencies, error rates
+Testing:
+Unit tests for prompt templates
+Integration tests mocking OpenAI
+Security & Compliance:
+Audit logs of all AI interactions
+GDPR: strip personal data

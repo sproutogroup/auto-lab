@@ -1,0 +1,65 @@
+26Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.Understand this error
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'battery'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'layout-animations'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'navigation-override'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'oversized-images'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'publickey-credentials'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'speaker-selection'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'unoptimized-images'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'unsized-media'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Unrecognized feature: 'pointer-lock'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+framework-f19320d7c934e18f.js:1 Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-f19320d7c934e18f.js:1Understand this warning
+27Refused to frame '<URL>' because an ancestor violates the following Content Security Policy directive: "frame-ancestors 'self'".
+Understand this error
+sw.js:2 Service Worker loading...
+sw.js:58 Refused to connect to 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans' because it violates the following Content Security Policy directive: "connect-src 'self' ws://localhost:* http://localhost:* wss://localhost:* https://localhost:* ws: wss:".
+
+(anonymous) @ sw.js:58Understand this error
+sw.js:58 Fetch API cannot load https://fonts.googleapis.com/css?family=IBM+Plex+Sans. Refused to connect because it violates the document's Content Security Policy.
+(anonymous) @ sw.js:58Understand this error
+The FetchEvent for "https://fonts.googleapis.com/css?family=IBM+Plex+Sans" resulted in a network error response: the promise was rejected.Understand this warning
+sw.js:58 Uncaught (in promise) TypeError: Failed to fetch. Refused to connect because it violates the document's Content Security Policy.
+    at sw.js:58:28Understand this error
+sw.js:58 Refused to connect to 'https://infragrid.v.network/wallet/getnodeinfo' because it violates the following Content Security Policy directive: "connect-src 'self' ws://localhost:* http://localhost:* wss://localhost:* https://localhost:* ws: wss:".
+
+(anonymous) @ sw.js:58Understand this error
+sw.js:58 Fetch API cannot load https://infragrid.v.network/wallet/getnodeinfo. Refused to connect because it violates the document's Content Security Policy.
+(anonymous) @ sw.js:58Understand this error
+The FetchEvent for "https://infragrid.v.network/wallet/getnodeinfo" resulted in a network error response: the promise was rejected.Understand this warning
+sw.js:58 Uncaught (in promise) TypeError: Failed to fetch. Refused to connect because it violates the document's Content Security Policy.
+    at sw.js:58:28Understand this error
+workspace_iframe.html:32 Unrecognized feature: 'ambient-light-sensor'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'battery'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-not-rendered'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.Understand this warning
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.Understand this warning
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.Understand this warning
+sw.js:2 Service Worker loading...

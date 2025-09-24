@@ -1,0 +1,65 @@
+9:35:25 AM [express] GET /api/vehicles 200 in 281ms :: [{"id":259,"stock_number":"AL254092","departm…
+2025-07-18 10:35:25.19
+8cf35b4b
+User
+9:35:25 AM [express] POST /api/admin/audit-log 200 in 277ms :: {"success":true,"message":"Audit log …
+2025-07-18 10:35:25.31
+8cf35b4b
+User
+info: Created notification record: 52 {"service":"dealership-management","timestamp":"2025-07-18T09:35:25.318Z"}
+2025-07-18 10:35:25.51
+8cf35b4b
+User
+info: Web push notification sent successfully {"service":"dealership-management","subscription_id":18,"timestamp":"2025-07-18T09:35:25.514Z","title":"Vehicle Updated","user_id":1}
+2025-07-18 10:35:25.53
+8cf35b4b
+User
+error: Web push notification failed {"endpoint":"https://fcm.googleapis.com/fcm/send/fx20QUIk5h0:APA91bF6G9ki1YfmA7SIK7mqmjTP4vih1BQ8RG4mPB3zMpQJlmgNfQYrPg-XQTMlBnZ04yPsLwBoveA2a-3hY6NP_CP9-JU7dzCqL8WQz1jQ-bNevuyr5toFpCpJzjn0zl6Q3wRArxpn","error":"Received unexpected response code","service":"dealership-management","status_code":410,"subscription_id":17,"timestamp":"2025-07-18T09:35:25.533Z","user_id":1}
+2025-07-18 10:35:25.53
+8cf35b4b
+User
+error: Failed to mark subscription inactive {"error":"value.toISOString is not a function","service":"dealership-management","subscription_id":17,"timestamp":"2025-07-18T09:35:25.534Z"}
+2025-07-18 10:35:25.53
+8cf35b4b
+User
+info: Subscription marked inactive due to 404/410 error {"service":"dealership-management","subscription_id":17,"timestamp":"2025-07-18T09:35:25.534Z"}
+2025-07-18 10:35:25.54
+8cf35b4b
+User
+error: Web push notification failed {"endpoint":"https://fcm.googleapis.com/fcm/send/eNXuFFLfIRM:APA91bGHWu_g3ldSkpI13B8gyYHPL9szAMTlKnL86gHBkbKDvWTKOSLqTf2RXroCVafqWFM_jY5lhc82LggEdG9h84PG_9eWOcVW_ycpZ5cOxZC32JnQg-x4POXPDcCbvU2phl5WMOnV","error":"Received unexpected response code","service":"dealership-management","status_code":410,"subscription_id":12,"timestamp":"2025-07-18T09:35:25.543Z","user_id":1}
+2025-07-18 10:35:25.54
+8cf35b4b
+User
+error: Failed to mark subscription inactive {"error":"value.toISOString is not a function","service":"dealership-management","subscription_id":12,"timestamp":"2025-07-18T09:35:25.543Z"}
+2025-07-18 10:35:25.54
+8cf35b4b
+User
+info: Subscription marked inactive due to 404/410 error {"service":"dealership-management","subscription_id":12,"timestamp":"2025-07-18T09:35:25.543Z"}
+2025-07-18 10:35:25.54
+8cf35b4b
+User
+error: Web push notification failed {"endpoint":"https://fcm.googleapis.com/fcm/send/test-phase3-1-valid-ecdh","error":"Received unexpected response code","service":"dealership-management","status_code":404,"subscription_id":5,"timestamp":"2025-07-18T09:35:25.549Z","user_id":1}
+2025-07-18 10:35:25.55
+8cf35b4b
+User
+error: Failed to mark subscription inactive {"error":"value.toISOString is not a function","service":"dealership-management","subscription_id":5,"timestamp":"2025-07-18T09:35:25.550Z"}
+2025-07-18 10:35:25.55
+8cf35b4b
+User
+info: Subscription marked inactive due to 404/410 error {"service":"dealership-management","subscription_id":5,"timestamp":"2025-07-18T09:35:25.550Z"}
+2025-07-18 10:35:25.55
+8cf35b4b
+User
+info: WebSocket notification disabled temporarily for user 1 {"service":"dealership-management","timestamp":"2025-07-18T09:35:25.550Z"}
+2025-07-18 10:35:30.15
+8cf35b4b
+User
+info: Admin audit event {"action":"page_access","bypass_reason":"admin_role","ip":"34.170.189.63","page_key":"vehicle-master","service":"dealership-management","timestamp":"2025-07-18T09:35:30.027Z","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15","user_id":1,"username":"admin"}
+2025-07-18 10:35:30.15
+8cf35b4b
+User
+info: Request completed {"duration":46,"ip":"34.170.189.63","method":"POST","requestId":"xmof2tmmk","service":"dealership-management","statusCode":200,"timestamp":"2025-07-18T09:35:30.153Z","url":"/api/admin/audit-log","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15","userId":1,"username":"admin"}
+2025-07-18 10:35:30.20
+8cf35b4b
+User
+9:35:30 AM [express] POST /api/admin/audit-log 200 in 93ms :: {"success":true,"message":"Audit log r…

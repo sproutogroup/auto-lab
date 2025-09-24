@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dealer Management System - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "apple-blue": "#007AFF",
+              "apple-green": "#34C759",
+              "apple-orange": "#FF9500",
+              "apple-red": "#FF3B30",
+              "apple-gray": "#8E8E93",
+              "apple-light-gray": "#F2F2F7",
+              "apple-border": "#E5E5EA",
+              "apple-text": "#1D1D1F",
+            },
+            fontFamily: {
+              sf: [
+                "-apple-system",
+                "BlinkMacSystemFont",
+                "SF Pro Display",
+                "Segoe UI",
+                "Roboto",
+                "sans-serif",
+              ],
+            },
+            boxShadow: {
+              apple:
+                "0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)",
+              "apple-lg":
+                "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-50 font-sf">
+    <!-- @COMPONENT: AppLayout -->
+    <div class="flex h-screen overflow-hidden">
+      <!-- @COMPONENT: Sidebar -->
+      <aside class="w-64 bg-white border-r border-apple-border flex-shrink-0">
+        <!-- @COMPONENT: SidebarHeader -->
+        <div class="h-16 flex items-center px-6 border-b border-apple-border">
+          <div class="flex items-center space-x-3">
+            <div
+              class="w-8 h-8 bg-apple-blue rounded-lg flex items-center justify-center"
+            >
+              <i class="fas fa-car text-white text-sm"></i>
+            </div>
+            <span class="text-lg font-semibold text-apple-text"
+              >AutoHub UK</span
+            >
+          </div>
+        </div>
+        <!-- @END_COMPONENT: SidebarHeader -->
+
+        <!-- @COMPONENT: SidebarNavigation -->
+        <nav class="mt-6 px-3">
+          <!-- @COMPONENT: NavItem [active] -->
+          <a
+            href="#"
+            class="flex items-center px-3 py-2 text-sm font-medium text-apple-blue bg-apple-blue/10 rounded-lg mb-1"
+          >
+            <i class="fas fa-tachometer-alt w-5 h-5 mr-3"></i>
+            Dashboard
+          </a>
+          <!-- @END_COMPONENT: NavItem -->
+
+          <!-- @COMPONENT: NavSection [Stock] -->
+          <div class="mt-6">
+            <h3
+              class="px-3 text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2"
+            >
+              Stock
+            </h3>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-warehouse w-5 h-5 mr-3"></i>
+              Vehicle Master
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-boxes w-5 h-5 mr-3"></i>
+              Sold Stock
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-clipboard-list w-5 h-5 mr-3"></i>
+              Current Stock
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-tags w-5 h-5 mr-3"></i>
+              Available Stock
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-clock w-5 h-5 mr-3"></i>
+              Stock Age
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-chart-line w-5 h-5 mr-3"></i>
+              Bought Vehicles
+            </a>
+          </div>
+          <!-- @END_COMPONENT: NavSection -->
+
+          <!-- @COMPONENT: NavSection [Sales] -->
+          <div class="mt-6">
+            <h3
+              class="px-3 text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2"
+            >
+              Sales
+            </h3>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-users w-5 h-5 mr-3"></i>
+              Customers
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-handshake w-5 h-5 mr-3"></i>
+              Leads
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-calendar-alt w-5 h-5 mr-3"></i>
+              Appointments
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-tasks w-5 h-5 mr-3"></i>
+              Tasks
+            </a>
+          </div>
+          <!-- @END_COMPONENT: NavSection -->
+
+          <!-- @COMPONENT: NavSection [Documents] -->
+          <div class="mt-6">
+            <h3
+              class="px-3 text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2"
+            >
+              Documents
+            </h3>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-receipt w-5 h-5 mr-3"></i>
+              Purchase Invoices
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-file-invoice w-5 h-5 mr-3"></i>
+              Sales Invoices
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-file-alt w-5 h-5 mr-3"></i>
+              Collection Forms
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-file-pdf w-5 h-5 mr-3"></i>
+              PDF Templates
+            </a>
+          </div>
+          <!-- @END_COMPONENT: NavSection -->
+
+          <!-- @COMPONENT: NavSection [Management] -->
+          <div class="mt-6">
+            <h3
+              class="px-3 text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2"
+            >
+              Management
+            </h3>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-calendar w-5 h-5 mr-3"></i>
+              Calendar
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-clock w-5 h-5 mr-3"></i>
+              Scheduler
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-history w-5 h-5 mr-3"></i>
+              Job History
+            </a>
+          </div>
+          <!-- @END_COMPONENT: NavSection -->
+
+          <!-- @COMPONENT: NavSection [Analytics] -->
+          <div class="mt-6">
+            <h3
+              class="px-3 text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2"
+            >
+              Analytics
+            </h3>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-chart-bar w-5 h-5 mr-3"></i>
+              Reports
+            </a>
+          </div>
+          <!-- @END_COMPONENT: NavSection -->
+
+          <!-- @COMPONENT: NavSection [System] -->
+          <div class="mt-6">
+            <h3
+              class="px-3 text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2"
+            >
+              System
+            </h3>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-users-cog w-5 h-5 mr-3"></i>
+              Users
+            </a>
+            <a
+              href="#"
+              class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 mb-1"
+            >
+              <i class="fas fa-upload w-5 h-5 mr-3"></i>
+              Upload
+            </a>
+          </div>
+          <!-- @END_COMPONENT: NavSection -->
+        </nav>
+        <!-- @END_COMPONENT: SidebarNavigation -->
+      </aside>
+      <!-- @END_COMPONENT: Sidebar -->
+
+      <!-- @COMPONENT: MainContent -->
+      <div class="flex flex-col flex-1 overflow-hidden">
+        <!-- @COMPONENT: Header -->
+        <header
+          class="h-16 bg-white border-b border-apple-border px-6 flex items-center justify-between"
+        >
+          <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-semibold text-apple-text">
+              Welcome, admin
+            </h1>
+            <span class="text-sm text-apple-gray">Wednesday, 25 June 2025</span>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <!-- @COMPONENT: SearchBar -->
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Search..."
+                class="w-64 pl-10 pr-4 py-2 text-sm border border-apple-border rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue focus:border-transparent"
+                data-mock="true"
+              />
+              <i
+                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-apple-gray text-xs"
+              ></i>
+            </div>
+            <!-- @END_COMPONENT: SearchBar -->
+
+            <!-- @COMPONENT: HeaderActions -->
+            <button
+              class="p-2 text-apple-gray hover:text-apple-text rounded-lg hover:bg-gray-100"
+            >
+              <i class="fas fa-bell"></i>
+            </button>
+            <button
+              class="p-2 text-apple-gray hover:text-apple-text rounded-lg hover:bg-gray-100"
+            >
+              <i class="fas fa-cog"></i>
+            </button>
+            <button
+              class="p-2 text-apple-gray hover:text-apple-text rounded-lg hover:bg-gray-100"
+            >
+              <i class="fas fa-user-circle"></i>
+            </button>
+            <!-- @END_COMPONENT: HeaderActions -->
+          </div>
+        </header>
+        <!-- @END_COMPONENT: Header -->
+
+        <!-- @COMPONENT: DashboardContent -->
+        <main class="flex-1 overflow-y-auto p-6">
+          <div class="max-w-7xl mx-auto">
+            <!-- @COMPONENT: DashboardGrid -->
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+            >
+              <!-- @COMPONENT: StockSummaryCard -->
+              <div
+                class="bg-white rounded-xl shadow-apple border border-apple-border p-6 lg:col-span-2"
+              >
+                <div class="flex items-center justify-between mb-4">
+                  <h3
+                    class="text-lg font-semibold text-apple-text flex items-center"
+                  >
+                    <i class="fas fa-warehouse text-blue-500 mr-2"></i>
+                    Stock Summary
+                  </h3>
+                </div>
+                <div class="grid grid-cols-3 gap-6">
+                  <div class="text-center">
+                    <div
+                      class="text-2xl font-bold text-apple-text mb-1"
+                      data-bind="stock.totalValue"
+                    >
+                      £3,353,123.88
+                    </div>
+                    <div class="text-sm text-apple-gray">TOTAL VALUE</div>
+                  </div>
+                  <div class="text-center">
+                    <div
+                      class="text-2xl font-bold text-apple-text mb-1"
+                      data-bind="stock.vehicles"
+                    >
+                      70
+                    </div>
+                    <div class="text-sm text-apple-gray">VEHICLES</div>
+                  </div>
+                  <div class="text-center">
+                    <div
+                      class="text-2xl font-bold text-apple-text mb-1"
+                      data-bind="stock.makes"
+                    >
+                      11
+                    </div>
+                    <div class="text-sm text-apple-gray">MAKES</div>
+                  </div>
+                </div>
+              </div>
+              <!-- @END_COMPONENT: StockSummaryCard -->
+
+              <!-- @COMPONENT: WeeklySalesCard -->
+              <div
+                class="bg-white rounded-xl shadow-apple border border-apple-border p-6"
+              >
+                <div class="flex items-center justify-between mb-4">
+                  <h3
+                    class="text-lg font-semibold text-apple-text flex items-center"
+                  >
+                    <i class="fas fa-chart-line text-apple-green mr-2"></i>
+                    Weekly Sales
+                  </h3>
+                </div>
+                <div class="space-y-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-apple-gray">THIS WEEK</span>
+                    <span
+                      class="text-lg font-semibold text-apple-text"
+                      data-bind="sales.thisWeek"
+                      >0</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-apple-gray">TOTAL VALUE</span>
+                    <span
+                      class="text-lg font-semibold text-apple-text"
+                      data-bind="sales.weeklyValue"
+                      >£0</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-apple-gray">GROSS PROFIT</span>
+                    <span
+                      class="text-lg font-semibold text-apple-text"
+                      data-bind="sales.weeklyProfit"
+                      >£0</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- @END_COMPONENT: WeeklySalesCard -->
+            </div>
+            <!-- @END_COMPONENT: DashboardGrid -->
+
+            <!-- @COMPONENT: SecondaryMetrics -->
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            >
+              <!-- @COMPONENT: BoughtSummaryCard -->
+              <div
+                class="bg-white rounded-xl shadow-apple border border-apple-border p-6"
+              >
+                <div class="flex items-center justify-between mb-4">
+                  <h3
+                    class="text-lg font-semibold text-apple-text flex items-center"
+                  >
+                    <i class="fas fa-shopping-cart text-purple-500 mr-2"></i>
+                    Bought Summary (MTD)
+                  </h3>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">THIS MONTH</span>
+                    <span
+                      class="text-lg font-semibold"
+                      data-bind="bought.thisMonth"
+                      >16</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">PAY OUTS</span>
+                    <span
+                      class="text-lg font-semibold"
+                      data-bind="bought.payouts"
+                      >3</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">PAID VALUE</span>
+                    <span
+                      class="text-lg font-semibold text-apple-text"
+                      data-bind="bought.paidValue"
+                      >£97,000</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">TOTAL VALUE</span>
+                    <span
+                      class="text-lg font-semibold text-apple-text"
+                      data-bind="bought.totalValue"
+                      >£519,669</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- @END_COMPONENT: BoughtSummaryCard -->
+
+              <!-- @COMPONENT: MonthToDateCard -->
+              <div
+                class="bg-white rounded-xl shadow-apple border border-apple-border p-6"
+              >
+                <div class="flex items-center justify-between mb-4">
+                  <h3
+                    class="text-lg font-semibold text-apple-text flex items-center"
+                  >
+                    <i class="fas fa-calendar-check text-apple-orange mr-2"></i>
+                    Month-to-Date Sales
+                  </h3>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">THIS MONTH</span>
+                    <span
+                      class="text-lg font-semibold"
+                      data-bind="mtd.salesCount"
+                      >17</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">TOTAL VALUE</span>
+                    <span
+                      class="text-lg font-semibold text-apple-text"
+                      data-bind="mtd.totalValue"
+                      >£1,132,526.8</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">GROSS PROFIT</span>
+                    <span
+                      class="text-lg font-semibold text-apple-green"
+                      data-bind="mtd.grossProfit"
+                      >£512,527.8</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">PROFIT</span>
+                    <span
+                      class="text-lg font-semibold text-apple-green"
+                      data-bind="mtd.profit"
+                      >£30,165,341</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- @END_COMPONENT: MonthToDateCard -->
+
+              <!-- @COMPONENT: FinanceSalesCard -->
+              <div
+                class="bg-white rounded-xl shadow-apple border border-apple-border p-6"
+              >
+                <div class="flex items-center justify-between mb-4">
+                  <h3
+                    class="text-lg font-semibold text-apple-text flex items-center"
+                  >
+                    <i class="fas fa-credit-card text-yellow-500 mr-2"></i>
+                    Finance Sales
+                  </h3>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">COUNT</span>
+                    <span
+                      class="text-lg font-semibold"
+                      data-bind="finance.count"
+                      >6</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">TOTAL VALUE</span>
+                    <span
+                      class="text-lg font-semibold text-apple-text"
+                      data-bind="finance.totalValue"
+                      >£277,596.76</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">AVERAGE FINANCE</span>
+                    <span
+                      class="text-lg font-semibold text-apple-text"
+                      data-bind="finance.averageFinance"
+                      >£46,266.127</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- @END_COMPONENT: FinanceSalesCard -->
+
+              <!-- @COMPONENT: AddOnProductsCard -->
+              <div
+                class="bg-white rounded-xl shadow-apple border border-apple-border p-6"
+              >
+                <div class="flex items-center justify-between mb-4">
+                  <h3
+                    class="text-lg font-semibold text-apple-text flex items-center"
+                  >
+                    <i class="fas fa-plus-circle text-teal-500 mr-2"></i>
+                    Add-On Products (MTD)
+                  </h3>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">QUANTITY</span>
+                    <span
+                      class="text-lg font-semibold"
+                      data-bind="addOns.quantity"
+                      >0</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">&nbsp;</span>
+                    <span
+                      class="text-lg font-semibold"
+                      data-bind="addOns.secondary"
+                      >0</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-apple-gray">&nbsp;</span>
+                    <span
+                      class="text-lg font-semibold"
+                      data-bind="addOns.tertiary"
+                      >0</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- @END_COMPONENT: AddOnProductsCard -->
+            </div>
+            <!-- @END_COMPONENT: SecondaryMetrics -->
+
+            <!-- @COMPONENT: DetailedReports -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- @COMPONENT: SalesByMakeCard -->
+              <div
+                class="bg-white rounded-xl shadow-apple border border-apple-border p-6"
+              >
+                <div class="flex items-center justify-between mb-6">
+                  <h3
+                    class="text-lg font-semibold text-apple-text flex items-center"
+                  >
+                    <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
+                    Sales by Make
+                  </h3>
+                </div>
+                <div class="space-y-4">
+                  <!-- @MAP: salesByMake.map(make => ( -->
+                  <div
+                    class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <span
+                        class="font-medium text-apple-text"
+                        data-bind="make.name"
+                        >Land Rover</span
+                      >
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="make.sold"
+                      >
+                        12 sold
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="make.units"
+                      >
+                        31 units
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span
+                        class="font-medium text-apple-text"
+                        data-bind="make.name"
+                        >Mercedes</span
+                      >
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="make.sold"
+                      >
+                        4 sold
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="make.units"
+                      >
+                        11 units
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                      <span
+                        class="font-medium text-apple-text"
+                        data-bind="make.name"
+                        >Audi</span
+                      >
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="make.sold"
+                      >
+                        4 sold
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="make.units"
+                      >
+                        9 units
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                      <span
+                        class="font-medium text-apple-text"
+                        data-bind="make.name"
+                        >BMW</span
+                      >
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="make.sold"
+                      >
+                        1 sold
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="make.units"
+                      >
+                        4 units
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between py-2">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <span
+                        class="font-medium text-apple-text"
+                        data-bind="make.name"
+                        >Porsche</span
+                      >
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="make.sold"
+                      >
+                        1 sold
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="make.units"
+                      >
+                        4 units
+                      </div>
+                    </div>
+                  </div>
+                  <!-- @END_MAP )) -->
+                </div>
+              </div>
+              <!-- @END_COMPONENT: SalesByMakeCard -->
+
+              <!-- @COMPONENT: RecentVehiclesCard -->
+              <div
+                class="bg-white rounded-xl shadow-apple border border-apple-border p-6"
+              >
+                <div class="flex items-center justify-between mb-6">
+                  <h3
+                    class="text-lg font-semibold text-apple-text flex items-center"
+                  >
+                    <i class="fas fa-clock text-gray-500 mr-2"></i>
+                    Last 10 Vehicles Bought
+                  </h3>
+                </div>
+                <div class="space-y-4">
+                  <!-- @MAP: recentVehicles.map(vehicle => ( -->
+                  <div
+                    class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div>
+                      <div
+                        class="font-medium text-apple-text"
+                        data-bind="vehicle.model"
+                      >
+                        Audi Q8 Sline
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="vehicle.registration"
+                      >
+                        AutoHub
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="vehicle.price"
+                      >
+                        £45,922.8
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="vehicle.date"
+                      >
+                        Today
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div>
+                      <div
+                        class="font-medium text-apple-text"
+                        data-bind="vehicle.model"
+                      >
+                        Land Rover Sport
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="vehicle.registration"
+                      >
+                        AutoHub
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="vehicle.price"
+                      >
+                        £24,000
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="vehicle.date"
+                      >
+                        Today
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div>
+                      <div
+                        class="font-medium text-apple-text"
+                        data-bind="vehicle.model"
+                      >
+                        Audi S3
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="vehicle.registration"
+                      >
+                        AutoHub
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="vehicle.price"
+                      >
+                        £16,642.8
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="vehicle.date"
+                      >
+                        Today
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div>
+                      <div
+                        class="font-medium text-apple-text"
+                        data-bind="vehicle.model"
+                      >
+                        Land Rover Sport
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="vehicle.registration"
+                      >
+                        AutoHub
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div
+                        class="font-semibold text-apple-text"
+                        data-bind="vehicle.price"
+                      >
+                        £24,000
+                      </div>
+                      <div
+                        class="text-sm text-apple-gray"
+                        data-bind="vehicle.date"
+                      >
+                        Yesterday
+                      </div>
+                    </div>
+                  </div>
+                  <!-- @END_MAP )) -->
+                </div>
+              </div>
+              <!-- @END_COMPONENT: RecentVehiclesCard -->
+            </div>
+            <!-- @END_COMPONENT: DetailedReports -->
+          </div>
+        </main>
+        <!-- @END_COMPONENT: DashboardContent -->
+      </div>
+      <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <script>
+      // TODO: Implement React Router for navigation
+      // TODO: Implement React Query for data fetching
+      // TODO: Implement React Context for state management
+      // TODO: Connect to Express.js backend with TypeScript
+      // TODO: Integrate Drizzle ORM with PostgreSQL
+      // TODO: Implement session-based authentication
+      // TODO: Add Framer Motion animations for smooth interactions
+      // TODO: Implement real-time data updates
+      // TODO: Add form validation with React Hook Form and Zod
+      // TODO: Implement PDF generation for invoices
+      // TODO: Add file upload functionality with Multer
+      // TODO: Integrate shadcn/ui components
+      // TODO: Add responsive design optimizations
+      // TODO: Implement search functionality
+      // TODO: Add notification system
+      // TODO: Implement dark mode toggle
+      // TODO: Add data visualization charts
+      // TODO: Implement export functionality
+      // TODO: Add keyboard shortcuts
+      // TODO: Implement accessibility features
+
+      (function () {
+        // Initialize dashboard interactions
+        const initializeDashboard = () => {
+          // Simulate real-time data updates
+          const updateMetrics = () => {
+            // This would be replaced with actual API calls
+            console.log("Updating dashboard metrics...");
+          };
+
+          // Set up periodic updates
+          setInterval(updateMetrics, 30000); // Update every 30 seconds
+
+          // Initialize search functionality
+          const searchInput = document.querySelector('input[type="text"]');
+          if (searchInput) {
+            searchInput.addEventListener("input", (e) => {
+              const query = e.target.value;
+              // TODO: Implement actual search functionality
+              console.log("Search query:", query);
+            });
+          }
+
+          // Add hover effects for nav items
+          const navItems = document.querySelectorAll("nav a");
+          navItems.forEach((item) => {
+            item.addEventListener("mouseenter", () => {
+              // TODO: Add subtle animations
+            });
+          });
+
+          console.log("Dashboard initialized successfully");
+        };
+
+        // Initialize when DOM is loaded
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initializeDashboard);
+        } else {
+          initializeDashboard();
+        }
+      })();
+    </script>
+  </body>
+</html>

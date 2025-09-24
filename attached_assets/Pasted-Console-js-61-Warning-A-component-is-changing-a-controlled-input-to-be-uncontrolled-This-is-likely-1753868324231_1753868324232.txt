@@ -1,0 +1,52 @@
+Console.js:61 Warning: A component is changing a controlled input to be uncontrolled. This is likely caused by the value changing from a defined to undefined, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components
+    at input
+    at _c (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/components/ui/input.tsx:20:11)
+    at div
+    at div
+    at div
+    at form
+    at div
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=58f9c337:42:13
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…runner/workspace/node_modules/.vite/deps/chunk-AFLIZ4FI.js?v=58f9c337:61:7
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=58f9c337:79:13
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=58f9c337:56:13
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=58f9c337:42:13
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…runner/workspace/node_modules/.vite/deps/chunk-HG7P5XMB.js?v=58f9c337:29:5
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…nner/workspace/node_modules/.vite/deps/chunk-V4SDQJCY.js?v=58f9c337:235:13
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…nner/workspace/node_modules/.vite/deps/chunk-V4SDQJCY.js?v=58f9c337:158:58
+    at Presence (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-LUE5KDWX.js?v=58f9c337:24:11)
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…nner/workspace/node_modules/.vite/deps/chunk-V4SDQJCY.js?v=58f9c337:149:64
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=58f9c337:79:13
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=58f9c337:56:13
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=58f9c337:42:13
+    at https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…nner/workspace/node_modules/.vite/deps/chunk-AFLIZ4FI.js?v=58f9c337:260:22
+    at Presence (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-LUE5KDWX.js?v=58f9c337:24:11)
+    at Provider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-OXZDJRWN.js?v=58f9c337:38:15)
+    at DialogPortal (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…nner/workspace/node_modules/.vite/deps/chunk-V4SDQJCY.js?v=58f9c337:111:11)
+    at _c3 (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/components/ui/dialog.tsx:52:12)
+    at Provider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-OXZDJRWN.js?v=58f9c337:38:15)
+    at Dialog (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…runner/workspace/node_modules/.vite/deps/chunk-V4SDQJCY.js?v=58f9c337:52:5)
+    at VehicleModal (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/components/VehicleModal.tsx:31:40)
+    at div
+    at VehicleMaster (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/pages/VehicleMaster.tsx:134:39)
+    at PermissionGuard (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/App.tsx?v=q7hWzhQ8MPH9IgVgIoGmO:36:3)
+    at Route (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58f9c337:323:16)
+    at Switch (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58f9c337:379:17)
+    at ProtectedRoute (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/components/auth/ProtectedRoute.tsx:22:34)
+    at ProtectedRouter
+    at main
+    at div
+    at div
+    at SidebarProvider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/hooks/useSidebar.tsx:20:35)
+    at AppContent (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/App.tsx?v=q7hWzhQ8MPH9IgVgIoGmO:465:31)
+    at NotificationProvider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/components/NotificationProvider.tsx:32:40)
+    at WebSocketProvider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/contexts/WebSocketContext.tsx:110:37)
+    at AuthProvider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at PWAProvider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/components/pwa/PWAProvider.tsx:22:31)
+    at Provider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…unner/workspace/node_modules/.vite/deps/chunk-OXZDJRWN.js?v=58f9c337:38:15)
+    at TooltipProvider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58f9c337:64:5)
+    at QueryClientProvider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=58f9c337:2805:3)
+    at ErrorBoundary (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/src/components/ErrorBoundary.tsx:9:5)
+    at App
+﻿
+

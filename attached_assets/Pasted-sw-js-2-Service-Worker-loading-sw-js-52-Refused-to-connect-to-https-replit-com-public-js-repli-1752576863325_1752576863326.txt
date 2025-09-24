@@ -1,0 +1,72 @@
+sw.js:2 Service Worker loading...
+sw.js:52 Refused to connect to 'https://replit.com/public/js/replit-dev-banner.js' because it violates the following Content Security Policy directive: "connect-src 'self' ws://localhost:* http://localhost:* wss://localhost:* https://localhost:* ws: wss:".
+
+(anonymous) @ sw.js:52Understand this error
+sw.js:52 Fetch API cannot load https://replit.com/public/js/replit-dev-banner.js. Refused to connect because it violates the document's Content Security Policy.
+(anonymous) @ sw.js:52Understand this error
+The FetchEvent for "https://replit.com/public/js/replit-dev-banner.js" resulted in a network error response: the promise was rejected.Understand this warning
+sw.js:52 Uncaught (in promise) TypeError: Failed to fetch. Refused to connect because it violates the document's Content Security Policy.
+    at sw.js:52:28Understand this error
+inject.js:1119 Refused to connect to 'https://infragrid.v.network/wallet/getnodeinfo' because it violates the following Content Security Policy directive: "connect-src 'self' ws://localhost:* http://localhost:* wss://localhost:* https://localhost:* ws: wss:".
+
+(anonymous) @ inject.js:1119Understand this error
+replit-dev-banner.js:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+chunk-RPCDYKBN.js?v=dcdec9da:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+chunk-RPCDYKBN.js?v=58f9c337:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+pwa-utils.ts:364 [PWA] PWA utilities loaded
+2chunk-QCHXOAYK.js?v=dcdec9da:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=dcdec9da:136Understand this error
+chunk-QCHXOAYK.js?v=dcdec9da:1078 Uncaught TypeError: Cannot read properties of null (reading 'useEffect')
+    at Object.useEffect (chunk-QCHXOAYK.js?v=dcdec9da:1078:29)
+    at QueryClientProvider (@tanstack_react-query.js?v=dcdec9da:2808:9)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=dcdec9da:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=dcdec9da:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=dcdec9da:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=dcdec9da:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=dcdec9da:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=dcdec9da:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=dcdec9da:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=dcdec9da:19198:20)Understand this error
+2chunk-QCHXOAYK.js?v=dcdec9da:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=dcdec9da:136Understand this error
+chunk-QCHXOAYK.js?v=dcdec9da:1078 Uncaught TypeError: Cannot read properties of null (reading 'useEffect')
+    at Object.useEffect (chunk-QCHXOAYK.js?v=dcdec9da:1078:29)
+    at QueryClientProvider (@tanstack_react-query.js?v=dcdec9da:2808:9)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=dcdec9da:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=dcdec9da:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=dcdec9da:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=dcdec9da:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=dcdec9da:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=dcdec9da:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=dcdec9da:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=dcdec9da:19198:20)Understand this error
+chunk-RPCDYKBN.js?v=dcdec9da:14032 The above error occurred in the <QueryClientProvider> component:
+
+    at QueryClientProvider (https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=dcdec9da:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=dcdec9da:14032Understand this error
+chunk-RPCDYKBN.js?v=dcdec9da:19413 Uncaught TypeError: Cannot read properties of null (reading 'useEffect')
+    at Object.useEffect (chunk-QCHXOAYK.js?v=dcdec9da:1078:29)
+    at QueryClientProvider (@tanstack_react-query.js?v=dcdec9da:2808:9)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=dcdec9da:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=dcdec9da:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=dcdec9da:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=dcdec9da:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=dcdec9da:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=dcdec9da:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=dcdec9da:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js?v=dcdec9da:18736:28)Understand this error
+pwa-utils.ts:179 [PWA] Offline storage initialized
+offline-storage.ts:42 [PWA] IndexedDB initialized successfully
+3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/:1 Error while trying to use the following icon from the Manifest: https://3b05150b-e0a2-4ceb-9e74-f58110654a46-00-1faunxgs7nl75.riker.replit.dev/icons/icon-144x144.png (Download error or resource isn't a valid image)
