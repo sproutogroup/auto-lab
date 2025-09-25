@@ -37,6 +37,7 @@ const corsOptions = {
    // Custom domain
    "https://autolabdms.com",
    "https://www.autolabdms.com",
+   "https://auto-lab.onrender.com",
   ];
 
   // Add custom domains from environment variables
