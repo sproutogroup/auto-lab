@@ -8,3 +8,5 @@ vite.config.ts.*
 .env*
 .config
 .local
+docker-compose.yml
+Dockerfile
