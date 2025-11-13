@@ -135,6 +135,7 @@ class WebSocketService {
    // Production domain
    "https://autolabdms.com",
    "https://www.autolabdms.com",
+   "https://auto-lab-nhle.onrender.com",
    // Replit domain patterns
    /^https:\/\/.*\.replit\.app$/,
    /^https:\/\/.*\.repl\.co$/,
