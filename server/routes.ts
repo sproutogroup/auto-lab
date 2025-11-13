@@ -40,11 +40,7 @@ import {
 import { z } from "zod";
 
 // Configure multer for file uploads
-const purchaseUploadDir = path.join(
- process.cwd(),
- "uploads",
- "purchase-invoices"
-);
+const purchaseUploadDir = path.join(process.cwd(), "uploads", "purchase-invoices");
 const salesUploadDir = path.join(process.cwd(), "uploads", "sales-invoices");
 if (!fs.existsSync(purchaseUploadDir)) {
  fs.mkdirSync(purchaseUploadDir, { recursive: true });
@@ -59,10 +55,7 @@ const purchaseStorageConfig = multer.diskStorage({
  },
  filename: (req, file, cb) => {
   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  cb(
-   null,
-   file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-  );
+  cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
  },
 });
 
@@ -72,18 +65,13 @@ const salesStorageConfig = multer.diskStorage({
  },
  filename: (req, file, cb) => {
   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  cb(
-   null,
-   file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-  );
+  cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
  },
 });
 
 const fileFilter = (req: any, file: any, cb: any) => {
  const allowedTypes = /pdf|doc|docx|xls|xlsx|jpg|jpeg|png/;
- const extname = allowedTypes.test(
-  path.extname(file.originalname).toLowerCase()
- );
+ const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
  const mimetype = allowedTypes.test(file.mimetype);
 
  if (mimetype && extname) {
@@ -187,9 +175,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
  const httpServer = createServer(app);
  const webSocketService = new WebSocketService(httpServer);
  (global as any).webSocketService = webSocketService;
- console.log(
-  "WebSocket service initialized and set globally at start of registerRoutes"
- );
+ console.log("WebSocket service initialized and set globally at start of registerRoutes");
 
  // Setup authentication system
  setupAuth(app);
@@ -232,30 +218,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
    console.log("Received interaction data:", req.body); // Debug log
 
    // Validate required fields
-   const {
-    lead_id,
-    user_id,
-    interaction_type,
-    interaction_direction,
-    interaction_notes,
-   } = req.body;
+   const { lead_id, user_id, interaction_type, interaction_direction, interaction_notes } = req.body;
 
-   if (
-    !lead_id ||
-    !user_id ||
-    !interaction_type ||
-    !interaction_direction ||
-    !interaction_notes
-   ) {
+   if (!lead_id || !user_id || !interaction_type || !interaction_direction || !interaction_notes) {
     return res.status(400).json({
      message: "Missing required fields",
-     required: [
-      "lead_id",
-      "user_id",
-      "interaction_type",
-      "interaction_direction",
-      "interaction_notes",
-     ],
+     required: ["lead_id", "user_id", "interaction_type", "interaction_direction", "interaction_notes"],
      received: req.body,
     });
    }
@@ -265,10 +233,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
    // Handle follow_up_date
    if (processedData.follow_up_date) {
-    if (
-     typeof processedData.follow_up_date === "string" &&
-     processedData.follow_up_date.trim() !== ""
-    ) {
+    if (typeof processedData.follow_up_date === "string" && processedData.follow_up_date.trim() !== "") {
      processedData.follow_up_date = new Date(processedData.follow_up_date);
     } else {
      // If empty string or invalid, set to null
@@ -294,62 +259,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
  });
 
  // Dashboard API with performance optimization
- app.get(
-  "/api/dashboard/stats",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const startTime = Date.now();
-    console.log(
-     `[Dashboard API] *** FETCHING DASHBOARD STATS *** - Request by user ${
-      req.user?.username
-     } at ${new Date().toLocaleTimeString()}`
-    );
+ app.get("/api/dashboard/stats", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const startTime = Date.now();
+   console.log(
+    `[Dashboard API] *** FETCHING DASHBOARD STATS *** - Request by user ${
+     req.user?.username
+    } at ${new Date().toLocaleTimeString()}`,
+   );
 
-    const stats = await storage.getDashboardStats();
-    const duration = Date.now() - startTime;
+   const stats = await storage.getDashboardStats();
+   const duration = Date.now() - startTime;
 
-    // Add detailed logging for dashboard stats
-    console.log(`[Dashboard API] Stock Summary:`, {
-     totalVehicles: stats.stockSummary.totalVehicles,
-     totalValue: stats.stockSummary.totalValue,
-     totalMakes: stats.stockSummary.totalMakes,
-    });
-    console.log(`[Dashboard API] Monthly Sales:`, {
-     thisMonth: stats.monthlySales.thisMonth,
-     thisMonthValue: stats.monthlySales.thisMonthValue,
-     grossProfit: stats.monthlySales.grossProfit,
-    });
-    console.log(`[Dashboard API] Finance Sales:`, {
-     financeAmount: stats.financeSales.monthlyFinanceAmount,
-     financeValue: stats.financeSales.monthlyFinanceValue,
-    });
-    console.log(`[Dashboard API] Query duration: ${duration}ms`);
+   // Add detailed logging for dashboard stats
+   console.log(`[Dashboard API] Stock Summary:`, {
+    totalVehicles: stats.stockSummary.totalVehicles,
+    totalValue: stats.stockSummary.totalValue,
+    totalMakes: stats.stockSummary.totalMakes,
+   });
+   console.log(`[Dashboard API] Monthly Sales:`, {
+    thisMonth: stats.monthlySales.thisMonth,
+    thisMonthValue: stats.monthlySales.thisMonthValue,
+    grossProfit: stats.monthlySales.grossProfit,
+   });
+   console.log(`[Dashboard API] Finance Sales:`, {
+    financeAmount: stats.financeSales.monthlyFinanceAmount,
+    financeValue: stats.financeSales.monthlyFinanceValue,
+   });
+   console.log(`[Dashboard API] Query duration: ${duration}ms`);
 
-    // Log slow queries for optimization
-    if (duration > 1000) {
-     logger.warn("Slow dashboard stats query", {
-      duration,
-      endpoint: "/api/dashboard/stats",
-      user_id: req.user?.id,
-      service: "dealership-management",
-     });
-    }
-
-    // Remove caching headers to ensure fresh data
-    res.set("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.json(stats);
-   } catch (error) {
-    logger.error("Error fetching dashboard stats:", {
-     error: error instanceof Error ? error.message : "Unknown error",
-     stack: error instanceof Error ? error.stack : undefined,
+   // Log slow queries for optimization
+   if (duration > 1000) {
+    logger.warn("Slow dashboard stats query", {
+     duration,
+     endpoint: "/api/dashboard/stats",
      user_id: req.user?.id,
      service: "dealership-management",
     });
-    res.status(500).json({ message: "Failed to fetch dashboard stats" });
    }
+
+   // Remove caching headers to ensure fresh data
+   res.set("Cache-Control", "no-cache, no-store, must-revalidate");
+   res.json(stats);
+  } catch (error) {
+   logger.error("Error fetching dashboard stats:", {
+    error: error instanceof Error ? error.message : "Unknown error",
+    stack: error instanceof Error ? error.stack : undefined,
+    user_id: req.user?.id,
+    service: "dealership-management",
+   });
+   res.status(500).json({ message: "Failed to fetch dashboard stats" });
   }
- );
+ });
 
  // Stock Age Analytics API
  app.get("/api/stock-age/analytics", async (req, res) => {
@@ -423,13 +384,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const customerData = {
     ...req.body,
     budget_min:
-     req.body.budget_min === "" || req.body.budget_min === undefined
-      ? null
-      : parseFloat(req.body.budget_min),
+     req.body.budget_min === "" || req.body.budget_min === undefined ? null : parseFloat(req.body.budget_min),
     budget_max:
-     req.body.budget_max === "" || req.body.budget_max === undefined
-      ? null
-      : parseFloat(req.body.budget_max),
+     req.body.budget_max === "" || req.body.budget_max === undefined ? null : parseFloat(req.body.budget_max),
     total_spent:
      req.body.total_spent === "" || req.body.total_spent === undefined
       ? null
@@ -523,9 +480,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ...req.body,
     customer_id: customerId,
     purchase_date: new Date(req.body.purchase_date),
-    delivery_date: req.body.delivery_date
-     ? new Date(req.body.delivery_date)
-     : null,
+    delivery_date: req.body.delivery_date ? new Date(req.body.delivery_date) : null,
    };
 
    const purchase = await storage.createCustomerPurchase(purchaseData);
@@ -541,12 +496,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const id = parseInt(req.params.id);
    const updateData = {
     ...req.body,
-    purchase_date: req.body.purchase_date
-     ? new Date(req.body.purchase_date)
-     : undefined,
-    delivery_date: req.body.delivery_date
-     ? new Date(req.body.delivery_date)
-     : undefined,
+    purchase_date: req.body.purchase_date ? new Date(req.body.purchase_date) : undefined,
+    delivery_date: req.body.delivery_date ? new Date(req.body.delivery_date) : undefined,
    };
 
    const purchase = await storage.updateCustomerPurchase(id, updateData);
@@ -572,37 +523,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
  });
 
  // Vehicles API
- app.get(
-  "/api/vehicles",
-  requirePermission("vehicle-master"),
-  async (req, res) => {
-   try {
-    const vehicles = await storage.getVehicles();
-    res.json(vehicles);
-   } catch (error) {
-    console.error("Error fetching vehicles:", error);
-    res.status(500).json({ message: "Failed to fetch vehicles" });
-   }
+ app.get("/api/vehicles", requirePermission("vehicle-master"), async (req, res) => {
+  try {
+   const vehicles = await storage.getVehicles();
+   res.json(vehicles);
+  } catch (error) {
+   console.error("Error fetching vehicles:", error);
+   res.status(500).json({ message: "Failed to fetch vehicles" });
   }
- );
+ });
 
- app.get(
-  "/api/vehicles/sold",
-  requirePermission("sold-stock"),
-  async (req, res) => {
-   try {
-    const vehicles = await storage.getVehicles();
-    const soldVehicles = vehicles.filter(
-     (vehicle) =>
-      vehicle.sales_status && vehicle.sales_status.toLowerCase() === "sold"
-    );
-    res.json(soldVehicles);
-   } catch (error) {
-    console.error("Error fetching sold vehicles:", error);
-    res.status(500).json({ message: "Failed to fetch sold vehicles" });
-   }
+ app.get("/api/vehicles/sold", requirePermission("sold-stock"), async (req, res) => {
+  try {
+   const vehicles = await storage.getVehicles();
+   const soldVehicles = vehicles.filter(
+    vehicle => vehicle.sales_status && vehicle.sales_status.toLowerCase() === "sold",
+   );
+   res.json(soldVehicles);
+  } catch (error) {
+   console.error("Error fetching sold vehicles:", error);
+   res.status(500).json({ message: "Failed to fetch sold vehicles" });
   }
- );
+ });
 
  app.get("/api/vehicles/:id", async (req, res) => {
   try {
@@ -618,315 +560,237 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
  });
 
- app.post(
-  "/api/vehicles",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
+ app.post("/api/vehicles", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const vehicleData = req.body;
+   console.log(`Vehicle Create: Creating new vehicle by user ${req.user?.username}`);
+
+   const newVehicle = await storage.createVehicle(vehicleData);
+   console.log(`Vehicle Create: Successfully created vehicle ${newVehicle.id}`);
+
+   // Trigger vehicle.added notification
    try {
-    const vehicleData = req.body;
-    console.log(
-     `Vehicle Create: Creating new vehicle by user ${req.user?.username}`
-    );
-
-    const newVehicle = await storage.createVehicle(vehicleData);
-    console.log(
-     `Vehicle Create: Successfully created vehicle ${newVehicle.id}`
-    );
-
-    // Trigger vehicle.added notification
-    try {
-     await notificationService.createNotification({
-      recipient_user_id: req.user?.id || 1,
-      notification_type: "inventory",
-      priority_level: "medium",
-      title: "New Vehicle Added",
-      body: `User ${req.user?.username || "System"} added '${
-       newVehicle.registration || "N/A"
-      }' to Vehicle Master`,
-      action_url: "/vehicle-master",
-      related_entity_type: "vehicle",
-      related_entity_id: newVehicle.id,
-      status: "pending",
-     });
-     console.log(
-      `Vehicle Create: Notification created for vehicle ${newVehicle.id}`
-     );
-    } catch (notificationError) {
-     console.error("Vehicle Create: Notification failed:", notificationError);
-    }
-
-    // Broadcast vehicle creation to all connected clients
-    const webSocketService = (global as any).webSocketService;
-    console.log(
-     `Vehicle Create: WebSocket service available: ${!!webSocketService}`
-    );
-    if (webSocketService) {
-     console.log(
-      `Vehicle Create: Broadcasting vehicle creation for vehicle ${newVehicle.id}`
-     );
-     webSocketService.broadcastVehicleCreated(newVehicle, req.user?.id);
-     console.log(`Vehicle Create: Vehicle creation broadcast complete`);
-    } else {
-     console.log(
-      "ERROR: WebSocket service not available for broadcasting vehicle creation"
-     );
-    }
-
-    res.status(201).json(newVehicle);
-   } catch (error) {
-    console.error("Error creating vehicle:", error);
-    res.status(500).json({ message: "Failed to create vehicle" });
-   }
-  }
- );
-
- app.put(
-  "/api/vehicles/:id",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   console.log(
-    `🚨🚨🚨 CRITICAL DEBUG: VEHICLE UPDATE ROUTE HIT /api/vehicles/${req.params.id} 🚨🚨🚨`
-   );
-   console.log(`🚨 Request method: ${req.method}`);
-   console.log(`🚨 Request URL: ${req.url}`);
-   console.log(`🚨 User authenticated: ${!!req.user}`);
-   console.log(`🚨 Route middleware executed successfully`);
-
-   try {
-    const vehicleId = parseInt(req.params.id);
-    const vehicleData = req.body;
-
-    console.log(
-     `Vehicle Update: Updating vehicle ${vehicleId} by user ${req.user?.username}`
-    );
-    console.log(`Vehicle Update: Request data:`, {
-     ...vehicleData,
-     id: vehicleId,
+    await notificationService.createNotification({
+     recipient_user_id: req.user?.id || 1,
+     notification_type: "inventory",
+     priority_level: "medium",
+     title: "New Vehicle Added",
+     body: `User ${req.user?.username || "System"} added '${
+      newVehicle.registration || "N/A"
+     }' to Vehicle Master`,
+     action_url: "/vehicle-master",
+     related_entity_type: "vehicle",
+     related_entity_id: newVehicle.id,
+     status: "pending",
     });
+    console.log(`Vehicle Create: Notification created for vehicle ${newVehicle.id}`);
+   } catch (notificationError) {
+    console.error("Vehicle Create: Notification failed:", notificationError);
+   }
 
-    // Get original vehicle for status comparison
-    const originalVehicle = await storage.getVehicleById(vehicleId);
-    const updatedVehicle = await storage.updateVehicle(vehicleId, vehicleData);
+   // Broadcast vehicle creation to all connected clients
+   const webSocketService = (global as any).webSocketService;
+   console.log(`Vehicle Create: WebSocket service available: ${!!webSocketService}`);
+   if (webSocketService) {
+    console.log(`Vehicle Create: Broadcasting vehicle creation for vehicle ${newVehicle.id}`);
+    webSocketService.broadcastVehicleCreated(newVehicle, req.user?.id);
+    console.log(`Vehicle Create: Vehicle creation broadcast complete`);
+   } else {
+    console.log("ERROR: WebSocket service not available for broadcasting vehicle creation");
+   }
 
-    console.log(`Vehicle Update: Successfully updated vehicle ${vehicleId}`);
-    console.log(
-     `Vehicle Update: Status change: ${originalVehicle?.sales_status} → ${updatedVehicle.sales_status}`
-    );
+   res.status(201).json(newVehicle);
+  } catch (error) {
+   console.error("Error creating vehicle:", error);
+   res.status(500).json({ message: "Failed to create vehicle" });
+  }
+ });
 
-    // Trigger vehicle.updated notification
+ app.put("/api/vehicles/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
+  console.log(`🚨🚨🚨 CRITICAL DEBUG: VEHICLE UPDATE ROUTE HIT /api/vehicles/${req.params.id} 🚨🚨🚨`);
+  console.log(`🚨 Request method: ${req.method}`);
+  console.log(`🚨 Request URL: ${req.url}`);
+  console.log(`🚨 User authenticated: ${!!req.user}`);
+  console.log(`🚨 Route middleware executed successfully`);
+
+  try {
+   const vehicleId = parseInt(req.params.id);
+   const vehicleData = req.body;
+
+   console.log(`Vehicle Update: Updating vehicle ${vehicleId} by user ${req.user?.username}`);
+   console.log(`Vehicle Update: Request data:`, {
+    ...vehicleData,
+    id: vehicleId,
+   });
+
+   // Get original vehicle for status comparison
+   const originalVehicle = await storage.getVehicleById(vehicleId);
+   const updatedVehicle = await storage.updateVehicle(vehicleId, vehicleData);
+
+   console.log(`Vehicle Update: Successfully updated vehicle ${vehicleId}`);
+   console.log(
+    `Vehicle Update: Status change: ${originalVehicle?.sales_status} → ${updatedVehicle.sales_status}`,
+   );
+
+   // Trigger vehicle.updated notification
+   try {
+    await notificationService.createNotification({
+     recipient_user_id: req.user?.id || 1,
+     notification_type: "inventory",
+     priority_level: "medium",
+     title: "Vehicle Updated",
+     body: `User ${req.user?.username || "System"} updated '${
+      updatedVehicle.registration || "N/A"
+     }' - vehicle details changed`,
+     action_url: "/vehicle-master",
+     related_entity_type: "vehicle",
+     related_entity_id: updatedVehicle.id,
+     status: "pending",
+    });
+    console.log(`Vehicle Update: Notification created for vehicle ${vehicleId}`);
+   } catch (notificationError) {
+    console.error("Vehicle Update: Notification failed:", notificationError);
+   }
+
+   // Check if vehicle was sold and trigger vehicle.sold notification
+   if (originalVehicle && originalVehicle.sales_status !== "SOLD" && updatedVehicle.sales_status === "SOLD") {
     try {
+     const salePrice =
+      Number(updatedVehicle.bank_payment || 0) +
+      Number(updatedVehicle.finance_payment || 0) +
+      Number(updatedVehicle.finance_settlement || 0) +
+      Number(updatedVehicle.px_value || 0) +
+      Number(updatedVehicle.vat_payment || 0) +
+      Number(updatedVehicle.cash_payment || 0);
      await notificationService.createNotification({
       recipient_user_id: req.user?.id || 1,
-      notification_type: "inventory",
-      priority_level: "medium",
-      title: "Vehicle Updated",
-      body: `User ${req.user?.username || "System"} updated '${
+      notification_type: "sales",
+      priority_level: "high",
+      title: "Vehicle Sold",
+      body: `User ${req.user?.username || "System"} marked '${
        updatedVehicle.registration || "N/A"
-      }' - vehicle details changed`,
+      }' as sold - £${salePrice.toLocaleString()}`,
       action_url: "/vehicle-master",
       related_entity_type: "vehicle",
       related_entity_id: updatedVehicle.id,
       status: "pending",
      });
-     console.log(
-      `Vehicle Update: Notification created for vehicle ${vehicleId}`
-     );
+     console.log(`Vehicle Update: Vehicle sold notification created for vehicle ${vehicleId}`);
     } catch (notificationError) {
-     console.error("Vehicle Update: Notification failed:", notificationError);
+     console.error("Vehicle Update: Vehicle sold notification failed:", notificationError);
     }
-
-    // Check if vehicle was sold and trigger vehicle.sold notification
-    if (
-     originalVehicle &&
-     originalVehicle.sales_status !== "SOLD" &&
-     updatedVehicle.sales_status === "SOLD"
-    ) {
-     try {
-      const salePrice =
-       Number(updatedVehicle.bank_payment || 0) +
-       Number(updatedVehicle.finance_payment || 0) +
-       Number(updatedVehicle.finance_settlement || 0) +
-       Number(updatedVehicle.px_value || 0) +
-       Number(updatedVehicle.vat_payment || 0) +
-       Number(updatedVehicle.cash_payment || 0);
-      await notificationService.createNotification({
-       recipient_user_id: req.user?.id || 1,
-       notification_type: "sales",
-       priority_level: "high",
-       title: "Vehicle Sold",
-       body: `User ${req.user?.username || "System"} marked '${
-        updatedVehicle.registration || "N/A"
-       }' as sold - £${salePrice.toLocaleString()}`,
-       action_url: "/vehicle-master",
-       related_entity_type: "vehicle",
-       related_entity_id: updatedVehicle.id,
-       status: "pending",
-      });
-      console.log(
-       `Vehicle Update: Vehicle sold notification created for vehicle ${vehicleId}`
-      );
-     } catch (notificationError) {
-      console.error(
-       "Vehicle Update: Vehicle sold notification failed:",
-       notificationError
-      );
-     }
-    }
-
-    // Broadcast vehicle update to all connected clients
-    const webSocketService = (global as any).webSocketService;
-    console.log(
-     `[DEBUG] Vehicle Update: WebSocket service available: ${!!webSocketService}`
-    );
-    console.log(
-     `[DEBUG] Vehicle Update: WebSocket service type:`,
-     typeof webSocketService
-    );
-    console.log(
-     `[DEBUG] Vehicle Update: Available methods:`,
-     webSocketService
-      ? Object.getOwnPropertyNames(Object.getPrototypeOf(webSocketService))
-      : "N/A"
-    );
-
-    if (webSocketService) {
-     console.log(
-      `[DEBUG] Vehicle Update: *** BROADCASTING VEHICLE UPDATE FOR VEHICLE ${vehicleId} ***`
-     );
-     console.log(`[DEBUG] Vehicle Update: Updated vehicle data:`, {
-      id: updatedVehicle.id,
-      stock_number: updatedVehicle.stock_number,
-      collection_status: updatedVehicle.collection_status,
-     });
-     webSocketService.broadcastVehicleUpdated(updatedVehicle, req.user?.id);
-
-     // Check if status changed and broadcast status change
-     if (
-      originalVehicle &&
-      originalVehicle.sales_status !== updatedVehicle.sales_status
-     ) {
-      console.log(
-       `Vehicle Update: Broadcasting status change from ${originalVehicle.sales_status} to ${updatedVehicle.sales_status}`
-      );
-      webSocketService.broadcastVehicleStatusChanged(
-       vehicleId,
-       originalVehicle.sales_status,
-       updatedVehicle.sales_status,
-       req.user?.id
-      );
-     }
-     console.log(
-      `Vehicle Update: All broadcasts complete for vehicle ${vehicleId}`
-     );
-    } else {
-     console.log(
-      "ERROR: WebSocket service not available for broadcasting vehicle update"
-     );
-     console.log("Available global properties:", Object.keys(global as any));
-    }
-
-    res.json(updatedVehicle);
-   } catch (error) {
-    console.error("Error updating vehicle:", error);
-    res.status(500).json({ message: "Failed to update vehicle" });
    }
-  }
- );
 
- app.delete(
-  "/api/vehicles/:id",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const vehicleId = parseInt(req.params.id);
+   // Broadcast vehicle update to all connected clients
+   const webSocketService = (global as any).webSocketService;
+   console.log(`[DEBUG] Vehicle Update: WebSocket service available: ${!!webSocketService}`);
+   console.log(`[DEBUG] Vehicle Update: WebSocket service type:`, typeof webSocketService);
+   console.log(
+    `[DEBUG] Vehicle Update: Available methods:`,
+    webSocketService ? Object.getOwnPropertyNames(Object.getPrototypeOf(webSocketService)) : "N/A",
+   );
 
-    // Validate vehicle ID
-    if (isNaN(vehicleId) || vehicleId <= 0) {
-     return res.status(400).json({ message: "Invalid vehicle ID" });
-    }
-
-    console.log(`Attempting to delete vehicle ${vehicleId}`);
-    const success = await storage.deleteVehicle(vehicleId);
-
-    if (!success) {
-     console.log(`Vehicle ${vehicleId} not found or could not be deleted`);
-     return res
-      .status(404)
-      .json({ message: "Vehicle not found or could not be deleted" });
-    }
-
-    console.log(`Vehicle ${vehicleId} deleted successfully`);
-
-    // Broadcast vehicle deletion to all connected clients
-    const webSocketService = (global as any).webSocketService;
-    console.log(`Global WebSocket service available: ${!!webSocketService}`);
-    if (webSocketService) {
-     console.log(`Broadcasting vehicle deletion for vehicle ${vehicleId}`);
-     webSocketService.broadcastVehicleDeleted(vehicleId, req.user?.id);
-     console.log(
-      `Vehicle deletion broadcast complete for vehicle ${vehicleId}`
-     );
-    } else {
-     console.log(
-      "ERROR: WebSocket service not available for broadcasting vehicle deletion"
-     );
-     console.log("Available global properties:", Object.keys(global as any));
-    }
-
-    res.json({ message: "Vehicle deleted successfully" });
-   } catch (error) {
-    console.error("Error deleting vehicle:", error);
-    res.status(500).json({
-     message: "Failed to delete vehicle",
-     error: process.env.NODE_ENV === "development" ? error.message : undefined,
+   if (webSocketService) {
+    console.log(`[DEBUG] Vehicle Update: *** BROADCASTING VEHICLE UPDATE FOR VEHICLE ${vehicleId} ***`);
+    console.log(`[DEBUG] Vehicle Update: Updated vehicle data:`, {
+     id: updatedVehicle.id,
+     stock_number: updatedVehicle.stock_number,
+     collection_status: updatedVehicle.collection_status,
     });
+    webSocketService.broadcastVehicleUpdated(updatedVehicle, req.user?.id);
+
+    // Check if status changed and broadcast status change
+    if (originalVehicle && originalVehicle.sales_status !== updatedVehicle.sales_status) {
+     console.log(
+      `Vehicle Update: Broadcasting status change from ${originalVehicle.sales_status} to ${updatedVehicle.sales_status}`,
+     );
+     webSocketService.broadcastVehicleStatusChanged(
+      vehicleId,
+      originalVehicle.sales_status,
+      updatedVehicle.sales_status,
+      req.user?.id,
+     );
+    }
+    console.log(`Vehicle Update: All broadcasts complete for vehicle ${vehicleId}`);
+   } else {
+    console.log("ERROR: WebSocket service not available for broadcasting vehicle update");
+    console.log("Available global properties:", Object.keys(global as any));
    }
+
+   res.json(updatedVehicle);
+  } catch (error) {
+   console.error("Error updating vehicle:", error);
+   res.status(500).json({ message: "Failed to update vehicle" });
   }
- );
+ });
+
+ app.delete("/api/vehicles/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const vehicleId = parseInt(req.params.id);
+
+   // Validate vehicle ID
+   if (isNaN(vehicleId) || vehicleId <= 0) {
+    return res.status(400).json({ message: "Invalid vehicle ID" });
+   }
+
+   console.log(`Attempting to delete vehicle ${vehicleId}`);
+   const success = await storage.deleteVehicle(vehicleId);
+
+   if (!success) {
+    console.log(`Vehicle ${vehicleId} not found or could not be deleted`);
+    return res.status(404).json({ message: "Vehicle not found or could not be deleted" });
+   }
+
+   console.log(`Vehicle ${vehicleId} deleted successfully`);
+
+   // Broadcast vehicle deletion to all connected clients
+   const webSocketService = (global as any).webSocketService;
+   console.log(`Global WebSocket service available: ${!!webSocketService}`);
+   if (webSocketService) {
+    console.log(`Broadcasting vehicle deletion for vehicle ${vehicleId}`);
+    webSocketService.broadcastVehicleDeleted(vehicleId, req.user?.id);
+    console.log(`Vehicle deletion broadcast complete for vehicle ${vehicleId}`);
+   } else {
+    console.log("ERROR: WebSocket service not available for broadcasting vehicle deletion");
+    console.log("Available global properties:", Object.keys(global as any));
+   }
+
+   res.json({ message: "Vehicle deleted successfully" });
+  } catch (error) {
+   console.error("Error deleting vehicle:", error);
+   res.status(500).json({
+    message: "Failed to delete vehicle",
+    error: process.env.NODE_ENV === "development" ? error.message : undefined,
+   });
+  }
+ });
 
  app.post("/api/vehicles/import", requireAuth, async (req, res) => {
   try {
    const { vehicles } = req.body;
-   console.log(
-    `CSV Import: Received ${vehicles?.length || 0} vehicles for import`
-   );
+   console.log(`CSV Import: Received ${vehicles?.length || 0} vehicles for import`);
 
    if (!vehicles || !Array.isArray(vehicles)) {
     return res.status(400).json({ message: "Invalid vehicles data" });
    }
 
    const importedVehicles = await storage.importVehiclesFromCsv(vehicles);
-   console.log(
-    `CSV Import: Successfully imported ${importedVehicles.length} vehicles`
-   );
+   console.log(`CSV Import: Successfully imported ${importedVehicles.length} vehicles`);
 
    // Broadcast vehicle import to all connected clients
    const webSocketService = (global as any).webSocketService;
-   console.log(
-    `CSV Import: WebSocket service available: ${!!webSocketService}`
-   );
+   console.log(`CSV Import: WebSocket service available: ${!!webSocketService}`);
    if (webSocketService) {
-    console.log(
-     `CSV Import: Broadcasting vehicle import for ${importedVehicles.length} vehicles`
-    );
-    webSocketService.broadcastVehicleImported(
-     importedVehicles.length,
-     req.user?.id
-    );
+    console.log(`CSV Import: Broadcasting vehicle import for ${importedVehicles.length} vehicles`);
+    webSocketService.broadcastVehicleImported(importedVehicles.length, req.user?.id);
 
     // CRITICAL: Also broadcast dashboard stats update like individual vehicle operations
-    console.log(
-     `CSV Import: Broadcasting dashboard stats update after CSV import`
-    );
+    console.log(`CSV Import: Broadcasting dashboard stats update after CSV import`);
     webSocketService.broadcastDashboardStatsUpdated("csv_import", req.user?.id);
 
-    console.log(
-     `CSV Import: All broadcasts complete (import + dashboard stats)`
-    );
+    console.log(`CSV Import: All broadcasts complete (import + dashboard stats)`);
    } else {
-    console.log(
-     "ERROR: WebSocket service not available for broadcasting vehicle import"
-    );
+    console.log("ERROR: WebSocket service not available for broadcasting vehicle import");
     console.log("Available global properties:", Object.keys(global as any));
    }
 
@@ -1077,12 +941,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const cleanedBody = { ...req.body };
 
    // Remove any timestamp fields that are undefined or empty strings
-   const timestampFields = [
-    "last_contact_date",
-    "next_follow_up_date",
-    "gdpr_consent_date",
-   ];
-   timestampFields.forEach((field) => {
+   const timestampFields = ["last_contact_date", "next_follow_up_date", "gdpr_consent_date"];
+   timestampFields.forEach(field => {
     if (cleanedBody[field] === "" || cleanedBody[field] === undefined) {
      delete cleanedBody[field];
     } else if (cleanedBody[field]) {
@@ -1094,13 +954,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const leadData = {
     ...cleanedBody,
     budget_min:
-     req.body.budget_min === "" || req.body.budget_min === undefined
-      ? null
-      : parseFloat(req.body.budget_min),
+     req.body.budget_min === "" || req.body.budget_min === undefined ? null : parseFloat(req.body.budget_min),
     budget_max:
-     req.body.budget_max === "" || req.body.budget_max === undefined
-      ? null
-      : parseFloat(req.body.budget_max),
+     req.body.budget_max === "" || req.body.budget_max === undefined ? null : parseFloat(req.body.budget_max),
     trade_in_value:
      req.body.trade_in_value === "" || req.body.trade_in_value === undefined
       ? null
@@ -1122,9 +978,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
      notification_type: "customer",
      priority_level: "high",
      title: "New Lead Created",
-     body: `User ${req.user?.username || "System"} added a new lead: ${
-      lead.first_name
-     } ${lead.last_name}`,
+     body: `User ${req.user?.username || "System"} added a new lead: ${lead.first_name} ${lead.last_name}`,
      action_url: "/leads",
      related_entity_type: "lead",
      related_entity_id: lead.id,
@@ -1160,12 +1014,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
        lead_source: lead.lead_source,
       },
       userRole: req.user?.role || "user",
-      urgency:
-       lead.lead_quality === "hot"
-        ? "high"
-        : lead.lead_quality === "warm"
-        ? "medium"
-        : "low",
+      urgency: lead.lead_quality === "hot" ? "high" : lead.lead_quality === "warm" ? "medium" : "low",
       customInstructions:
        "New lead requires immediate attention and follow-up. Use professional luxury dealership tone.",
      });
@@ -1221,13 +1070,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     last_contact_date: parseDate(req.body.last_contact_date),
     next_follow_up_date: parseDate(req.body.next_follow_up_date),
     budget_min:
-     req.body.budget_min === "" || req.body.budget_min === undefined
-      ? null
-      : parseFloat(req.body.budget_min),
+     req.body.budget_min === "" || req.body.budget_min === undefined ? null : parseFloat(req.body.budget_min),
     budget_max:
-     req.body.budget_max === "" || req.body.budget_max === undefined
-      ? null
-      : parseFloat(req.body.budget_max),
+     req.body.budget_max === "" || req.body.budget_max === undefined ? null : parseFloat(req.body.budget_max),
     trade_in_value:
      req.body.trade_in_value === "" || req.body.trade_in_value === undefined
       ? null
@@ -1252,7 +1097,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       id,
       originalLead.pipeline_stage,
       lead.pipeline_stage,
-      req.user?.id
+      req.user?.id,
      );
     }
    }
@@ -1308,11 +1153,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    // Broadcast lead conversion to all connected clients
    const webSocketService = (global as any).webSocketService;
    if (webSocketService) {
-    webSocketService.broadcastLeadConverted(
-     leadId,
-     result.customer.id,
-     req.user?.id
-    );
+    webSocketService.broadcastLeadConverted(leadId, result.customer.id, req.user?.id);
    }
 
    res.json(result);
@@ -1373,9 +1214,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    // Convert date string to Date object if needed
    const appointmentData = {
     ...req.body,
-    appointment_date: req.body.appointment_date
-     ? new Date(req.body.appointment_date)
-     : undefined,
+    appointment_date: req.body.appointment_date ? new Date(req.body.appointment_date) : undefined,
    };
 
    const validatedData = insertAppointmentSchema.parse(appointmentData);
@@ -1389,23 +1228,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
      priority_level: "medium",
      title: "Appointment Booked",
      body: `User ${req.user?.username || "System"} booked an appointment on ${
-      appointment.appointment_date
-       ? appointment.appointment_date.toLocaleDateString()
-       : "TBD"
+      appointment.appointment_date ? appointment.appointment_date.toLocaleDateString() : "TBD"
      }`,
      action_url: "/appointments",
      related_entity_type: "appointment",
      related_entity_id: appointment.id,
      status: "pending",
     });
-    console.log(
-     `Appointment Create: Notification created for appointment ${appointment.id}`
-    );
+    console.log(`Appointment Create: Notification created for appointment ${appointment.id}`);
    } catch (notificationError) {
-    console.error(
-     "Appointment Create: Notification failed:",
-     notificationError
-    );
+    console.error("Appointment Create: Notification failed:", notificationError);
    }
 
    // Broadcast appointment creation to all connected clients
@@ -1418,9 +1250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error creating appointment:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid appointment data", details: error.errors });
+    res.status(400).json({ message: "Invalid appointment data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to create appointment" });
    }
@@ -1434,14 +1264,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
    // Convert date string to Date object if needed
    const appointmentData = {
     ...req.body,
-    appointment_date: req.body.appointment_date
-     ? new Date(req.body.appointment_date)
-     : undefined,
+    appointment_date: req.body.appointment_date ? new Date(req.body.appointment_date) : undefined,
    };
 
-   const validatedData = insertAppointmentSchema
-    .partial()
-    .parse(appointmentData);
+   const validatedData = insertAppointmentSchema.partial().parse(appointmentData);
    const appointment = await storage.updateAppointment(id, validatedData);
 
    // Broadcast appointment update to all connected clients
@@ -1454,9 +1280,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error updating appointment:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid appointment data", details: error.errors });
+    res.status(400).json({ message: "Invalid appointment data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to update appointment" });
    }
@@ -1539,12 +1363,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const cleanedBody = { ...req.body };
 
    // Convert date fields to proper Date objects
-   const dateFields = [
-    "scheduled_date",
-    "actual_start_date",
-    "actual_end_date",
-   ];
-   dateFields.forEach((field) => {
+   const dateFields = ["scheduled_date", "actual_start_date", "actual_end_date"];
+   dateFields.forEach(field => {
     if (cleanedBody[field] === "" || cleanedBody[field] === undefined) {
      cleanedBody[field] = null;
     } else if (cleanedBody[field]) {
@@ -1561,12 +1381,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     "external_costs",
     "total_cost",
    ];
-   costFields.forEach((field) => {
-    if (
-     cleanedBody[field] !== undefined &&
-     cleanedBody[field] !== null &&
-     cleanedBody[field] !== ""
-    ) {
+   costFields.forEach(field => {
+    if (cleanedBody[field] !== undefined && cleanedBody[field] !== null && cleanedBody[field] !== "") {
      cleanedBody[field] = cleanedBody[field].toString();
     } else {
      cleanedBody[field] = null;
@@ -1585,9 +1401,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
      notification_type: "staff",
      priority_level: "medium",
      title: "Job Booked",
-     body: `User ${req.user?.username || "System"} booked a new job: ${
-      job.job_type || "Job"
-     }`,
+     body: `User ${req.user?.username || "System"} booked a new job: ${job.job_type || "Job"}`,
      action_url: "/calendar",
      related_entity_type: "job",
      related_entity_id: job.id,
@@ -1608,9 +1422,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error creating job:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid job data", details: error.errors });
+    res.status(400).json({ message: "Invalid job data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to create job" });
    }
@@ -1632,12 +1444,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const cleanedBody = { ...req.body };
 
    // Convert date fields to proper Date objects
-   const dateFields = [
-    "scheduled_date",
-    "actual_start_date",
-    "actual_end_date",
-   ];
-   dateFields.forEach((field) => {
+   const dateFields = ["scheduled_date", "actual_start_date", "actual_end_date"];
+   dateFields.forEach(field => {
     if (cleanedBody[field] === "" || cleanedBody[field] === undefined) {
      cleanedBody[field] = null;
     } else if (cleanedBody[field]) {
@@ -1654,12 +1462,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     "external_costs",
     "total_cost",
    ];
-   costFields.forEach((field) => {
-    if (
-     cleanedBody[field] !== undefined &&
-     cleanedBody[field] !== null &&
-     cleanedBody[field] !== ""
-    ) {
+   costFields.forEach(field => {
+    if (cleanedBody[field] !== undefined && cleanedBody[field] !== null && cleanedBody[field] !== "") {
      cleanedBody[field] = cleanedBody[field].toString();
     } else if (cleanedBody[field] === "") {
      cleanedBody[field] = null;
@@ -1679,12 +1483,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     // Check if status changed and broadcast status change
     if (originalJob && originalJob.status !== job.status) {
-     webSocketService.broadcastJobStatusChanged(
-      id,
-      originalJob.status,
-      job.status,
-      req.user?.id
-     );
+     webSocketService.broadcastJobStatusChanged(id, originalJob.status, job.status, req.user?.id);
     }
    }
 
@@ -1692,9 +1491,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error updating job:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid job data", details: error.errors });
+    res.status(400).json({ message: "Invalid job data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to update job" });
    }
@@ -1752,9 +1549,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error creating schedule:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid schedule data", details: error.errors });
+    res.status(400).json({ message: "Invalid schedule data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to create schedule" });
    }
@@ -1780,9 +1575,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error creating logistics entry:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid logistics data", details: error.errors });
+    res.status(400).json({ message: "Invalid logistics data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to create logistics entry" });
    }
@@ -1808,9 +1601,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error creating job template:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid template data", details: error.errors });
+    res.status(400).json({ message: "Invalid template data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to create job template" });
    }
@@ -1818,19 +1609,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
  });
 
  // Bought Vehicles API
- app.get(
-  "/api/bought-vehicles",
-  requirePermission("bought-vehicles"),
-  async (req, res) => {
-   try {
-    const vehicles = await storage.getBoughtVehicles();
-    res.json(vehicles);
-   } catch (error) {
-    console.error("Error fetching bought vehicles:", error);
-    res.status(500).json({ message: "Failed to fetch bought vehicles" });
-   }
+ app.get("/api/bought-vehicles", requirePermission("bought-vehicles"), async (req, res) => {
+  try {
+   const vehicles = await storage.getBoughtVehicles();
+   res.json(vehicles);
+  } catch (error) {
+   console.error("Error fetching bought vehicles:", error);
+   res.status(500).json({ message: "Failed to fetch bought vehicles" });
   }
- );
+ });
 
  app.get("/api/bought-vehicles/:id", async (req, res) => {
   try {
@@ -1854,9 +1641,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error creating bought vehicle:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid vehicle data", details: error.errors });
+    res.status(400).json({ message: "Invalid vehicle data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to create bought vehicle" });
    }
@@ -1872,9 +1657,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error updating bought vehicle:", error);
    if (error instanceof z.ZodError) {
-    res
-     .status(400)
-     .json({ message: "Invalid vehicle data", details: error.errors });
+    res.status(400).json({ message: "Invalid vehicle data", details: error.errors });
    } else {
     res.status(500).json({ message: "Failed to update bought vehicle" });
    }
@@ -1933,51 +1716,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
  });
 
- app.post(
-  "/api/purchase-invoices",
-  purchaseUpload.single("document"),
-  async (req, res) => {
-   try {
-    if (!req.file) {
-     return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    const invoiceData = {
-     ...req.body,
-     document_filename: req.file.originalname,
-     document_path: req.file.path,
-     document_size: req.file.size,
-     document_type: path
-      .extname(req.file.originalname)
-      .toLowerCase()
-      .substring(1),
-     // Convert date strings to proper format
-     purchase_date: req.body.purchase_date
-      ? new Date(req.body.purchase_date)
-      : null,
-     estimated_collection_date: req.body.estimated_collection_date
-      ? new Date(req.body.estimated_collection_date)
-      : null,
-     outstanding_finance: req.body.outstanding_finance === "true",
-     part_exchange: req.body.part_exchange === "true",
-     tags: req.body.tags
-      ? req.body.tags.split(",").map((tag: string) => tag.trim())
-      : [],
-    };
-
-    const validatedData = insertPurchaseInvoiceSchema.parse(invoiceData);
-    const newInvoice = await storage.createPurchaseInvoice(validatedData);
-    res.status(201).json(newInvoice);
-   } catch (error) {
-    console.error("Error creating purchase invoice:", error);
-    // Clean up uploaded file if database save fails
-    if (req.file && fs.existsSync(req.file.path)) {
-     fs.unlinkSync(req.file.path);
-    }
-    res.status(500).json({ message: "Failed to create purchase invoice" });
+ app.post("/api/purchase-invoices", purchaseUpload.single("document"), async (req, res) => {
+  try {
+   if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
    }
+
+   const invoiceData = {
+    ...req.body,
+    document_filename: req.file.originalname,
+    document_path: req.file.path,
+    document_size: req.file.size,
+    document_type: path.extname(req.file.originalname).toLowerCase().substring(1),
+    // Convert date strings to proper format
+    purchase_date: req.body.purchase_date ? new Date(req.body.purchase_date) : null,
+    estimated_collection_date: req.body.estimated_collection_date
+     ? new Date(req.body.estimated_collection_date)
+     : null,
+    outstanding_finance: req.body.outstanding_finance === "true",
+    part_exchange: req.body.part_exchange === "true",
+    tags: req.body.tags ? req.body.tags.split(",").map((tag: string) => tag.trim()) : [],
+   };
+
+   const validatedData = insertPurchaseInvoiceSchema.parse(invoiceData);
+   const newInvoice = await storage.createPurchaseInvoice(validatedData);
+   res.status(201).json(newInvoice);
+  } catch (error) {
+   console.error("Error creating purchase invoice:", error);
+   // Clean up uploaded file if database save fails
+   if (req.file && fs.existsSync(req.file.path)) {
+    fs.unlinkSync(req.file.path);
+   }
+   res.status(500).json({ message: "Failed to create purchase invoice" });
   }
- );
+ });
 
  app.put("/api/purchase-invoices/:id", async (req, res) => {
   try {
@@ -1986,10 +1758,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return res.status(400).json({ message: "Invalid purchase invoice ID" });
    }
    const validatedData = insertPurchaseInvoiceSchema.partial().parse(req.body);
-   const updatedInvoice = await storage.updatePurchaseInvoice(
-    id,
-    validatedData
-   );
+   const updatedInvoice = await storage.updatePurchaseInvoice(id, validatedData);
    res.json(updatedInvoice);
   } catch (error) {
    console.error("Error updating purchase invoice:", error);
@@ -2066,81 +1835,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
  });
 
- app.post(
-  "/api/sales-invoices",
-  salesUpload.single("document"),
-  async (req, res) => {
-   try {
-    if (!req.file) {
-     return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    const formData = req.body;
-
-    // Convert string boolean values to actual booleans and handle empty strings
-    const processedData = {
-     seller_name: formData.seller_name || "",
-     registration:
-      formData.registration && formData.registration.trim() !== ""
-       ? formData.registration
-       : undefined,
-     date_of_sale:
-      formData.date_of_sale && formData.date_of_sale.trim() !== ""
-       ? formData.date_of_sale
-       : undefined,
-     delivery_collection:
-      formData.delivery_collection && formData.delivery_collection.trim() !== ""
-       ? formData.delivery_collection
-       : undefined,
-     make:
-      formData.make && formData.make.trim() !== "" ? formData.make : undefined,
-     model:
-      formData.model && formData.model.trim() !== ""
-       ? formData.model
-       : undefined,
-     customer_name: formData.customer_name || "",
-     notes:
-      formData.notes && formData.notes.trim() !== ""
-       ? formData.notes
-       : undefined,
-     paid_in_full: formData.paid_in_full === "true",
-     finance: formData.finance === "true",
-     part_exchange: formData.part_exchange === "true",
-     documents_to_sign: formData.documents_to_sign === "true",
-     document_filename: req.file.originalname,
-     document_path: req.file.path,
-     document_size: req.file.size,
-     document_type: path
-      .extname(req.file.originalname)
-      .toLowerCase()
-      .substring(1),
-     tags: formData.tags ? JSON.parse(formData.tags) : [],
-    };
-
-    const validationResult = insertSalesInvoiceSchema.safeParse(processedData);
-
-    if (!validationResult.success) {
-     console.error("Sales Invoice Validation failed:");
-     console.error("Raw form data:", formData);
-     console.error("Processed data:", processedData);
-     console.error(
-      "Validation errors:",
-      JSON.stringify(validationResult.error.errors, null, 2)
-     );
-     return res.status(400).json({
-      message: "Invalid data",
-      errors: validationResult.error.errors,
-     });
-    }
-
-    const invoice = await storage.createSalesInvoice(validationResult.data);
-    res.status(201).json(invoice);
-   } catch (error) {
-    console.error("Error creating sales invoice:", error);
-    res.status(500).json({ message: "Failed to create sales invoice" });
+ app.post("/api/sales-invoices", salesUpload.single("document"), async (req, res) => {
+  try {
+   if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
    }
+
+   const formData = req.body;
+
+   // Convert string boolean values to actual booleans and handle empty strings
+   const processedData = {
+    seller_name: formData.seller_name || "",
+    registration:
+     formData.registration && formData.registration.trim() !== "" ? formData.registration : undefined,
+    date_of_sale:
+     formData.date_of_sale && formData.date_of_sale.trim() !== "" ? formData.date_of_sale : undefined,
+    delivery_collection:
+     formData.delivery_collection && formData.delivery_collection.trim() !== ""
+      ? formData.delivery_collection
+      : undefined,
+    make: formData.make && formData.make.trim() !== "" ? formData.make : undefined,
+    model: formData.model && formData.model.trim() !== "" ? formData.model : undefined,
+    customer_name: formData.customer_name || "",
+    notes: formData.notes && formData.notes.trim() !== "" ? formData.notes : undefined,
+    paid_in_full: formData.paid_in_full === "true",
+    finance: formData.finance === "true",
+    part_exchange: formData.part_exchange === "true",
+    documents_to_sign: formData.documents_to_sign === "true",
+    document_filename: req.file.originalname,
+    document_path: req.file.path,
+    document_size: req.file.size,
+    document_type: path.extname(req.file.originalname).toLowerCase().substring(1),
+    tags: formData.tags ? JSON.parse(formData.tags) : [],
+   };
+
+   const validationResult = insertSalesInvoiceSchema.safeParse(processedData);
+
+   if (!validationResult.success) {
+    console.error("Sales Invoice Validation failed:");
+    console.error("Raw form data:", formData);
+    console.error("Processed data:", processedData);
+    console.error("Validation errors:", JSON.stringify(validationResult.error.errors, null, 2));
+    return res.status(400).json({
+     message: "Invalid data",
+     errors: validationResult.error.errors,
+    });
+   }
+
+   const invoice = await storage.createSalesInvoice(validationResult.data);
+   res.status(201).json(invoice);
+  } catch (error) {
+   console.error("Error creating sales invoice:", error);
+   res.status(500).json({ message: "Failed to create sales invoice" });
   }
- );
+ });
 
  app.put("/api/sales-invoices/:id", async (req, res) => {
   try {
@@ -2205,27 +1953,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
    res.json(overview);
   } catch (error) {
    console.error("Error fetching business intelligence overview:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to fetch business intelligence overview" });
+   res.status(500).json({ message: "Failed to fetch business intelligence overview" });
   }
  });
 
- app.get(
-  "/api/business-intelligence/financial-performance",
-  async (req, res) => {
-   try {
-    const { dateRange = "current" } = req.query;
-    const performance = await storage.getFinancialPerformance(
-     dateRange as string
-    );
-    res.json(performance);
-   } catch (error) {
-    console.error("Error fetching financial performance:", error);
-    res.status(500).json({ message: "Failed to fetch financial performance" });
-   }
+ app.get("/api/business-intelligence/financial-performance", async (req, res) => {
+  try {
+   const { dateRange = "current" } = req.query;
+   const performance = await storage.getFinancialPerformance(dateRange as string);
+   res.json(performance);
+  } catch (error) {
+   console.error("Error fetching financial performance:", error);
+   res.status(500).json({ message: "Failed to fetch financial performance" });
   }
- );
+ });
 
  app.get("/api/business-intelligence/quarterly-overview", async (req, res) => {
   try {
@@ -2268,18 +2009,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
  });
 
- app.get(
-  "/api/business-intelligence/performance-indicators",
-  async (req, res) => {
-   try {
-    const indicators = await storage.getPerformanceIndicators();
-    res.json(indicators);
-   } catch (error) {
-    console.error("Error fetching performance indicators:", error);
-    res.status(500).json({ message: "Failed to fetch performance indicators" });
-   }
+ app.get("/api/business-intelligence/performance-indicators", async (req, res) => {
+  try {
+   const indicators = await storage.getPerformanceIndicators();
+   res.json(indicators);
+  } catch (error) {
+   console.error("Error fetching performance indicators:", error);
+   res.status(500).json({ message: "Failed to fetch performance indicators" });
   }
- );
+ });
 
  // New comprehensive business intelligence endpoints
  app.get("/api/business-intelligence/financial-audit", async (req, res) => {
@@ -2298,9 +2036,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    res.json(performance);
   } catch (error) {
    console.error("Error fetching vehicle performance metrics:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to fetch vehicle performance metrics" });
+   res.status(500).json({ message: "Failed to fetch vehicle performance metrics" });
   }
  });
 
@@ -2310,9 +2046,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    res.json(dashboard);
   } catch (error) {
    console.error("Error fetching sales management dashboard:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to fetch sales management dashboard" });
+   res.status(500).json({ message: "Failed to fetch sales management dashboard" });
   }
  });
 
@@ -2326,27 +2060,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
  });
 
- app.get(
-  "/api/business-intelligence/monthly-data/:yearMonth",
-  async (req, res) => {
-   try {
-    const { yearMonth } = req.params;
-    const monthlyData = await storage.getMonthlyData(yearMonth);
-    res.json(monthlyData);
-   } catch (error) {
-    console.error("Error fetching monthly data:", error);
-    res.status(500).json({ message: "Failed to fetch monthly data" });
-   }
+ app.get("/api/business-intelligence/monthly-data/:yearMonth", async (req, res) => {
+  try {
+   const { yearMonth } = req.params;
+   const monthlyData = await storage.getMonthlyData(yearMonth);
+   res.json(monthlyData);
+  } catch (error) {
+   console.error("Error fetching monthly data:", error);
+   res.status(500).json({ message: "Failed to fetch monthly data" });
   }
- );
+ });
 
  // Permission Management API (Admin only)
 
  // Audit logging endpoint for security tracking
  app.post("/api/admin/audit-log", requireAuth, async (req, res) => {
   try {
-   const { action, page_key, user_id, username, timestamp, bypass_reason } =
-    req.body;
+   const { action, page_key, user_id, username, timestamp, bypass_reason } = req.body;
 
    // Log audit event to server logs for proper tracking
    logger.info("Admin audit event", {
@@ -2367,26 +2097,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     error: error instanceof Error ? error.message : "Unknown error",
     service: "dealership-management",
    });
-   res
-    .status(500)
-    .json({ success: false, message: "Failed to record audit log" });
+   res.status(500).json({ success: false, message: "Failed to record audit log" });
   }
  });
 
  // Initialize default pages (run once during setup)
- app.post(
-  "/api/admin/permissions/initialize",
-  requireAdmin,
-  async (req, res) => {
-   try {
-    await storage.initializeDefaultPages();
-    res.json({ message: "Default pages initialized successfully" });
-   } catch (error) {
-    console.error("Error initializing default pages:", error);
-    res.status(500).json({ message: "Failed to initialize default pages" });
-   }
+ app.post("/api/admin/permissions/initialize", requireAdmin, async (req, res) => {
+  try {
+   await storage.initializeDefaultPages();
+   res.json({ message: "Default pages initialized successfully" });
+  } catch (error) {
+   console.error("Error initializing default pages:", error);
+   res.status(500).json({ message: "Failed to initialize default pages" });
   }
- );
+ });
 
  // Get all page definitions
  app.get("/api/admin/page-definitions", requireAdmin, async (req, res) => {
@@ -2439,155 +2163,120 @@ export async function registerRoutes(app: Express): Promise<Server> {
  });
 
  // Delete page definition
- app.delete(
-  "/api/admin/page-definitions/:id",
-  requireAdmin,
-  async (req, res) => {
-   try {
-    const id = parseInt(req.params.id);
-    const deleted = await storage.deletePageDefinition(id);
-    if (deleted) {
-     res.json({ message: "Page definition deleted successfully" });
-    } else {
-     res.status(404).json({ message: "Page definition not found" });
-    }
-   } catch (error) {
-    console.error("Error deleting page definition:", error);
-    res.status(500).json({ message: "Failed to delete page definition" });
+ app.delete("/api/admin/page-definitions/:id", requireAdmin, async (req, res) => {
+  try {
+   const id = parseInt(req.params.id);
+   const deleted = await storage.deletePageDefinition(id);
+   if (deleted) {
+    res.json({ message: "Page definition deleted successfully" });
+   } else {
+    res.status(404).json({ message: "Page definition not found" });
    }
+  } catch (error) {
+   console.error("Error deleting page definition:", error);
+   res.status(500).json({ message: "Failed to delete page definition" });
   }
- );
+ });
 
  // Get all users with their permissions
- app.get(
-  "/api/admin/users-with-permissions",
-  requireAdmin,
-  async (req, res) => {
-   try {
-    const usersWithPermissions = await storage.getUsersWithPermissions();
-    res.json(usersWithPermissions);
-   } catch (error) {
-    console.error("Error fetching users with permissions:", error);
-    res.status(500).json({ message: "Failed to fetch users with permissions" });
-   }
+ app.get("/api/admin/users-with-permissions", requireAdmin, async (req, res) => {
+  try {
+   const usersWithPermissions = await storage.getUsersWithPermissions();
+   res.json(usersWithPermissions);
+  } catch (error) {
+   console.error("Error fetching users with permissions:", error);
+   res.status(500).json({ message: "Failed to fetch users with permissions" });
   }
- );
+ });
 
  // Get user permissions
- app.get(
-  "/api/admin/user-permissions/:userId",
-  requireAdmin,
-  async (req, res) => {
-   try {
-    const userId = parseInt(req.params.userId);
-    const permissions = await storage.getUserPermissions(userId);
-    res.json(permissions);
-   } catch (error) {
-    console.error("Error fetching user permissions:", error);
-    res.status(500).json({ message: "Failed to fetch user permissions" });
-   }
+ app.get("/api/admin/user-permissions/:userId", requireAdmin, async (req, res) => {
+  try {
+   const userId = parseInt(req.params.userId);
+   const permissions = await storage.getUserPermissions(userId);
+   res.json(permissions);
+  } catch (error) {
+   console.error("Error fetching user permissions:", error);
+   res.status(500).json({ message: "Failed to fetch user permissions" });
   }
- );
+ });
 
  // Create or update user permission
- app.put(
-  "/api/admin/user-permissions/:userId/:pageKey",
-  requireAdmin,
-  async (req, res) => {
-   try {
-    const userId = parseInt(req.params.userId);
-    const { pageKey } = req.params;
-    const permissionData = {
-     ...req.body,
-     user_id: userId,
-     page_key: pageKey,
-    };
+ app.put("/api/admin/user-permissions/:userId/:pageKey", requireAdmin, async (req, res) => {
+  try {
+   const userId = parseInt(req.params.userId);
+   const { pageKey } = req.params;
+   const permissionData = {
+    ...req.body,
+    user_id: userId,
+    page_key: pageKey,
+   };
 
-    // Check if permission already exists
-    const existingPermission = await storage.getUserPermissionsByPageKey(
-     userId,
-     pageKey
-    );
+   // Check if permission already exists
+   const existingPermission = await storage.getUserPermissionsByPageKey(userId, pageKey);
 
-    if (existingPermission) {
-     // Update existing permission
-     const validatedData = insertUserPermissionSchema.partial().parse(req.body);
-     const permission = await storage.updateUserPermission(
-      existingPermission.id,
-      validatedData
-     );
-     res.json(permission);
-    } else {
-     // Create new permission
-     const validatedData = insertUserPermissionSchema.parse(permissionData);
-     const permission = await storage.createUserPermission(validatedData);
-     res.status(201).json(permission);
-    }
-   } catch (error) {
-    console.error("Error creating/updating user permission:", error);
-    if (error instanceof z.ZodError) {
-     res.status(400).json({
-      message: "Invalid permission data",
-      details: error.errors,
-     });
-    } else {
-     res
-      .status(500)
-      .json({ message: "Failed to create/update user permission" });
-    }
+   if (existingPermission) {
+    // Update existing permission
+    const validatedData = insertUserPermissionSchema.partial().parse(req.body);
+    const permission = await storage.updateUserPermission(existingPermission.id, validatedData);
+    res.json(permission);
+   } else {
+    // Create new permission
+    const validatedData = insertUserPermissionSchema.parse(permissionData);
+    const permission = await storage.createUserPermission(validatedData);
+    res.status(201).json(permission);
+   }
+  } catch (error) {
+   console.error("Error creating/updating user permission:", error);
+   if (error instanceof z.ZodError) {
+    res.status(400).json({
+     message: "Invalid permission data",
+     details: error.errors,
+    });
+   } else {
+    res.status(500).json({ message: "Failed to create/update user permission" });
    }
   }
- );
+ });
 
  // Delete user permission
- app.delete(
-  "/api/admin/user-permissions/:userId/:pageKey",
-  requireAdmin,
-  async (req, res) => {
-   try {
-    const userId = parseInt(req.params.userId);
-    const { pageKey } = req.params;
+ app.delete("/api/admin/user-permissions/:userId/:pageKey", requireAdmin, async (req, res) => {
+  try {
+   const userId = parseInt(req.params.userId);
+   const { pageKey } = req.params;
 
-    const existingPermission = await storage.getUserPermissionsByPageKey(
-     userId,
-     pageKey
-    );
-    if (existingPermission) {
-     const deleted = await storage.deleteUserPermission(existingPermission.id);
-     if (deleted) {
-      res.json({ message: "User permission deleted successfully" });
-     } else {
-      res.status(404).json({ message: "User permission not found" });
-     }
+   const existingPermission = await storage.getUserPermissionsByPageKey(userId, pageKey);
+   if (existingPermission) {
+    const deleted = await storage.deleteUserPermission(existingPermission.id);
+    if (deleted) {
+     res.json({ message: "User permission deleted successfully" });
     } else {
      res.status(404).json({ message: "User permission not found" });
     }
-   } catch (error) {
-    console.error("Error deleting user permission:", error);
-    res.status(500).json({ message: "Failed to delete user permission" });
+   } else {
+    res.status(404).json({ message: "User permission not found" });
    }
+  } catch (error) {
+   console.error("Error deleting user permission:", error);
+   res.status(500).json({ message: "Failed to delete user permission" });
   }
- );
+ });
 
  // Delete all permissions for a user
- app.delete(
-  "/api/admin/user-permissions/:userId",
-  requireAdmin,
-  async (req, res) => {
-   try {
-    const userId = parseInt(req.params.userId);
-    const deleted = await storage.deleteUserPermissionsByUserId(userId);
-    if (deleted) {
-     res.json({ message: "All user permissions deleted successfully" });
-    } else {
-     res.status(404).json({ message: "No permissions found for user" });
-    }
-   } catch (error) {
-    console.error("Error deleting user permissions:", error);
-    res.status(500).json({ message: "Failed to delete user permissions" });
+ app.delete("/api/admin/user-permissions/:userId", requireAdmin, async (req, res) => {
+  try {
+   const userId = parseInt(req.params.userId);
+   const deleted = await storage.deleteUserPermissionsByUserId(userId);
+   if (deleted) {
+    res.json({ message: "All user permissions deleted successfully" });
+   } else {
+    res.status(404).json({ message: "No permissions found for user" });
    }
+  } catch (error) {
+   console.error("Error deleting user permissions:", error);
+   res.status(500).json({ message: "Failed to delete user permissions" });
   }
- );
+ });
 
  // Get accessible pages for authenticated user
  app.get("/api/user/accessible-pages", requireAuth, async (req, res) => {
@@ -2604,123 +2293,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
  // ====== NOTIFICATION ROUTES ======
 
  // Get notification statistics
- app.get(
-  "/api/notifications/stats",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const userId = req.user!.id;
-    const stats = await storage.getNotificationStats(userId);
-    res.json(stats);
-   } catch (error) {
-    console.error("Error fetching notification stats:", error);
-    res.status(500).json({ message: "Failed to fetch notification stats" });
-   }
+ app.get("/api/notifications/stats", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const userId = req.user!.id;
+   const stats = await storage.getNotificationStats(userId);
+   res.json(stats);
+  } catch (error) {
+   console.error("Error fetching notification stats:", error);
+   res.status(500).json({ message: "Failed to fetch notification stats" });
   }
- );
+ });
 
  // Get notifications for user
- app.get(
-  "/api/notifications",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const userId = req.user!.id;
-    const limit = parseInt(req.query.limit as string) || 50;
-    const offset = parseInt(req.query.offset as string) || 0;
+ app.get("/api/notifications", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const userId = req.user!.id;
+   const limit = parseInt(req.query.limit as string) || 50;
+   const offset = parseInt(req.query.offset as string) || 0;
 
-    const notifications = await storage.getNotificationsByUser(
-     userId,
-     limit,
-     offset
-    );
-    res.json(notifications);
-   } catch (error) {
-    console.error("Error fetching notifications:", error);
-    res.status(500).json({ message: "Failed to fetch notifications" });
-   }
+   const notifications = await storage.getNotificationsByUser(userId, limit, offset);
+   res.json(notifications);
+  } catch (error) {
+   console.error("Error fetching notifications:", error);
+   res.status(500).json({ message: "Failed to fetch notifications" });
   }
- );
+ });
 
  // Mark notification as read
- app.put(
-  "/api/notifications/:id/read",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const notificationId = parseInt(req.params.id);
-    const userId = req.user!.id;
+ app.put("/api/notifications/:id/read", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const notificationId = parseInt(req.params.id);
+   const userId = req.user!.id;
 
-    const notification = await storage.getNotificationById(notificationId);
-    if (!notification || notification.recipient_user_id !== userId) {
-     return res.status(404).json({ message: "Notification not found" });
-    }
-
-    const updated = await storage.updateNotification(notificationId, {
-     is_read: true,
-     read_at: new Date().toISOString(),
-    });
-
-    res.json(updated);
-   } catch (error) {
-    console.error("Error marking notification as read:", error);
-    res.status(500).json({ message: "Failed to mark notification as read" });
+   const notification = await storage.getNotificationById(notificationId);
+   if (!notification || notification.recipient_user_id !== userId) {
+    return res.status(404).json({ message: "Notification not found" });
    }
+
+   const updated = await storage.updateNotification(notificationId, {
+    is_read: true,
+    read_at: new Date().toISOString(),
+   });
+
+   res.json(updated);
+  } catch (error) {
+   console.error("Error marking notification as read:", error);
+   res.status(500).json({ message: "Failed to mark notification as read" });
   }
- );
+ });
 
  // ====== DEVICE REGISTRATION ROUTES ======
 
  // Register new device
- app.post(
-  "/api/devices/register",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const userId = req.user!.id;
-    const deviceData = insertDeviceRegistrationSchema.parse({
-     ...req.body,
-     user_id: userId,
-    });
+ app.post("/api/devices/register", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const userId = req.user!.id;
+   const deviceData = insertDeviceRegistrationSchema.parse({
+    ...req.body,
+    user_id: userId,
+   });
 
-    // Check if device already exists
-    const existingDevice = await storage.getDeviceRegistrationByToken(
-     deviceData.device_token
-    );
-    if (existingDevice) {
-     // Update existing device
-     const updated = await storage.updateDeviceRegistration(
-      existingDevice.id,
-      deviceData
-     );
-     res.json(updated);
-    } else {
-     // Create new device
-     const newDevice = await storage.createDeviceRegistration(deviceData);
-     res.json(newDevice);
-    }
-   } catch (error) {
-    console.error("Error registering device:", error);
-    res.status(500).json({ message: "Failed to register device" });
+   // Check if device already exists
+   const existingDevice = await storage.getDeviceRegistrationByToken(deviceData.device_token);
+   if (existingDevice) {
+    // Update existing device
+    const updated = await storage.updateDeviceRegistration(existingDevice.id, deviceData);
+    res.json(updated);
+   } else {
+    // Create new device
+    const newDevice = await storage.createDeviceRegistration(deviceData);
+    res.json(newDevice);
    }
+  } catch (error) {
+   console.error("Error registering device:", error);
+   res.status(500).json({ message: "Failed to register device" });
   }
- );
+ });
 
  // Get user devices
- app.get(
-  "/api/devices",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const userId = req.user!.id;
-    const devices = await storage.getDeviceRegistrationsByUser(userId);
-    res.json(devices);
-   } catch (error) {
-    console.error("Error fetching devices:", error);
-    res.status(500).json({ message: "Failed to fetch devices" });
-   }
+ app.get("/api/devices", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const userId = req.user!.id;
+   const devices = await storage.getDeviceRegistrationsByUser(userId);
+   res.json(devices);
+  } catch (error) {
+   console.error("Error fetching devices:", error);
+   res.status(500).json({ message: "Failed to fetch devices" });
   }
- );
+ });
 
  // Get device by token
  app.get("/api/devices/:token", requireAuth, async (req, res) => {
@@ -2738,45 +2398,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
  });
 
  // Update device settings
- app.put(
-  "/api/devices/:id",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const deviceId = parseInt(req.params.id);
-    const updateData = insertDeviceRegistrationSchema.partial().parse(req.body);
+ app.put("/api/devices/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const deviceId = parseInt(req.params.id);
+   const updateData = insertDeviceRegistrationSchema.partial().parse(req.body);
 
-    const updated = await storage.updateDeviceRegistration(
-     deviceId,
-     updateData
-    );
-    res.json(updated);
-   } catch (error) {
-    console.error("Error updating device:", error);
-    res.status(500).json({ message: "Failed to update device" });
-   }
+   const updated = await storage.updateDeviceRegistration(deviceId, updateData);
+   res.json(updated);
+  } catch (error) {
+   console.error("Error updating device:", error);
+   res.status(500).json({ message: "Failed to update device" });
   }
- );
+ });
 
  // Delete device
- app.delete(
-  "/api/devices/:id",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const deviceId = parseInt(req.params.id);
-    const deleted = await storage.deleteDeviceRegistration(deviceId);
-    if (deleted) {
-     res.json({ message: "Device deleted successfully" });
-    } else {
-     res.status(404).json({ message: "Device not found" });
-    }
-   } catch (error) {
-    console.error("Error deleting device:", error);
-    res.status(500).json({ message: "Failed to delete device" });
+ app.delete("/api/devices/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const deviceId = parseInt(req.params.id);
+   const deleted = await storage.deleteDeviceRegistration(deviceId);
+   if (deleted) {
+    res.json({ message: "Device deleted successfully" });
+   } else {
+    res.status(404).json({ message: "Device not found" });
    }
+  } catch (error) {
+   console.error("Error deleting device:", error);
+   res.status(500).json({ message: "Failed to delete device" });
   }
- );
+ });
 
  // Update device last active
  app.put("/api/devices/:token/active", requireAuth, async (req, res) => {
@@ -2796,12 +2445,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const devices = await storage.getDeviceRegistrations();
    const stats = {
     totalDevices: devices.length,
-    activeDevices: devices.filter((d) => d.is_active).length,
-    platforms: devices.reduce((acc, d) => {
-     acc[d.platform] = (acc[d.platform] || 0) + 1;
-     return acc;
-    }, {} as Record<string, number>),
-    pushEnabled: devices.filter((d) => d.push_enabled).length,
+    activeDevices: devices.filter(d => d.is_active).length,
+    platforms: devices.reduce(
+     (acc, d) => {
+      acc[d.platform] = (acc[d.platform] || 0) + 1;
+      return acc;
+     },
+     {} as Record<string, number>,
+    ),
+    pushEnabled: devices.filter(d => d.push_enabled).length,
    };
    res.json(stats);
   } catch (error) {
@@ -2895,9 +2547,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error creating pinned message:", error);
    if (error instanceof z.ZodError) {
-    return res
-     .status(400)
-     .json({ message: "Invalid data", errors: error.errors });
+    return res.status(400).json({ message: "Invalid data", errors: error.errors });
    }
    res.status(500).json({ message: "Failed to create pinned message" });
   }
@@ -2935,9 +2585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
    console.error("Error updating pinned message:", error);
    if (error instanceof z.ZodError) {
-    return res
-     .status(400)
-     .json({ message: "Invalid data", errors: error.errors });
+    return res.status(400).json({ message: "Invalid data", errors: error.errors });
    }
    res.status(500).json({ message: "Failed to update pinned message" });
   }
@@ -2984,8 +2632,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   try {
    const users = await storage.getUsers();
    const activeUsers = users
-    .filter((user) => user.is_active)
-    .map((user) => ({
+    .filter(user => user.is_active)
+    .map(user => ({
      id: user.id,
      username: user.username,
      first_name: user.first_name,
@@ -3000,103 +2648,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
  });
 
  // Test notification endpoint (admin only)
- app.post(
-  "/api/notifications/test",
-  requireAdmin,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const userId = req.user!.id;
-    const {
-     title = "Test Notification",
-     body = "This is a test notification from the dealership management system",
-    } = req.body;
+ app.post("/api/notifications/test", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  try {
+   const userId = req.user!.id;
+   const {
+    title = "Test Notification",
+    body = "This is a test notification from the dealership management system",
+   } = req.body;
 
-    // Create a test notification
-    const notification = await storage.createNotification({
-     recipient_user_id: userId,
-     notification_type: "system",
-     priority_level: "high",
+   // Create a test notification
+   const notification = await storage.createNotification({
+    recipient_user_id: userId,
+    notification_type: "system",
+    priority_level: "high",
+    title,
+    body,
+    status: "pending",
+   });
+
+   // Try to send the notification
+   try {
+    // Send notification via WebSocket (notificationHub replaced with webSocketService)
+    // await webSocketService.broadcastToAll('NOTIFICATION_CREATED', notification);
+    res.json({
+     message: "Test notification sent successfully",
+     notification_id: notification.id,
      title,
      body,
-     status: "pending",
     });
-
-    // Try to send the notification
-    try {
-     // Send notification via WebSocket (notificationHub replaced with webSocketService)
-     // await webSocketService.broadcastToAll('NOTIFICATION_CREATED', notification);
-     res.json({
-      message: "Test notification sent successfully",
-      notification_id: notification.id,
-      title,
-      body,
-     });
-    } catch (sendError) {
-     console.error("Failed to send test notification:", sendError);
-     res.json({
-      message: "Test notification created but sending failed",
-      notification_id: notification.id,
-      error: sendError instanceof Error ? sendError.message : "Unknown error",
-      title,
-      body,
-     });
-    }
-   } catch (error) {
-    console.error("Error creating test notification:", error);
-    res.status(500).json({ message: "Failed to create test notification" });
+   } catch (sendError) {
+    console.error("Failed to send test notification:", sendError);
+    res.json({
+     message: "Test notification created but sending failed",
+     notification_id: notification.id,
+     error: sendError instanceof Error ? sendError.message : "Unknown error",
+     title,
+     body,
+    });
    }
+  } catch (error) {
+   console.error("Error creating test notification:", error);
+   res.status(500).json({ message: "Failed to create test notification" });
   }
- );
+ });
 
  // OpenAI-powered smart notification endpoints (Phase 2)
 
  // Create smart notification using OpenAI
- app.post(
-  "/api/notifications/smart",
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
-   try {
-    const { context, entityType, entityData, urgency, customInstructions } =
-     req.body;
+ app.post("/api/notifications/smart", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+   const { context, entityType, entityData, urgency, customInstructions } = req.body;
 
-    if (!context || !entityType) {
-     return res
-      .status(400)
-      .json({ message: "Context and entity type are required" });
-    }
-
-    const userId = req.user!.id;
-    const userRole = req.user!.role || "user";
-
-    const notification = await notificationService.createSmartNotification({
-     user_id: userId,
-     context,
-     entityType,
-     entityData: entityData || {},
-     userRole,
-     urgency,
-     customInstructions,
-    });
-
-    res.json({
-     message: "Smart notification created successfully",
-     notification,
-    });
-   } catch (error) {
-    console.error("Error creating smart notification:", error);
-    res.status(500).json({ message: "Failed to create smart notification" });
+   if (!context || !entityType) {
+    return res.status(400).json({ message: "Context and entity type are required" });
    }
+
+   const userId = req.user!.id;
+   const userRole = req.user!.role || "user";
+
+   const notification = await notificationService.createSmartNotification({
+    user_id: userId,
+    context,
+    entityType,
+    entityData: entityData || {},
+    userRole,
+    urgency,
+    customInstructions,
+   });
+
+   res.json({
+    message: "Smart notification created successfully",
+    notification,
+   });
+  } catch (error) {
+   console.error("Error creating smart notification:", error);
+   res.status(500).json({ message: "Failed to create smart notification" });
   }
- );
+ });
 
  // Optimize notification content
  app.post("/api/notifications/:id/optimize", requireAuth, async (req, res) => {
   try {
    const notificationId = parseInt(req.params.id);
 
-   const optimized = await notificationService.optimizeNotificationContent(
-    notificationId
-   );
+   const optimized = await notificationService.optimizeNotificationContent(notificationId);
 
    res.json({
     message: "Notification optimized successfully",
@@ -3114,17 +2749,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const notificationId = parseInt(req.params.id);
    const { userResponse } = req.body;
 
-   if (
-    !userResponse ||
-    !["read", "dismissed", "clicked", "ignored"].includes(userResponse)
-   ) {
+   if (!userResponse || !["read", "dismissed", "clicked", "ignored"].includes(userResponse)) {
     return res.status(400).json({ message: "Valid user response is required" });
    }
 
-   const followUp = await notificationService.generateFollowUpNotification(
-    notificationId,
-    userResponse
-   );
+   const followUp = await notificationService.generateFollowUpNotification(notificationId, userResponse);
 
    if (followUp) {
     res.json({
@@ -3139,9 +2768,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    }
   } catch (error) {
    console.error("Error generating follow-up notification:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to generate follow-up notification" });
+   res.status(500).json({ message: "Failed to generate follow-up notification" });
   }
  });
 
@@ -3152,7 +2779,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
    const predictions = await openaiNotificationService.predictNotificationNeeds(
     dealershipData || {},
-    timeframe
+    timeframe,
    );
 
    res.json({
@@ -3173,9 +2800,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    res.json(preferences);
   } catch (error) {
    console.error("Error fetching notification preferences:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to fetch notification preferences" });
+   res.status(500).json({ message: "Failed to fetch notification preferences" });
   }
  });
 
@@ -3183,19 +2808,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
  app.put("/api/notifications/preferences", requireAuth, async (req, res) => {
   try {
    const userId = req.user!.id;
-   const validatedData = insertNotificationPreferenceSchema
-    .partial()
-    .parse(req.body);
-   const preferences = await storage.updateNotificationPreferences(
-    userId,
-    validatedData
-   );
+   const validatedData = insertNotificationPreferenceSchema.partial().parse(req.body);
+   const preferences = await storage.updateNotificationPreferences(userId, validatedData);
    res.json(preferences);
   } catch (error) {
    console.error("Error updating notification preferences:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to update notification preferences" });
+   res.status(500).json({ message: "Failed to update notification preferences" });
   }
  });
 
@@ -3206,9 +2824,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    res.json(metrics);
   } catch (error) {
    console.error("Error fetching notification performance metrics:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to fetch notification performance metrics" });
+   res.status(500).json({ message: "Failed to fetch notification performance metrics" });
   }
  });
 
@@ -3223,10 +2839,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return res.status(400).json({ message: "Prompt is required" });
    }
 
-   const parsedRule =
-    await naturalLanguageNotificationService.parseNotificationRule({
-     prompt,
-    });
+   const parsedRule = await naturalLanguageNotificationService.parseNotificationRule({
+    prompt,
+   });
 
    res.json(parsedRule);
   } catch (error) {
@@ -3239,19 +2854,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
  app.post("/api/notifications/rules", requireAuth, async (req, res) => {
   try {
    const userId = req.user!.id;
-   const {
-    trigger,
-    condition,
-    priority,
-    recipients,
-    message_template,
-    confidence,
-   } = req.body;
+   const { trigger, condition, priority, recipients, message_template, confidence } = req.body;
 
    if (!trigger || !priority || !recipients) {
-    return res
-     .status(400)
-     .json({ message: "Trigger, priority, and recipients are required" });
+    return res.status(400).json({ message: "Trigger, priority, and recipients are required" });
    }
 
    const rule = await storage.createNotificationRule({
@@ -3334,8 +2940,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   try {
    const { context = "luxury car dealership management" } = req.body;
 
-   const suggestions =
-    await naturalLanguageNotificationService.suggestNotificationRules(context);
+   const suggestions = await naturalLanguageNotificationService.suggestNotificationRules(context);
 
    res.json({
     message: "Notification suggestions generated successfully",
@@ -3343,9 +2948,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    });
   } catch (error) {
    console.error("Error generating notification suggestions:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to generate notification suggestions" });
+   res.status(500).json({ message: "Failed to generate notification suggestions" });
   }
  });
 
@@ -3361,45 +2964,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
    res.json(subscription);
   } catch (error) {
    console.error("Error creating notification subscription:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to create notification subscription" });
+   res.status(500).json({ message: "Failed to create notification subscription" });
   }
  });
 
  // Unsubscribe from push notifications
- app.delete(
-  "/api/notifications/subscribe/:id",
-  requireAuth,
-  async (req, res) => {
-   try {
-    const subscriptionId = parseInt(req.params.id);
-    const userId = req.user!.id;
+ app.delete("/api/notifications/subscribe/:id", requireAuth, async (req, res) => {
+  try {
+   const subscriptionId = parseInt(req.params.id);
+   const userId = req.user!.id;
 
-    const subscriptions = await storage.getNotificationSubscriptions();
-    const subscription = subscriptions.find((s) => s.id === subscriptionId);
-    if (!subscription || subscription.user_id !== userId) {
-     return res.status(404).json({ message: "Subscription not found" });
-    }
-
-    const deleted = await storage.deleteNotificationSubscription(
-     subscriptionId
-    );
-    if (deleted) {
-     res.json({
-      message: "Notification subscription deleted successfully",
-     });
-    } else {
-     res.status(404).json({ message: "Notification subscription not found" });
-    }
-   } catch (error) {
-    console.error("Error deleting notification subscription:", error);
-    res
-     .status(500)
-     .json({ message: "Failed to delete notification subscription" });
+   const subscriptions = await storage.getNotificationSubscriptions();
+   const subscription = subscriptions.find(s => s.id === subscriptionId);
+   if (!subscription || subscription.user_id !== userId) {
+    return res.status(404).json({ message: "Subscription not found" });
    }
+
+   const deleted = await storage.deleteNotificationSubscription(subscriptionId);
+   if (deleted) {
+    res.json({
+     message: "Notification subscription deleted successfully",
+    });
+   } else {
+    res.status(404).json({ message: "Notification subscription not found" });
+   }
+  } catch (error) {
+   console.error("Error deleting notification subscription:", error);
+   res.status(500).json({ message: "Failed to delete notification subscription" });
   }
- );
+ });
 
  // Send test notification (admin only)
  app.post("/api/notifications/test", requireAdmin, async (req, res) => {
@@ -3407,9 +3000,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const { templateKey, recipientUserId, context } = req.body;
    const senderId = req.user!.id;
 
-   const { notificationService } = await import(
-    "./services/notificationService"
-   );
+   const { notificationService } = await import("./services/notificationService");
    const notification = await notificationService.createNotification({
     recipient_user_id: recipientUserId,
     notification_type: "system",
@@ -3429,17 +3020,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
  // Initialize notification system (admin only)
  app.post("/api/notifications/initialize", requireAdmin, async (req, res) => {
   try {
-   const { notificationService } = await import(
-    "./services/notificationService"
-   );
+   const { notificationService } = await import("./services/notificationService");
    // Note: Initialization methods not implemented yet - system works without them
 
    res.json({ message: "Notification system initialized successfully" });
   } catch (error) {
    console.error("Error initializing notification system:", error);
-   res
-    .status(500)
-    .json({ message: "Failed to initialize notification system" });
+   res.status(500).json({ message: "Failed to initialize notification system" });
   }
  });
 
@@ -3449,13 +3036,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
  app.post("/api/push/subscribe", requireAuth, async (req, res) => {
   try {
    const userId = req.user!.id;
-   const { endpoint, keys_p256dh, keys_auth, device_type, user_agent } =
-    req.body;
+   const { endpoint, keys_p256dh, keys_auth, device_type, user_agent } = req.body;
 
    if (!endpoint || !keys_p256dh || !keys_auth) {
-    return res
-     .status(400)
-     .json({ message: "Missing required subscription data" });
+    return res.status(400).json({ message: "Missing required subscription data" });
    }
 
    const subscription = await storage.createPushSubscription({
@@ -3547,9 +3131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const userId = req.user!.id;
    const { timestamp, sync_type } = req.body;
 
-   console.log(
-    `Sync request from user ${userId} at ${timestamp}, type: ${sync_type}`
-   );
+   console.log(`Sync request from user ${userId} at ${timestamp}, type: ${sync_type}`);
 
    // For now, return empty pending notifications
    // In a full implementation, this would check for queued notifications
@@ -3612,7 +3194,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    webpush.default.setVapidDetails(
     process.env.VAPID_SUBJECT || "mailto:test@example.com",
     process.env.VAPID_PUBLIC_KEY || "",
-    process.env.VAPID_PRIVATE_KEY || ""
+    process.env.VAPID_PRIVATE_KEY || "",
    );
 
    // Create push subscription object
@@ -3690,7 +3272,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    webpush.default.setVapidDetails(
     process.env.VAPID_SUBJECT || "mailto:test@example.com",
     process.env.VAPID_PUBLIC_KEY || "",
-    process.env.VAPID_PRIVATE_KEY || ""
+    process.env.VAPID_PRIVATE_KEY || "",
    );
 
    // Create push subscription object
@@ -3818,10 +3400,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    // Handle specific queries with direct data access for speed
    const lowerQuery = query.toLowerCase();
 
-   if (
-    lowerQuery.includes("how many vehicles") ||
-    lowerQuery.includes("inventory count")
-   ) {
+   if (lowerQuery.includes("how many vehicles") || lowerQuery.includes("inventory count")) {
     const stats = await storage.getDashboardStats();
     return res.json({
      message: `We currently have ${
@@ -3838,10 +3417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
    }
 
-   if (
-    lowerQuery.includes("sales today") ||
-    lowerQuery.includes("today sales")
-   ) {
+   if (lowerQuery.includes("sales today") || lowerQuery.includes("today sales")) {
     const todaySales = await storage.getTodaySales();
     return res.json({
      message: `Today we've sold ${
@@ -3866,9 +3442,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const topMakes = stats.salesByMake.slice(0, 5);
     let message = `Here are our top selling makes:\n\n`;
     topMakes.forEach((make, index) => {
-     message += `${index + 1}. ${make.makeName}: ${
-      make.soldCount
-     } vehicles sold\n`;
+     message += `${index + 1}. ${make.makeName}: ${make.soldCount} vehicles sold\n`;
     });
 
     return res.json({
@@ -3890,7 +3464,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
      message: `We currently have ${
       leadStats.totalLeads
      } active leads in our pipeline with a ${leadStats.conversionRate.toFixed(
-      1
+      1,
      )}% conversion rate. We've served ${
       customerStats.total_leads_mtd
      } customers total, with ${customerStats.active_leads} active this year.`,
@@ -3920,9 +3494,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const { query, context, conversation_history } = req.body;
 
    if (!query || typeof query !== "string") {
-    return res
-     .status(400)
-     .json({ error: "Query is required and must be a string" });
+    return res.status(400).json({ error: "Query is required and must be a string" });
    }
 
    const response = await aiBusinessIntelligenceService.processConversation({
@@ -3944,9 +3516,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const { message, conversationHistory } = req.body;
 
    if (!message || typeof message !== "string") {
-    return res
-     .status(400)
-     .json({ error: "Message is required and must be a string" });
+    return res.status(400).json({ error: "Message is required and must be a string" });
    }
 
    const response = await aiBusinessIntelligenceService.processConversation({
@@ -3968,9 +3538,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
    const { timestamp } = req.body;
 
    // Get pending notifications for user
-   const pendingNotifications = await storage.getPendingNotificationsByUser(
-    userId
-   );
+   const pendingNotifications = await storage.getPendingNotificationsByUser(userId);
 
    res.json({
     message: "Notifications synced successfully",
@@ -3983,9 +3551,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
  });
 
  // Import and register DealerGPT routes (WebSocket service is now available)
- const { default: simpleDealerGPTRoutes } = await import(
-  "./routes/simpleDealerGPTRoutes"
- );
+ const { default: simpleDealerGPTRoutes } = await import("./routes/simpleDealerGPTRoutes");
  app.use(simpleDealerGPTRoutes);
 
  return httpServer;

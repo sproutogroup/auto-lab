@@ -291,103 +291,98 @@ async cleanupExpiredSubscriptions(): Promise<number> {
 #### 4.1.1 Push Event Handling
 
 ```javascript
-self.addEventListener("push", (event) => {
-  console.log("Push event received");
+self.addEventListener("push", event => {
+ console.log("Push event received");
 
-  let notificationData = {
-    title: "AUTOLAB Dealership",
-    body: "New notification",
-    icon: "/icons/icon-192x192.png",
-    badge: "/icons/icon-96x96.png",
-    tag: "autolab-notification",
-    data: {},
-  };
+ let notificationData = {
+  title: "AUTOLAB Dealership",
+  body: "New notification",
+  icon: "/icons/icon-192x192.png",
+  badge: "/icons/icon-96x96.png",
+  tag: "autolab-notification",
+  data: {},
+ };
 
-  // Parse push data
-  if (event.data) {
-    try {
-      notificationData = { ...notificationData, ...event.data.json() };
-    } catch (error) {
-      console.error("Error parsing push data:", error);
-    }
+ // Parse push data
+ if (event.data) {
+  try {
+   notificationData = { ...notificationData, ...event.data.json() };
+  } catch (error) {
+   console.error("Error parsing push data:", error);
   }
+ }
 
-  // Enhanced notification options
-  const options = {
-    body: notificationData.body,
-    icon: notificationData.icon,
-    badge: notificationData.badge,
-    tag: notificationData.tag,
-    requireInteraction: false,
-    silent: false,
-    data: {
-      ...notificationData.data,
-      timestamp: Date.now(),
-      notification_id: notificationData.notification_id,
-    },
-    actions: [
-      { action: "view", title: "View", icon: "/icons/view.png" },
-      { action: "dismiss", title: "Dismiss", icon: "/icons/dismiss.png" },
-    ],
-  };
+ // Enhanced notification options
+ const options = {
+  body: notificationData.body,
+  icon: notificationData.icon,
+  badge: notificationData.badge,
+  tag: notificationData.tag,
+  requireInteraction: false,
+  silent: false,
+  data: {
+   ...notificationData.data,
+   timestamp: Date.now(),
+   notification_id: notificationData.notification_id,
+  },
+  actions: [
+   { action: "view", title: "View", icon: "/icons/view.png" },
+   { action: "dismiss", title: "Dismiss", icon: "/icons/dismiss.png" },
+  ],
+ };
 
-  // iOS Safari compatibility
-  if (
-    self.navigator.userAgent.includes("iPhone") ||
-    self.navigator.userAgent.includes("iPad")
-  ) {
-    delete options.actions;
-    delete options.badge;
-    options.requireInteraction = false;
-  }
+ // iOS Safari compatibility
+ if (self.navigator.userAgent.includes("iPhone") || self.navigator.userAgent.includes("iPad")) {
+  delete options.actions;
+  delete options.badge;
+  options.requireInteraction = false;
+ }
 
-  event.waitUntil(
-    self.registration.showNotification(notificationData.title, options),
-  );
+ event.waitUntil(self.registration.showNotification(notificationData.title, options));
 });
 ```
 
 #### 4.1.2 Enhanced Click Handling
 
 ```javascript
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
+self.addEventListener("notificationclick", event => {
+ event.notification.close();
 
-  const action = event.action;
-  const data = event.notification.data || {};
+ const action = event.action;
+ const data = event.notification.data || {};
 
-  // Send analytics
+ // Send analytics
+ event.waitUntil(
+  fetch("/api/notifications/analytics", {
+   method: "POST",
+   headers: { "Content-Type": "application/json" },
+   body: JSON.stringify({
+    notification_id: data.notification_id,
+    event_type: action || "clicked",
+    timestamp: new Date().toISOString(),
+   }),
+  }).catch(console.error),
+ );
+
+ // Handle navigation
+ if (action !== "dismiss") {
+  const urlToOpen = data.url || "/";
+
   event.waitUntil(
-    fetch("/api/notifications/analytics", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        notification_id: data.notification_id,
-        event_type: action || "clicked",
-        timestamp: new Date().toISOString(),
-      }),
-    }).catch(console.error),
+   clients.matchAll({ type: "window" }).then(clientList => {
+    // Focus existing window or open new one
+    for (const client of clientList) {
+     if (client.url.includes(urlToOpen) && "focus" in client) {
+      return client.focus();
+     }
+    }
+
+    if (clients.openWindow) {
+     return clients.openWindow(urlToOpen);
+    }
+   }),
   );
-
-  // Handle navigation
-  if (action !== "dismiss") {
-    const urlToOpen = data.url || "/";
-
-    event.waitUntil(
-      clients.matchAll({ type: "window" }).then((clientList) => {
-        // Focus existing window or open new one
-        for (const client of clientList) {
-          if (client.url.includes(urlToOpen) && "focus" in client) {
-            return client.focus();
-          }
-        }
-
-        if (clients.openWindow) {
-          return clients.openWindow(urlToOpen);
-        }
-      }),
-    );
-  }
+ }
 });
 ```
 
@@ -399,95 +394,91 @@ self.addEventListener("notificationclick", (event) => {
 
 ```typescript
 export class WebPushManager {
-  private vapidPublicKey: string;
-  private serviceWorkerRegistration: ServiceWorkerRegistration | null = null;
+ private vapidPublicKey: string;
+ private serviceWorkerRegistration: ServiceWorkerRegistration | null = null;
 
-  constructor() {
-    this.vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || "";
+ constructor() {
+  this.vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || "";
+ }
+
+ async initialize(): Promise<void> {
+  // Skip iOS Safari (no web push support)
+  if (this.isIOSSafari()) {
+   console.log("iOS Safari detected - web push not supported");
+   return;
   }
 
-  async initialize(): Promise<void> {
-    // Skip iOS Safari (no web push support)
-    if (this.isIOSSafari()) {
-      console.log("iOS Safari detected - web push not supported");
-      return;
-    }
-
-    // Check browser support
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      throw new Error("Web push not supported");
-    }
-
-    // Register service worker
-    this.serviceWorkerRegistration =
-      await navigator.serviceWorker.register("/sw.js");
-    await navigator.serviceWorker.ready;
+  // Check browser support
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+   throw new Error("Web push not supported");
   }
 
-  async subscribe(userId: number): Promise<boolean> {
-    try {
-      // Request permission
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        return false;
-      }
+  // Register service worker
+  this.serviceWorkerRegistration = await navigator.serviceWorker.register("/sw.js");
+  await navigator.serviceWorker.ready;
+ }
 
-      if (!this.serviceWorkerRegistration) {
-        await this.initialize();
-      }
+ async subscribe(userId: number): Promise<boolean> {
+  try {
+   // Request permission
+   const permission = await Notification.requestPermission();
+   if (permission !== "granted") {
+    return false;
+   }
 
-      // Create subscription
-      const subscription =
-        await this.serviceWorkerRegistration!.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: this.urlB64ToUint8Array(this.vapidPublicKey),
-        });
+   if (!this.serviceWorkerRegistration) {
+    await this.initialize();
+   }
 
-      // Store subscription in database
-      await apiRequest("POST", "/api/push/subscribe", {
-        user_id: userId,
-        endpoint: subscription.endpoint,
-        keys_p256dh: subscription.toJSON().keys.p256dh,
-        keys_auth: subscription.toJSON().keys.auth,
-        user_agent: navigator.userAgent,
-        device_type: this.getDeviceType(),
-      });
+   // Create subscription
+   const subscription = await this.serviceWorkerRegistration!.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: this.urlB64ToUint8Array(this.vapidPublicKey),
+   });
 
-      return true;
-    } catch (error) {
-      console.error("Subscription failed:", error);
-      return false;
-    }
+   // Store subscription in database
+   await apiRequest("POST", "/api/push/subscribe", {
+    user_id: userId,
+    endpoint: subscription.endpoint,
+    keys_p256dh: subscription.toJSON().keys.p256dh,
+    keys_auth: subscription.toJSON().keys.auth,
+    user_agent: navigator.userAgent,
+    device_type: this.getDeviceType(),
+   });
+
+   return true;
+  } catch (error) {
+   console.error("Subscription failed:", error);
+   return false;
+  }
+ }
+
+ private isIOSSafari(): boolean {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+ }
+
+ private getDeviceType(): string {
+  if (/Mobile|Android|iPhone|iPad/.test(navigator.userAgent)) {
+   return "mobile";
+  }
+  if (/Tablet|iPad/.test(navigator.userAgent)) {
+   return "tablet";
+  }
+  return "desktop";
+ }
+
+ private urlB64ToUint8Array(base64String: string): Uint8Array {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+   outputArray[i] = rawData.charCodeAt(i);
   }
 
-  private isIOSSafari(): boolean {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  }
-
-  private getDeviceType(): string {
-    if (/Mobile|Android|iPhone|iPad/.test(navigator.userAgent)) {
-      return "mobile";
-    }
-    if (/Tablet|iPad/.test(navigator.userAgent)) {
-      return "tablet";
-    }
-    return "desktop";
-  }
-
-  private urlB64ToUint8Array(base64String: string): Uint8Array {
-    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, "+")
-      .replace(/_/g, "/");
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-
-    return outputArray;
-  }
+  return outputArray;
+ }
 }
 ```
 
@@ -498,22 +489,22 @@ export class WebPushManager {
 ```typescript
 // Add to App.tsx initialization
 useEffect(() => {
-  const initializeWebPush = async () => {
-    try {
-      const webPushManager = new WebPushManager();
-      await webPushManager.initialize();
+ const initializeWebPush = async () => {
+  try {
+   const webPushManager = new WebPushManager();
+   await webPushManager.initialize();
 
-      // Auto-subscribe for authenticated users
-      const user = await getCurrentUser();
-      if (user && !(await webPushManager.isSubscribed())) {
-        await webPushManager.subscribe(user.id);
-      }
-    } catch (error) {
-      console.warn("Web push initialization failed:", error);
-    }
-  };
+   // Auto-subscribe for authenticated users
+   const user = await getCurrentUser();
+   if (user && !(await webPushManager.isSubscribed())) {
+    await webPushManager.subscribe(user.id);
+   }
+  } catch (error) {
+   console.warn("Web push initialization failed:", error);
+  }
+ };
 
-  initializeWebPush();
+ initializeWebPush();
 }, []);
 ```
 
@@ -565,32 +556,32 @@ AND registration_source != 'web_push';
 
 ```typescript
 async function migrateToPushSubscriptions(): Promise<void> {
-  // Move existing web registrations to push_subscriptions
-  const webDevices = await db
-    .select()
-    .from(device_registrations)
-    .where(eq(device_registrations.platform, "web"));
+ // Move existing web registrations to push_subscriptions
+ const webDevices = await db
+  .select()
+  .from(device_registrations)
+  .where(eq(device_registrations.platform, "web"));
 
-  for (const device of webDevices) {
-    try {
-      // Parse device_token as subscription JSON
-      const subscription = JSON.parse(device.device_token);
+ for (const device of webDevices) {
+  try {
+   // Parse device_token as subscription JSON
+   const subscription = JSON.parse(device.device_token);
 
-      await db.insert(push_subscriptions).values({
-        user_id: device.user_id,
-        endpoint: subscription.endpoint,
-        keys_p256dh: subscription.keys.p256dh,
-        keys_auth: subscription.keys.auth,
-        user_agent: device.user_agent,
-        device_type: device.device_model,
-        platform: "web",
-        is_active: device.is_active,
-        created_at: device.created_at,
-      });
-    } catch (error) {
-      console.error("Migration failed for device:", device.id, error);
-    }
+   await db.insert(push_subscriptions).values({
+    user_id: device.user_id,
+    endpoint: subscription.endpoint,
+    keys_p256dh: subscription.keys.p256dh,
+    keys_auth: subscription.keys.auth,
+    user_agent: device.user_agent,
+    device_type: device.device_model,
+    platform: "web",
+    is_active: device.is_active,
+    created_at: device.created_at,
+   });
+  } catch (error) {
+   console.error("Migration failed for device:", device.id, error);
   }
+ }
 }
 ```
 
@@ -711,25 +702,22 @@ CREATE INDEX idx_push_logs_success ON push_logs(success);
 
 ```typescript
 interface PushAnalytics {
-  total_sent: number;
-  success_rate: number;
-  average_delivery_time: number;
-  error_breakdown: {
-    [status_code: string]: number;
-  };
-  platform_breakdown: {
-    [platform: string]: number;
-  };
-  hourly_distribution: {
-    [hour: string]: number;
-  };
+ total_sent: number;
+ success_rate: number;
+ average_delivery_time: number;
+ error_breakdown: {
+  [status_code: string]: number;
+ };
+ platform_breakdown: {
+  [platform: string]: number;
+ };
+ hourly_distribution: {
+  [hour: string]: number;
+ };
 }
 
-async function generatePushAnalytics(
-  startDate: Date,
-  endDate: Date,
-): Promise<PushAnalytics> {
-  // Implementation for analytics generation
+async function generatePushAnalytics(startDate: Date, endDate: Date): Promise<PushAnalytics> {
+ // Implementation for analytics generation
 }
 ```
 
@@ -740,22 +728,20 @@ async function generatePushAnalytics(
 ```typescript
 // Add to existing health check endpoint
 app.get("/api/health/push", async (req, res) => {
-  const health = {
-    vapid_configured: !!(
-      process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY
-    ),
-    service_worker_accessible: true, // Test /sw.js accessibility
-    active_subscriptions: await storage.getActiveSubscriptionCount(),
-    recent_success_rate: await storage.getRecentSuccessRate(),
-    last_successful_push: await storage.getLastSuccessfulPush(),
-  };
+ const health = {
+  vapid_configured: !!(process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY),
+  service_worker_accessible: true, // Test /sw.js accessibility
+  active_subscriptions: await storage.getActiveSubscriptionCount(),
+  recent_success_rate: await storage.getRecentSuccessRate(),
+  last_successful_push: await storage.getLastSuccessfulPush(),
+ };
 
-  const isHealthy = health.vapid_configured && health.recent_success_rate > 0.8;
+ const isHealthy = health.vapid_configured && health.recent_success_rate > 0.8;
 
-  res.status(isHealthy ? 200 : 503).json({
-    status: isHealthy ? "healthy" : "unhealthy",
-    ...health,
-  });
+ res.status(isHealthy ? 200 : 503).json({
+  status: isHealthy ? "healthy" : "unhealthy",
+  ...health,
+ });
 });
 ```
 
@@ -764,20 +750,20 @@ app.get("/api/health/push", async (req, res) => {
 ```typescript
 // Webhook for external monitoring
 app.post("/api/webhooks/push-failure", async (req, res) => {
-  const { subscription_id, error_code, error_message } = req.body;
+ const { subscription_id, error_code, error_message } = req.body;
 
-  // Send to monitoring service (Sentry, LogDNA, etc.)
-  if (error_code === 404 || error_code === 410) {
-    await storage.markSubscriptionInactive(subscription_id);
-  }
+ // Send to monitoring service (Sentry, LogDNA, etc.)
+ if (error_code === 404 || error_code === 410) {
+  await storage.markSubscriptionInactive(subscription_id);
+ }
 
-  // Alert if error rate exceeds threshold
-  const recentErrorRate = await storage.getRecentErrorRate();
-  if (recentErrorRate > 0.2) {
-    await sendAlertToAdmins("High push notification error rate detected");
-  }
+ // Alert if error rate exceeds threshold
+ const recentErrorRate = await storage.getRecentErrorRate();
+ if (recentErrorRate > 0.2) {
+  await sendAlertToAdmins("High push notification error rate detected");
+ }
 
-  res.status(200).json({ received: true });
+ res.status(200).json({ received: true });
 });
 ```
 

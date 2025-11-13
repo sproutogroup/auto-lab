@@ -158,14 +158,8 @@ The system includes comprehensive database indexing for optimal performance:
 ### NotificationProvider Context
 
 ```typescript
-const {
-  isInitialized,
-  isRegistered,
-  platform,
-  notificationPermission,
-  requestPermission,
-  getUserDevices,
-} = useNotifications();
+const { isInitialized, isRegistered, platform, notificationPermission, requestPermission, getUserDevices } =
+ useNotifications();
 ```
 
 ### Device Registration

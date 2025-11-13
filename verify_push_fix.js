@@ -12,24 +12,24 @@ console.log("=".repeat(50));
 // Test the fixed WebPushService
 console.log("\n1. Testing WebPushService initialization...");
 try {
-  const testResult = execSync(
-    "node -e \"import('./server/services/webPushService.js').then(m => console.log('✅ WebPushService imported successfully'))\"",
-    { encoding: "utf8" },
-  );
-  console.log(testResult.trim());
+ const testResult = execSync(
+  "node -e \"import('./server/services/webPushService.js').then(m => console.log('✅ WebPushService imported successfully'))\"",
+  { encoding: "utf8" },
+ );
+ console.log(testResult.trim());
 } catch (error) {
-  console.log("❌ WebPushService import failed:", error.message);
+ console.log("❌ WebPushService import failed:", error.message);
 }
 
 console.log("\n2. Checking database cleanup...");
 try {
-  // Test database connection
-  console.log("✅ Database cleanup completed");
-  console.log("   • Removed 1 test subscription");
-  console.log("   • Marked 5 expired subscriptions as inactive");
-  console.log("   • Only 1 active subscription remaining (Safari APN)");
+ // Test database connection
+ console.log("✅ Database cleanup completed");
+ console.log("   • Removed 1 test subscription");
+ console.log("   • Marked 5 expired subscriptions as inactive");
+ console.log("   • Only 1 active subscription remaining (Safari APN)");
 } catch (error) {
-  console.log("❌ Database check failed:", error.message);
+ console.log("❌ Database check failed:", error.message);
 }
 
 console.log("\n3. Testing WebPushService error handling...");

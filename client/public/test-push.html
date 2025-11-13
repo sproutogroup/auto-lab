@@ -1,397 +1,350 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Phase 3.2 - Real Device Push Test</title>
-    <style>
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background: #f5f5f5;
-      }
-      .container {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        color: #dc2626;
-      }
-      .step {
-        background: #f8f9fa;
-        padding: 20px;
-        margin: 20px 0;
-        border-radius: 8px;
-        border-left: 4px solid #dc2626;
-      }
-      button {
-        background: #dc2626;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        margin: 10px 5px;
-      }
-      button:hover {
-        background: #b91c1c;
-      }
-      button:disabled {
-        background: #9ca3af;
-        cursor: not-allowed;
-      }
-      .output {
-        background: #111827;
-        color: #f9fafb;
-        padding: 15px;
-        border-radius: 6px;
-        font-family: "Monaco", "Consolas", monospace;
-        font-size: 14px;
-        white-space: pre-wrap;
-        margin: 10px 0;
-        max-height: 300px;
-        overflow-y: auto;
-      }
-      .status {
-        padding: 10px;
-        border-radius: 6px;
-        margin: 10px 0;
-        font-weight: bold;
-      }
-      .status.success {
-        background: #dcfce7;
-        color: #166534;
-      }
-      .status.error {
-        background: #fef2f2;
-        color: #dc2626;
-      }
-      .status.info {
-        background: #eff6ff;
-        color: #1d4ed8;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Phase 3.2 - Real Device Push Test</h1>
+ <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 3.2 - Real Device Push Test</title>
+  <style>
+   body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f5f5f5;
+   }
+   .container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   }
+   h1 {
+    color: #dc2626;
+   }
+   .step {
+    background: #f8f9fa;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    border-left: 4px solid #dc2626;
+   }
+   button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px 5px;
+   }
+   button:hover {
+    background: #b91c1c;
+   }
+   button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+   }
+   .output {
+    background: #111827;
+    color: #f9fafb;
+    padding: 15px;
+    border-radius: 6px;
+    font-family: "Monaco", "Consolas", monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    margin: 10px 0;
+    max-height: 300px;
+    overflow-y: auto;
+   }
+   .status {
+    padding: 10px;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-weight: bold;
+   }
+   .status.success {
+    background: #dcfce7;
+    color: #166534;
+   }
+   .status.error {
+    background: #fef2f2;
+    color: #dc2626;
+   }
+   .status.info {
+    background: #eff6ff;
+    color: #1d4ed8;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <h1>Phase 3.2 - Real Device Push Test</h1>
 
-      <div class="step">
-        <h2>Device Information</h2>
-        <div id="deviceInfo">Loading...</div>
-      </div>
+   <div class="step">
+    <h2>Device Information</h2>
+    <div id="deviceInfo">Loading...</div>
+   </div>
 
-      <div class="step">
-        <h2>Step 1: Generate Real Subscription</h2>
-        <button onclick="generateSubscription()" id="subscribeBtn">
-          Generate Real Subscription
-        </button>
-        <div id="subscriptionStatus" class="status" style="display: none"></div>
-        <div id="subscriptionOutput" class="output" style="display: none"></div>
-      </div>
+   <div class="step">
+    <h2>Step 1: Generate Real Subscription</h2>
+    <button onclick="generateSubscription()" id="subscribeBtn">Generate Real Subscription</button>
+    <div id="subscriptionStatus" class="status" style="display: none"></div>
+    <div id="subscriptionOutput" class="output" style="display: none"></div>
+   </div>
 
-      <div class="step">
-        <h2>Step 2: Send Live Test Push</h2>
-        <button onclick="sendTestPush()" id="testPushBtn" disabled>
-          Send Live Test Push
-        </button>
-        <div id="pushStatus" class="status" style="display: none"></div>
-        <div id="pushOutput" class="output" style="display: none"></div>
-      </div>
+   <div class="step">
+    <h2>Step 2: Send Live Test Push</h2>
+    <button onclick="sendTestPush()" id="testPushBtn" disabled>Send Live Test Push</button>
+    <div id="pushStatus" class="status" style="display: none"></div>
+    <div id="pushOutput" class="output" style="display: none"></div>
+   </div>
 
-      <div class="step">
-        <h2>Results</h2>
-        <div id="finalResults">
-          <p>Complete steps 1 and 2 to see results...</p>
-        </div>
-      </div>
+   <div class="step">
+    <h2>Results</h2>
+    <div id="finalResults">
+     <p>Complete steps 1 and 2 to see results...</p>
     </div>
+   </div>
+  </div>
 
-    <script>
-      let subscriptionId = null;
-      let subscription = null;
+  <script>
+   let subscriptionId = null;
+   let subscription = null;
 
-      // Display device info
-      document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("deviceInfo").innerHTML = [
-          "User Agent: " + navigator.userAgent,
-          "Platform: " + navigator.platform,
-          "Language: " + navigator.language,
-          "Online: " + navigator.onLine,
-          "Service Worker Support: " +
-            ("serviceWorker" in navigator ? "Yes" : "No"),
-          "Push Manager Support: " + ("PushManager" in window ? "Yes" : "No"),
-          "Notification Support: " + ("Notification" in window ? "Yes" : "No"),
-        ].join("<br>");
-      });
+   // Display device info
+   document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("deviceInfo").innerHTML = [
+     "User Agent: " + navigator.userAgent,
+     "Platform: " + navigator.platform,
+     "Language: " + navigator.language,
+     "Online: " + navigator.onLine,
+     "Service Worker Support: " + ("serviceWorker" in navigator ? "Yes" : "No"),
+     "Push Manager Support: " + ("PushManager" in window ? "Yes" : "No"),
+     "Notification Support: " + ("Notification" in window ? "Yes" : "No"),
+    ].join("<br>");
+   });
 
-      function log(message, isError = false) {
-        console.log(message);
-        const timestamp = new Date().toISOString();
-        return (
-          "[" + timestamp + "] " + (isError ? "ERROR: " : "") + message + "\n"
-        );
-      }
+   function log(message, isError = false) {
+    console.log(message);
+    const timestamp = new Date().toISOString();
+    return "[" + timestamp + "] " + (isError ? "ERROR: " : "") + message + "\n";
+   }
 
-      function showStatus(elementId, message, type = "info") {
-        const element = document.getElementById(elementId);
-        element.style.display = "block";
-        element.className = "status " + type;
-        element.textContent = message;
-      }
+   function showStatus(elementId, message, type = "info") {
+    const element = document.getElementById(elementId);
+    element.style.display = "block";
+    element.className = "status " + type;
+    element.textContent = message;
+   }
 
-      function urlBase64ToUint8Array(base64String) {
-        const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-        const base64 = (base64String + padding)
-          .replace(/\-/g, "+")
-          .replace(/_/g, "/");
+   function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
 
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
 
-        for (let i = 0; i < rawData.length; ++i) {
-          outputArray[i] = rawData.charCodeAt(i);
-        }
-        return outputArray;
-      }
+    for (let i = 0; i < rawData.length; ++i) {
+     outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+   }
 
-      async function generateSubscription() {
-        const output = document.getElementById("subscriptionOutput");
-        output.style.display = "block";
-        output.textContent = "";
+   async function generateSubscription() {
+    const output = document.getElementById("subscriptionOutput");
+    output.style.display = "block";
+    output.textContent = "";
 
-        try {
-          showStatus(
-            "subscriptionStatus",
-            "Generating real browser subscription...",
-            "info",
-          );
-          output.textContent += log(
-            "Starting real device subscription generation...",
-          );
+    try {
+     showStatus("subscriptionStatus", "Generating real browser subscription...", "info");
+     output.textContent += log("Starting real device subscription generation...");
 
-          // Check support
-          if (!("serviceWorker" in navigator)) {
-            throw new Error("Service Worker not supported on this device");
-          }
-          if (!("PushManager" in window)) {
-            throw new Error("Push Manager not supported on this device");
-          }
-          if (!("Notification" in window)) {
-            throw new Error("Notifications not supported on this device");
-          }
+     // Check support
+     if (!("serviceWorker" in navigator)) {
+      throw new Error("Service Worker not supported on this device");
+     }
+     if (!("PushManager" in window)) {
+      throw new Error("Push Manager not supported on this device");
+     }
+     if (!("Notification" in window)) {
+      throw new Error("Notifications not supported on this device");
+     }
 
-          output.textContent += log("All push notification APIs supported");
+     output.textContent += log("All push notification APIs supported");
 
-          // Request notification permission
-          const permission = await Notification.requestPermission();
-          if (permission !== "granted") {
-            throw new Error("Notification permission denied: " + permission);
-          }
-          output.textContent += log("Notification permission granted");
+     // Request notification permission
+     const permission = await Notification.requestPermission();
+     if (permission !== "granted") {
+      throw new Error("Notification permission denied: " + permission);
+     }
+     output.textContent += log("Notification permission granted");
 
-          // Wait for service worker registration
-          await navigator.serviceWorker.register("/sw.js");
-          const registration = await navigator.serviceWorker.ready;
-          output.textContent += log("Service Worker registered and ready");
+     // Wait for service worker registration
+     await navigator.serviceWorker.register("/sw.js");
+     const registration = await navigator.serviceWorker.ready;
+     output.textContent += log("Service Worker registered and ready");
 
-          // VAPID public key from Phase 3.1
-          const vapidPublicKey =
-            "BAo_FnrKbB2p6gzRN8xTF65HGV94Xu-TSYf2VfaaISf9_Gn5j91I5X8v_1pb48aRFwV_dZrvUdVSWKRMDDVKHu8";
-          const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
-          output.textContent += log("VAPID key converted to Uint8Array");
+     // VAPID public key from Phase 3.1
+     const vapidPublicKey =
+      "BAo_FnrKbB2p6gzRN8xTF65HGV94Xu-TSYf2VfaaISf9_Gn5j91I5X8v_1pb48aRFwV_dZrvUdVSWKRMDDVKHu8";
+     const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
+     output.textContent += log("VAPID key converted to Uint8Array");
 
-          // Generate real subscription
-          subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: applicationServerKey,
-          });
+     // Generate real subscription
+     subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: applicationServerKey,
+     });
 
-          output.textContent += log("REAL BROWSER SUBSCRIPTION GENERATED!");
+     output.textContent += log("REAL BROWSER SUBSCRIPTION GENERATED!");
 
-          // Log the subscription for debugging
-          const subscriptionObject = {
-            endpoint: subscription.endpoint,
-            keys: {
-              p256dh: subscription.keys.p256dh,
-              auth: subscription.keys.auth,
-            },
-          };
+     // Log the subscription for debugging
+     const subscriptionObject = {
+      endpoint: subscription.endpoint,
+      keys: {
+       p256dh: subscription.keys.p256dh,
+       auth: subscription.keys.auth,
+      },
+     };
 
-          output.textContent += log("Real subscription object:");
-          output.textContent += log(
-            JSON.stringify(subscriptionObject, null, 2),
-          );
+     output.textContent += log("Real subscription object:");
+     output.textContent += log(JSON.stringify(subscriptionObject, null, 2));
 
-          // Register with our API
-          output.textContent += log("Registering subscription with API...");
-          const response = await fetch("/api/subscriptions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_id: 1,
-              endpoint: subscription.endpoint,
-              keys: {
-                p256dh: subscription.keys.p256dh,
-                auth: subscription.keys.auth,
-              },
-              device_type: /iPhone/.test(navigator.userAgent)
-                ? "iOS"
-                : "Browser",
-              user_agent: navigator.userAgent,
-            }),
-          });
+     // Register with our API
+     output.textContent += log("Registering subscription with API...");
+     const response = await fetch("/api/subscriptions", {
+      method: "POST",
+      headers: {
+       "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+       user_id: 1,
+       endpoint: subscription.endpoint,
+       keys: {
+        p256dh: subscription.keys.p256dh,
+        auth: subscription.keys.auth,
+       },
+       device_type: /iPhone/.test(navigator.userAgent) ? "iOS" : "Browser",
+       user_agent: navigator.userAgent,
+      }),
+     });
 
-          const result = await response.json();
+     const result = await response.json();
 
-          if (result.success) {
-            subscriptionId = result.subscription_id;
-            output.textContent += log(
-              "Subscription registered with ID: " + subscriptionId,
-            );
+     if (result.success) {
+      subscriptionId = result.subscription_id;
+      output.textContent += log("Subscription registered with ID: " + subscriptionId);
 
-            showStatus(
-              "subscriptionStatus",
-              "Success! Subscription ID: " + subscriptionId,
-              "success",
-            );
-            document.getElementById("testPushBtn").disabled = false;
-          } else {
-            throw new Error("API registration failed: " + result.message);
-          }
-        } catch (error) {
-          output.textContent += log(
-            "Subscription generation failed: " + error.message,
-            true,
-          );
-          showStatus("subscriptionStatus", "Error: " + error.message, "error");
-          console.error("Subscription error:", error);
-        }
-      }
+      showStatus("subscriptionStatus", "Success! Subscription ID: " + subscriptionId, "success");
+      document.getElementById("testPushBtn").disabled = false;
+     } else {
+      throw new Error("API registration failed: " + result.message);
+     }
+    } catch (error) {
+     output.textContent += log("Subscription generation failed: " + error.message, true);
+     showStatus("subscriptionStatus", "Error: " + error.message, "error");
+     console.error("Subscription error:", error);
+    }
+   }
 
-      async function sendTestPush() {
-        if (!subscriptionId) {
-          alert("Please generate a subscription first");
-          return;
-        }
+   async function sendTestPush() {
+    if (!subscriptionId) {
+     alert("Please generate a subscription first");
+     return;
+    }
 
-        const output = document.getElementById("pushOutput");
-        output.style.display = "block";
-        output.textContent = "";
+    const output = document.getElementById("pushOutput");
+    output.style.display = "block";
+    output.textContent = "";
 
-        try {
-          showStatus(
-            "pushStatus",
-            "Sending live test push notification...",
-            "info",
-          );
-          output.textContent += log("Sending live test push notification...");
+    try {
+     showStatus("pushStatus", "Sending live test push notification...", "info");
+     output.textContent += log("Sending live test push notification...");
 
-          const response = await fetch("/api/notifications/push", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              subscriptionId: subscriptionId,
-              notification: {
-                title: "Live Device Test",
-                body: "This is a real-device push from Phase 3!",
-                icon: "/assets/icon-192.png",
-                url: "/inbox",
-              },
-            }),
-          });
+     const response = await fetch("/api/notifications/push", {
+      method: "POST",
+      headers: {
+       "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+       subscriptionId: subscriptionId,
+       notification: {
+        title: "Live Device Test",
+        body: "This is a real-device push from Phase 3!",
+        icon: "/assets/icon-192.png",
+        url: "/inbox",
+       },
+      }),
+     });
 
-          const result = await response.json();
+     const result = await response.json();
 
-          if (result.success) {
-            output.textContent += log(
-              "Live push notification sent successfully!",
-            );
-            output.textContent += log("Server Response:");
-            output.textContent += log(JSON.stringify(result, null, 2));
+     if (result.success) {
+      output.textContent += log("Live push notification sent successfully!");
+      output.textContent += log("Server Response:");
+      output.textContent += log(JSON.stringify(result, null, 2));
 
-            showStatus(
-              "pushStatus",
-              "Success! Check your device for the notification!",
-              "success",
-            );
+      showStatus("pushStatus", "Success! Check your device for the notification!", "success");
 
-            // Update final results
-            document.getElementById("finalResults").innerHTML = [
-              '<div class="status success">',
-              "<h3>Phase 3.2 Real Device Test - SUCCESS!</h3>",
-              "<p><strong>Device:</strong> " +
-                (/iPhone/.test(navigator.userAgent)
-                  ? "iOS Device"
-                  : "Browser") +
-                "</p>",
-              "<p><strong>Subscription ID:</strong> " + subscriptionId + "</p>",
-              "<p><strong>Push Sent:</strong> " +
-                new Date().toLocaleString() +
-                "</p>",
-              "<p><strong>Endpoint:</strong> " +
-                subscription.endpoint.substring(0, 50) +
-                "...</p>",
-              "</div>",
-              '<div class="key-info">',
-              "<h4>Next Steps:</h4>",
-              "<p>1. Verify notification appeared on your device</p>",
-              "<p>2. Confirm Phase 3 is complete</p>",
-              "<p>3. Ready for Phase 4: Database Optimization</p>",
-              "</div>",
-            ].join("");
-          } else {
-            throw new Error("Push test failed: " + result.message);
-          }
-        } catch (error) {
-          output.textContent += log("Push test failed: " + error.message, true);
-          showStatus("pushStatus", "Error: " + error.message, "error");
-          console.error("Push test error:", error);
+      // Update final results
+      document.getElementById("finalResults").innerHTML = [
+       '<div class="status success">',
+       "<h3>Phase 3.2 Real Device Test - SUCCESS!</h3>",
+       "<p><strong>Device:</strong> " +
+        (/iPhone/.test(navigator.userAgent) ? "iOS Device" : "Browser") +
+        "</p>",
+       "<p><strong>Subscription ID:</strong> " + subscriptionId + "</p>",
+       "<p><strong>Push Sent:</strong> " + new Date().toLocaleString() + "</p>",
+       "<p><strong>Endpoint:</strong> " + subscription.endpoint.substring(0, 50) + "...</p>",
+       "</div>",
+       '<div class="key-info">',
+       "<h4>Next Steps:</h4>",
+       "<p>1. Verify notification appeared on your device</p>",
+       "<p>2. Confirm Phase 3 is complete</p>",
+       "<p>3. Ready for Phase 4: Database Optimization</p>",
+       "</div>",
+      ].join("");
+     } else {
+      throw new Error("Push test failed: " + result.message);
+     }
+    } catch (error) {
+     output.textContent += log("Push test failed: " + error.message, true);
+     showStatus("pushStatus", "Error: " + error.message, "error");
+     console.error("Push test error:", error);
 
-          // Update final results with error
-          document.getElementById("finalResults").innerHTML = [
-            '<div class="status error">',
-            "<h3>Phase 3.2 Real Device Test - FAILED</h3>",
-            "<p><strong>Error:</strong> " + error.message + "</p>",
-            "<p><strong>Device:</strong> " +
-              (/iPhone/.test(navigator.userAgent) ? "iOS Device" : "Browser") +
-              "</p>",
-            "<p><strong>Subscription ID:</strong> " +
-              (subscriptionId || "N/A") +
-              "</p>",
-            "</div>",
-          ].join("");
-        }
-      }
+     // Update final results with error
+     document.getElementById("finalResults").innerHTML = [
+      '<div class="status error">',
+      "<h3>Phase 3.2 Real Device Test - FAILED</h3>",
+      "<p><strong>Error:</strong> " + error.message + "</p>",
+      "<p><strong>Device:</strong> " +
+       (/iPhone/.test(navigator.userAgent) ? "iOS Device" : "Browser") +
+       "</p>",
+      "<p><strong>Subscription ID:</strong> " + (subscriptionId || "N/A") + "</p>",
+      "</div>",
+     ].join("");
+    }
+   }
 
-      // Auto-detect iOS Safari and show specific guidance
-      if (/iPhone/.test(navigator.userAgent)) {
-        document.addEventListener("DOMContentLoaded", function () {
-          const container = document.querySelector(".container");
-          const iosWarning = document.createElement("div");
-          iosWarning.className = "status info";
-          iosWarning.innerHTML = [
-            "<h3>iOS Safari Detected</h3>",
-            "<p>For best results on iOS:</p>",
-            '<ul style="margin: 10px 0; padding-left: 20px;">',
-            "<li>Add this page to your home screen first</li>",
-            "<li>Open from home screen icon (PWA mode)</li>",
-            "<li>Grant notification permissions when prompted</li>",
-            "</ul>",
-          ].join("");
-          container.insertBefore(iosWarning, container.firstChild.nextSibling);
-        });
-      }
-    </script>
-  </body>
+   // Auto-detect iOS Safari and show specific guidance
+   if (/iPhone/.test(navigator.userAgent)) {
+    document.addEventListener("DOMContentLoaded", function () {
+     const container = document.querySelector(".container");
+     const iosWarning = document.createElement("div");
+     iosWarning.className = "status info";
+     iosWarning.innerHTML = [
+      "<h3>iOS Safari Detected</h3>",
+      "<p>For best results on iOS:</p>",
+      '<ul style="margin: 10px 0; padding-left: 20px;">',
+      "<li>Add this page to your home screen first</li>",
+      "<li>Open from home screen icon (PWA mode)</li>",
+      "<li>Grant notification permissions when prompted</li>",
+      "</ul>",
+     ].join("");
+     container.insertBefore(iosWarning, container.firstChild.nextSibling);
+    });
+   }
+  </script>
+ </body>
 </html>

@@ -2,10 +2,7 @@ import { storage } from "../storage";
 import { NOTIFICATION_REGISTRY } from "../config/notificationRegistry";
 import logger from "../logger";
 
-export async function validateNotificationPermissions(
- userId: number,
- eventType: string
-): Promise<boolean> {
+export async function validateNotificationPermissions(userId: number, eventType: string): Promise<boolean> {
  try {
   const event = NOTIFICATION_REGISTRY[eventType];
   if (!event) {
@@ -28,9 +25,7 @@ export async function validateNotificationPermissions(
   // Check role permissions
   if (!event.recipient_criteria.roles.includes(user.role)) {
    logger.debug(
-    `User ${userId} role ${
-     user.role
-    } not in allowed roles: ${event.recipient_criteria.roles.join(", ")}`
+    `User ${userId} role ${user.role} not in allowed roles: ${event.recipient_criteria.roles.join(", ")}`,
    );
    return false;
   }
@@ -38,7 +33,7 @@ export async function validateNotificationPermissions(
   // Check page-specific permissions
   const pageKey = event.action_url.replace("/", "");
   const userPermissions = await storage.getUserPermissions(userId);
-  const pagePermission = userPermissions.find((p) => p.page_key === pageKey);
+  const pagePermission = userPermissions.find(p => p.page_key === pageKey);
 
   if (pagePermission && pagePermission.permission_level === "hidden") {
    logger.debug(`User ${userId} has hidden permission for page ${pageKey}`);
@@ -48,17 +43,12 @@ export async function validateNotificationPermissions(
   // Check notification preferences
   const preferences = await storage.getNotificationPreferencesByUser(userId);
   if (!preferences) {
-   logger.debug(
-    `No preferences found for user ${userId}, defaulting to enabled`
-   );
+   logger.debug(`No preferences found for user ${userId}, defaulting to enabled`);
    return true; // Default to enabled
   }
 
   // Check global notification settings
-  if (
-   !preferences.notifications_enabled ||
-   !preferences.push_notifications_enabled
-  ) {
+  if (!preferences.notifications_enabled || !preferences.push_notifications_enabled) {
    logger.debug(`User ${userId} has disabled global notifications`);
    return false;
   }
@@ -87,7 +77,7 @@ export async function validateNotificationPermissions(
 
 export async function getNotificationRecipients(
  eventType: string,
- excludeUserId?: number
+ excludeUserId?: number,
 ): Promise<number[]> {
  try {
   const event = NOTIFICATION_REGISTRY[eventType];

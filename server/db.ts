@@ -10,9 +10,7 @@ import * as schema from "@shared/schema";
 neonConfig.webSocketConstructor = ws;
 
 if (!process.env.DATABASE_URL) {
- throw new Error(
-  "DATABASE_URL must be set. Did you forget to provision a database?"
- );
+ throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
 }
 
 export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -36,18 +34,13 @@ export async function checkDatabaseConnection(): Promise<{
 }
 
 // Helper function to handle database operations with error handling
-export async function withErrorHandling<T>(
- operation: () => Promise<T>,
- operationName: string
-): Promise<T> {
+export async function withErrorHandling<T>(operation: () => Promise<T>, operationName: string): Promise<T> {
  try {
   return await operation();
  } catch (error) {
   console.error(`Database error in ${operationName}:`, error);
   throw new Error(
-   `Database operation failed: ${operationName}${
-    error instanceof Error ? ` - ${error.message}` : ""
-   }`
+   `Database operation failed: ${operationName}${error instanceof Error ? ` - ${error.message}` : ""}`,
   );
  }
 }

@@ -99,12 +99,12 @@ CMD ["npm", "start"]
 import { z } from "zod";
 
 const environmentSchema = z.object({
-  NODE_ENV: z.enum(["development", "production", "test"]),
-  DATABASE_URL: z.string().url(),
-  SESSION_SECRET: z.string().min(32),
-  ALLOWED_ORIGINS: z.string().optional(),
-  PORT: z.string().transform(Number).default("5000"),
-  LOG_LEVEL: z.enum(["error", "warn", "info", "debug"]).default("info"),
+ NODE_ENV: z.enum(["development", "production", "test"]),
+ DATABASE_URL: z.string().url(),
+ SESSION_SECRET: z.string().min(32),
+ ALLOWED_ORIGINS: z.string().optional(),
+ PORT: z.string().transform(Number).default("5000"),
+ LOG_LEVEL: z.enum(["error", "warn", "info", "debug"]).default("info"),
 });
 
 export const env = environmentSchema.parse(process.env);
@@ -152,21 +152,21 @@ aws s3 cp "$BACKUP_DIR/backup_$TIMESTAMP.sql" s3://your-backup-bucket/
 # .github/workflows/deploy.yml
 name: Deploy to Production
 on:
-  push:
-    branches: [main]
+ push:
+  branches: [main]
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run Tests
-        run: npm test
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to Production
-        run: npm run deploy
+ test:
+  runs-on: ubuntu-latest
+  steps:
+   - uses: actions/checkout@v3
+   - name: Run Tests
+     run: npm test
+ deploy:
+  needs: test
+  runs-on: ubuntu-latest
+  steps:
+   - name: Deploy to Production
+     run: npm run deploy
 ```
 
 **Benefits:**
@@ -214,29 +214,25 @@ jobs:
 // monitoring/alerts.ts
 import { logger } from "../server/logger";
 
-export function sendAlert(
-  level: "error" | "warning",
-  message: string,
-  data?: any,
-) {
-  logger.error(message, data);
+export function sendAlert(level: "error" | "warning", message: string, data?: any) {
+ logger.error(message, data);
 
-  // Send to monitoring service
-  if (process.env.SLACK_WEBHOOK_URL) {
-    fetch(process.env.SLACK_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: `${level.toUpperCase()}: ${message}`,
-        attachments: [
-          {
-            color: level === "error" ? "danger" : "warning",
-            text: JSON.stringify(data),
-          },
-        ],
-      }),
-    });
-  }
+ // Send to monitoring service
+ if (process.env.SLACK_WEBHOOK_URL) {
+  fetch(process.env.SLACK_WEBHOOK_URL, {
+   method: "POST",
+   headers: { "Content-Type": "application/json" },
+   body: JSON.stringify({
+    text: `${level.toUpperCase()}: ${message}`,
+    attachments: [
+     {
+      color: level === "error" ? "danger" : "warning",
+      text: JSON.stringify(data),
+     },
+    ],
+   }),
+  });
+ }
 }
 ```
 
@@ -257,15 +253,15 @@ export function sendAlert(
 ```typescript
 // monitoring/resources.ts
 export function monitorResources() {
-  const usage = process.memoryUsage();
-  const cpuUsage = process.cpuUsage();
+ const usage = process.memoryUsage();
+ const cpuUsage = process.cpuUsage();
 
-  if (usage.heapUsed > 512 * 1024 * 1024) {
-    // 512MB
-    logger.warn("High memory usage detected", { memory: usage });
-  }
+ if (usage.heapUsed > 512 * 1024 * 1024) {
+  // 512MB
+  logger.warn("High memory usage detected", { memory: usage });
+ }
 
-  return { memory: usage, cpu: cpuUsage };
+ return { memory: usage, cpu: cpuUsage };
 }
 ```
 

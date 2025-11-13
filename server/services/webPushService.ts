@@ -48,11 +48,7 @@ export class WebPushService {
   }
 
   // Configure web-push with VAPID details
-  webpush.setVapidDetails(
-   this.vapidSubject,
-   this.vapidPublicKey,
-   this.vapidPrivateKey
-  );
+  webpush.setVapidDetails(this.vapidSubject, this.vapidPublicKey, this.vapidPrivateKey);
 
   logger.info("WebPushService initialized", {
    vapid_subject: this.vapidSubject,
@@ -70,10 +66,7 @@ export class WebPushService {
  /**
   * Send web push notification to a single subscription
   */
- async sendWebPush(
-  subscription: WebPushSubscription,
-  payload: NotificationPayload
- ): Promise<WebPushResult> {
+ async sendWebPush(subscription: WebPushSubscription, payload: NotificationPayload): Promise<WebPushResult> {
   try {
    // Construct web push subscription object
    const pushSubscription = {
@@ -128,10 +121,7 @@ export class WebPushService {
  /**
   * Handle web push errors with appropriate actions
   */
- private async handleWebPushError(
-  error: any,
-  subscription: WebPushSubscription
- ): Promise<WebPushResult> {
+ private async handleWebPushError(error: any, subscription: WebPushSubscription): Promise<WebPushResult> {
   const statusCode = error.statusCode || error.status || 0;
   const errorMessage = error.message || "Unknown error";
 
@@ -211,7 +201,7 @@ export class WebPushService {
  async getUserSubscriptions(userId: number): Promise<WebPushSubscription[]> {
   try {
    const subscriptions = await storage.getActivePushSubscriptions(userId);
-   return subscriptions.map((sub) => ({
+   return subscriptions.map(sub => ({
     id: sub.id,
     user_id: sub.user_id,
     endpoint: sub.endpoint,
@@ -233,7 +223,7 @@ export class WebPushService {
   */
  async sendToUser(
   userId: number,
-  payload: NotificationPayload
+  payload: NotificationPayload,
  ): Promise<{ sent: number; failed: number; errors: string[] }> {
   const subscriptions = await this.getUserSubscriptions(userId);
 
@@ -242,9 +232,7 @@ export class WebPushService {
    return { sent: 0, failed: 0, errors: ["No active subscriptions"] };
   }
 
-  const results = await Promise.allSettled(
-   subscriptions.map((sub) => this.sendWebPush(sub, payload))
-  );
+  const results = await Promise.allSettled(subscriptions.map(sub => this.sendWebPush(sub, payload)));
 
   let sent = 0;
   let failed = 0;
@@ -255,8 +243,7 @@ export class WebPushService {
     sent++;
    } else {
     failed++;
-    const error =
-     result.status === "rejected" ? result.reason?.message : result.value.error;
+    const error = result.status === "rejected" ? result.reason?.message : result.value.error;
     errors.push(`Subscription ${subscriptions[index].id}: ${error}`);
    }
   });

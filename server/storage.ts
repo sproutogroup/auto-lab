@@ -82,20 +82,7 @@ import {
  type InsertPinnedMessage,
 } from "@shared/schema";
 import { db } from "./db";
-import {
- eq,
- desc,
- sql,
- and,
- gte,
- lte,
- isNotNull,
- gt,
- isNull,
- or,
- ilike,
- lt,
-} from "drizzle-orm";
+import { eq, desc, sql, and, gte, lte, isNotNull, gt, isNull, or, ilike, lt } from "drizzle-orm";
 import { NotificationEventService } from "./services/notificationEventService";
 
 export interface IStorage {
@@ -127,10 +114,7 @@ export interface IStorage {
  getCustomersByType(customerType: string): Promise<Customer[]>;
  getCustomerById(id: number): Promise<Customer | undefined>;
  createCustomer(customer: InsertCustomer): Promise<Customer>;
- updateCustomer(
-  id: number,
-  customer: Partial<InsertCustomer>
- ): Promise<Customer>;
+ updateCustomer(id: number, customer: Partial<InsertCustomer>): Promise<Customer>;
  deleteCustomer(id: number): Promise<boolean>;
  searchCustomers(query: string): Promise<Customer[]>;
  getCustomerStats(): Promise<{
@@ -189,19 +173,12 @@ export interface IStorage {
  createPurchase(purchase: InsertPurchase): Promise<Purchase>;
 
  // Customer Purchase operations
- getAllCustomerPurchases(): Promise<
-  Array<CustomerPurchase & { vehicle: Vehicle; salesperson?: User }>
- >;
+ getAllCustomerPurchases(): Promise<Array<CustomerPurchase & { vehicle: Vehicle; salesperson?: User }>>;
  getCustomerPurchases(
-  customerId: number
+  customerId: number,
  ): Promise<Array<CustomerPurchase & { vehicle: Vehicle; salesperson?: User }>>;
- createCustomerPurchase(
-  purchase: InsertCustomerPurchase
- ): Promise<CustomerPurchase>;
- updateCustomerPurchase(
-  id: number,
-  purchase: Partial<InsertCustomerPurchase>
- ): Promise<CustomerPurchase>;
+ createCustomerPurchase(purchase: InsertCustomerPurchase): Promise<CustomerPurchase>;
+ updateCustomerPurchase(id: number, purchase: Partial<InsertCustomerPurchase>): Promise<CustomerPurchase>;
  deleteCustomerPurchase(id: number): Promise<boolean>;
 
  // Lead operations - Enhanced sales pipeline
@@ -214,7 +191,7 @@ export interface IStorage {
  deleteLead(id: number): Promise<boolean>;
  convertLeadToCustomer(
   leadId: number,
-  customerData: InsertCustomer
+  customerData: InsertCustomer,
  ): Promise<{ lead: Lead; customer: Customer }>;
  assignVehicleToLead(leadId: number, vehicleId: number): Promise<Lead>;
  getLeadStats(): Promise<{
@@ -245,10 +222,7 @@ export interface IStorage {
  getAppointmentsByDate(date: Date): Promise<Appointment[]>;
  getAppointmentsByMonth(year: number, month: number): Promise<Appointment[]>;
  createAppointment(appointment: InsertAppointment): Promise<Appointment>;
- updateAppointment(
-  id: number,
-  appointment: Partial<InsertAppointment>
- ): Promise<Appointment>;
+ updateAppointment(id: number, appointment: Partial<InsertAppointment>): Promise<Appointment>;
  deleteAppointment(id: number): Promise<boolean>;
 
  // Task operations
@@ -262,10 +236,7 @@ export interface IStorage {
  getInteractionsByLead(leadId: number): Promise<Interaction[]>;
  getInteractionsByCustomer(customerId: number): Promise<Interaction[]>;
  createInteraction(interaction: InsertInteraction): Promise<Interaction>;
- updateInteraction(
-  id: number,
-  interaction: Partial<InsertInteraction>
- ): Promise<Interaction>;
+ updateInteraction(id: number, interaction: Partial<InsertInteraction>): Promise<Interaction>;
  deleteInteraction(id: number): Promise<boolean>;
 
  // Dashboard analytics
@@ -401,15 +372,9 @@ export interface IStorage {
  getStaffSchedules(): Promise<StaffSchedule[]>;
  getStaffSchedulesByUser(userId: number): Promise<StaffSchedule[]>;
  getStaffSchedulesByDate(date: Date): Promise<StaffSchedule[]>;
- getStaffSchedulesByDateRange(
-  startDate: Date,
-  endDate: Date
- ): Promise<StaffSchedule[]>;
+ getStaffSchedulesByDateRange(startDate: Date, endDate: Date): Promise<StaffSchedule[]>;
  createStaffSchedule(schedule: InsertStaffSchedule): Promise<StaffSchedule>;
- updateStaffSchedule(
-  id: number,
-  schedule: Partial<InsertStaffSchedule>
- ): Promise<StaffSchedule>;
+ updateStaffSchedule(id: number, schedule: Partial<InsertStaffSchedule>): Promise<StaffSchedule>;
  deleteStaffSchedule(id: number): Promise<boolean>;
  getStaffAvailability(userId: number, date: Date): Promise<StaffSchedule[]>;
 
@@ -417,23 +382,13 @@ export interface IStorage {
  getJobProgress(): Promise<JobProgress[]>;
  getJobProgressByJob(jobId: number): Promise<JobProgress[]>;
  createJobProgress(progress: InsertJobProgress): Promise<JobProgress>;
- updateJobProgress(
-  id: number,
-  progress: Partial<InsertJobProgress>
- ): Promise<JobProgress>;
+ updateJobProgress(id: number, progress: Partial<InsertJobProgress>): Promise<JobProgress>;
 
  // Vehicle Logistics operations
  getVehicleLogistics(): Promise<VehicleLogistics[]>;
- getVehicleLogisticsByVehicle(
-  vehicleId: number
- ): Promise<VehicleLogistics | undefined>;
- createVehicleLogistics(
-  logistics: InsertVehicleLogistics
- ): Promise<VehicleLogistics>;
- updateVehicleLogistics(
-  id: number,
-  logistics: Partial<InsertVehicleLogistics>
- ): Promise<VehicleLogistics>;
+ getVehicleLogisticsByVehicle(vehicleId: number): Promise<VehicleLogistics | undefined>;
+ createVehicleLogistics(logistics: InsertVehicleLogistics): Promise<VehicleLogistics>;
+ updateVehicleLogistics(id: number, logistics: Partial<InsertVehicleLogistics>): Promise<VehicleLogistics>;
  deleteVehicleLogistics(id: number): Promise<boolean>;
 
  // Job Templates operations
@@ -441,10 +396,7 @@ export interface IStorage {
  getJobTemplatesByCategory(category: string): Promise<JobTemplate[]>;
  getJobTemplateById(id: number): Promise<JobTemplate | undefined>;
  createJobTemplate(template: InsertJobTemplate): Promise<JobTemplate>;
- updateJobTemplate(
-  id: number,
-  template: Partial<InsertJobTemplate>
- ): Promise<JobTemplate>;
+ updateJobTemplate(id: number, template: Partial<InsertJobTemplate>): Promise<JobTemplate>;
  deleteJobTemplate(id: number): Promise<boolean>;
 
  // Job operations - Comprehensive logistics management
@@ -486,15 +438,9 @@ export interface IStorage {
  getStaffSchedules(): Promise<StaffSchedule[]>;
  getStaffSchedulesByUser(userId: number): Promise<StaffSchedule[]>;
  getStaffSchedulesByDate(date: Date): Promise<StaffSchedule[]>;
- getStaffSchedulesByDateRange(
-  startDate: Date,
-  endDate: Date
- ): Promise<StaffSchedule[]>;
+ getStaffSchedulesByDateRange(startDate: Date, endDate: Date): Promise<StaffSchedule[]>;
  createStaffSchedule(schedule: InsertStaffSchedule): Promise<StaffSchedule>;
- updateStaffSchedule(
-  id: number,
-  schedule: Partial<InsertStaffSchedule>
- ): Promise<StaffSchedule>;
+ updateStaffSchedule(id: number, schedule: Partial<InsertStaffSchedule>): Promise<StaffSchedule>;
  deleteStaffSchedule(id: number): Promise<boolean>;
  getStaffAvailability(date: Date): Promise<
   Array<{
@@ -509,10 +455,7 @@ export interface IStorage {
  // Job Progress operations
  getJobProgress(jobId: number): Promise<JobProgress[]>;
  createJobProgress(progress: InsertJobProgress): Promise<JobProgress>;
- updateJobProgress(
-  id: number,
-  progress: Partial<InsertJobProgress>
- ): Promise<JobProgress>;
+ updateJobProgress(id: number, progress: Partial<InsertJobProgress>): Promise<JobProgress>;
  getActiveJobsProgress(): Promise<
   Array<{
    jobId: number;
@@ -526,17 +469,10 @@ export interface IStorage {
 
  // Vehicle Logistics operations
  getVehicleLogistics(): Promise<VehicleLogistics[]>;
- getVehicleLogisticsByVehicle(
-  vehicleId: number
- ): Promise<VehicleLogistics | undefined>;
+ getVehicleLogisticsByVehicle(vehicleId: number): Promise<VehicleLogistics | undefined>;
  getVehicleLogisticsByStatus(status: string): Promise<VehicleLogistics[]>;
- createVehicleLogistics(
-  logistics: InsertVehicleLogistics
- ): Promise<VehicleLogistics>;
- updateVehicleLogistics(
-  id: number,
-  logistics: Partial<InsertVehicleLogistics>
- ): Promise<VehicleLogistics>;
+ createVehicleLogistics(logistics: InsertVehicleLogistics): Promise<VehicleLogistics>;
+ updateVehicleLogistics(id: number, logistics: Partial<InsertVehicleLogistics>): Promise<VehicleLogistics>;
  deleteVehicleLogistics(id: number): Promise<boolean>;
  getLogisticsOverview(): Promise<{
   totalVehicles: number;
@@ -555,24 +491,15 @@ export interface IStorage {
  getJobTemplatesByCategory(category: string): Promise<JobTemplate[]>;
  getJobTemplateById(id: number): Promise<JobTemplate | undefined>;
  createJobTemplate(template: InsertJobTemplate): Promise<JobTemplate>;
- updateJobTemplate(
-  id: number,
-  template: Partial<InsertJobTemplate>
- ): Promise<JobTemplate>;
+ updateJobTemplate(id: number, template: Partial<InsertJobTemplate>): Promise<JobTemplate>;
  deleteJobTemplate(id: number): Promise<boolean>;
- createJobFromTemplate(
-  templateId: number,
-  jobData: Partial<InsertJob>
- ): Promise<Job>;
+ createJobFromTemplate(templateId: number, jobData: Partial<InsertJob>): Promise<Job>;
 
  // Bought Vehicles operations - Separate monitoring system
  getBoughtVehicles(): Promise<BoughtVehicle[]>;
  getBoughtVehicleById(id: number): Promise<BoughtVehicle | undefined>;
  createBoughtVehicle(vehicle: InsertBoughtVehicle): Promise<BoughtVehicle>;
- updateBoughtVehicle(
-  id: number,
-  vehicle: Partial<InsertBoughtVehicle>
- ): Promise<BoughtVehicle>;
+ updateBoughtVehicle(id: number, vehicle: Partial<InsertBoughtVehicle>): Promise<BoughtVehicle>;
  deleteBoughtVehicle(id: number): Promise<boolean>;
  getBoughtVehicleStats(): Promise<{
   totalVehicles: number;
@@ -592,13 +519,8 @@ export interface IStorage {
  // Purchase Invoice operations
  getPurchaseInvoices(): Promise<PurchaseInvoice[]>;
  getPurchaseInvoiceById(id: number): Promise<PurchaseInvoice | undefined>;
- createPurchaseInvoice(
-  invoice: InsertPurchaseInvoice
- ): Promise<PurchaseInvoice>;
- updatePurchaseInvoice(
-  id: number,
-  invoice: Partial<InsertPurchaseInvoice>
- ): Promise<PurchaseInvoice>;
+ createPurchaseInvoice(invoice: InsertPurchaseInvoice): Promise<PurchaseInvoice>;
+ updatePurchaseInvoice(id: number, invoice: Partial<InsertPurchaseInvoice>): Promise<PurchaseInvoice>;
  deletePurchaseInvoice(id: number): Promise<boolean>;
  getPurchaseInvoiceStats(): Promise<{
   totalInvoices: number;
@@ -610,10 +532,7 @@ export interface IStorage {
  getSalesInvoices(): Promise<SalesInvoice[]>;
  getSalesInvoiceById(id: number): Promise<SalesInvoice | undefined>;
  createSalesInvoice(invoice: InsertSalesInvoice): Promise<SalesInvoice>;
- updateSalesInvoice(
-  id: number,
-  invoice: Partial<InsertSalesInvoice>
- ): Promise<SalesInvoice>;
+ updateSalesInvoice(id: number, invoice: Partial<InsertSalesInvoice>): Promise<SalesInvoice>;
  deleteSalesInvoice(id: number): Promise<boolean>;
  getSalesInvoiceStats(): Promise<{
   totalInvoices: number;
@@ -923,32 +842,17 @@ export interface IStorage {
 
  // Permission management operations
  getPageDefinitions(): Promise<PageDefinition[]>;
- createPageDefinition(
-  pageDefinition: InsertPageDefinition
- ): Promise<PageDefinition>;
- updatePageDefinition(
-  id: number,
-  pageDefinition: Partial<InsertPageDefinition>
- ): Promise<PageDefinition>;
+ createPageDefinition(pageDefinition: InsertPageDefinition): Promise<PageDefinition>;
+ updatePageDefinition(id: number, pageDefinition: Partial<InsertPageDefinition>): Promise<PageDefinition>;
  deletePageDefinition(id: number): Promise<boolean>;
 
  getUserPermissions(userId: number): Promise<UserPermission[]>;
- getUserPermissionsByPageKey(
-  userId: number,
-  pageKey: string
- ): Promise<UserPermission | undefined>;
- createUserPermission(
-  userPermission: InsertUserPermission
- ): Promise<UserPermission>;
- updateUserPermission(
-  id: number,
-  userPermission: Partial<InsertUserPermission>
- ): Promise<UserPermission>;
+ getUserPermissionsByPageKey(userId: number, pageKey: string): Promise<UserPermission | undefined>;
+ createUserPermission(userPermission: InsertUserPermission): Promise<UserPermission>;
+ updateUserPermission(id: number, userPermission: Partial<InsertUserPermission>): Promise<UserPermission>;
  deleteUserPermission(id: number): Promise<boolean>;
  deleteUserPermissionsByUserId(userId: number): Promise<boolean>;
- getUsersWithPermissions(): Promise<
-  Array<User & { permissions: UserPermission[] }>
- >;
+ getUsersWithPermissions(): Promise<Array<User & { permissions: UserPermission[] }>>;
  initializeDefaultPages(): Promise<void>;
  getAccessiblePages(userId: number): Promise<
   Array<{
@@ -965,13 +869,8 @@ export interface IStorage {
  getPushSubscriptions(): Promise<PushSubscription[]>;
  getPushSubscriptionsByUser(userId: number): Promise<PushSubscription[]>;
  getPushSubscriptionById(id: number): Promise<PushSubscription | undefined>;
- createPushSubscription(
-  subscription: InsertPushSubscription
- ): Promise<PushSubscription>;
- updatePushSubscription(
-  id: number,
-  subscription: Partial<InsertPushSubscription>
- ): Promise<PushSubscription>;
+ createPushSubscription(subscription: InsertPushSubscription): Promise<PushSubscription>;
+ updatePushSubscription(id: number, subscription: Partial<InsertPushSubscription>): Promise<PushSubscription>;
  deletePushSubscription(id: number): Promise<boolean>;
  getUserActiveSubscriptions(userId: number): Promise<PushSubscription[]>;
  cleanupOldSubscriptions(userId: number): Promise<void>;
@@ -980,22 +879,16 @@ export interface IStorage {
  getDeviceRegistrations(): Promise<DeviceRegistration[]>;
  getDeviceRegistrationsByUser(userId: number): Promise<DeviceRegistration[]>;
  getDeviceRegistrationById(id: number): Promise<DeviceRegistration | undefined>;
- getDeviceRegistrationByToken(
-  deviceToken: string
- ): Promise<DeviceRegistration | undefined>;
- createDeviceRegistration(
-  registration: InsertDeviceRegistration
- ): Promise<DeviceRegistration>;
+ getDeviceRegistrationByToken(deviceToken: string): Promise<DeviceRegistration | undefined>;
+ createDeviceRegistration(registration: InsertDeviceRegistration): Promise<DeviceRegistration>;
  updateDeviceRegistration(
   id: number,
-  registration: Partial<InsertDeviceRegistration>
+  registration: Partial<InsertDeviceRegistration>,
  ): Promise<DeviceRegistration>;
  deleteDeviceRegistration(id: number): Promise<boolean>;
  deleteDeviceRegistrationByToken(deviceToken: string): Promise<boolean>;
  getUserActiveDevices(userId: number): Promise<DeviceRegistration[]>;
- getDeviceRegistrationsByPlatform(
-  platform: string
- ): Promise<DeviceRegistration[]>;
+ getDeviceRegistrationsByPlatform(platform: string): Promise<DeviceRegistration[]>;
  updateDeviceLastActive(deviceToken: string): Promise<void>;
  cleanupInactiveDevices(daysInactive: number): Promise<number>;
 
@@ -1003,13 +896,8 @@ export interface IStorage {
  getPinnedMessages(): Promise<PinnedMessage[]>;
  getPinnedMessagesForUser(userId: number): Promise<PinnedMessage[]>;
  getPinnedMessageById(id: number): Promise<PinnedMessage | undefined>;
- createPinnedMessage(
-  pinnedMessage: InsertPinnedMessage
- ): Promise<PinnedMessage>;
- updatePinnedMessage(
-  id: number,
-  pinnedMessage: Partial<InsertPinnedMessage>
- ): Promise<PinnedMessage>;
+ createPinnedMessage(pinnedMessage: InsertPinnedMessage): Promise<PinnedMessage>;
+ updatePinnedMessage(id: number, pinnedMessage: Partial<InsertPinnedMessage>): Promise<PinnedMessage>;
  deletePinnedMessage(id: number): Promise<boolean>;
  getActivePinnedMessages(): Promise<PinnedMessage[]>;
  getActivePinnedMessagesForUser(userId: number): Promise<PinnedMessage[]>;
@@ -1019,16 +907,10 @@ export interface IStorage {
  // Notification operations
  getNotifications(): Promise<Notification[]>;
  getNotificationsByUser(userId: number): Promise<Notification[]>;
- getNotificationsByUserAndStatus(
-  userId: number,
-  status: string
- ): Promise<Notification[]>;
+ getNotificationsByUserAndStatus(userId: number, status: string): Promise<Notification[]>;
  getNotificationById(id: number): Promise<Notification | undefined>;
  createNotification(notification: InsertNotification): Promise<Notification>;
- updateNotification(
-  id: number,
-  notification: Partial<InsertNotification>
- ): Promise<Notification>;
+ updateNotification(id: number, notification: Partial<InsertNotification>): Promise<Notification>;
  deleteNotification(id: number): Promise<boolean>;
  markNotificationAsRead(id: number): Promise<Notification>;
  markNotificationAsDismissed(id: number): Promise<Notification>;
@@ -1050,49 +932,30 @@ export interface IStorage {
 
  // Notification Preference operations
  getNotificationPreferences(): Promise<NotificationPreference[]>;
- getNotificationPreferencesByUser(
-  userId: number
- ): Promise<NotificationPreference | undefined>;
- createNotificationPreference(
-  preference: InsertNotificationPreference
- ): Promise<NotificationPreference>;
+ getNotificationPreferencesByUser(userId: number): Promise<NotificationPreference | undefined>;
+ createNotificationPreference(preference: InsertNotificationPreference): Promise<NotificationPreference>;
  updateNotificationPreference(
   id: number,
-  preference: Partial<InsertNotificationPreference>
+  preference: Partial<InsertNotificationPreference>,
  ): Promise<NotificationPreference>;
  deleteNotificationPreference(id: number): Promise<boolean>;
  getUserNotificationSettings(userId: number): Promise<NotificationPreference>;
 
  // Notification Event operations
  getNotificationEvents(): Promise<NotificationEvent[]>;
- getNotificationEventsByCategory(
-  category: string
- ): Promise<NotificationEvent[]>;
+ getNotificationEventsByCategory(category: string): Promise<NotificationEvent[]>;
  getNotificationEventById(id: number): Promise<NotificationEvent | undefined>;
- getNotificationEventByKey(
-  eventKey: string
- ): Promise<NotificationEvent | undefined>;
- createNotificationEvent(
-  event: InsertNotificationEvent
- ): Promise<NotificationEvent>;
- updateNotificationEvent(
-  id: number,
-  event: Partial<InsertNotificationEvent>
- ): Promise<NotificationEvent>;
+ getNotificationEventByKey(eventKey: string): Promise<NotificationEvent | undefined>;
+ createNotificationEvent(event: InsertNotificationEvent): Promise<NotificationEvent>;
+ updateNotificationEvent(id: number, event: Partial<InsertNotificationEvent>): Promise<NotificationEvent>;
  deleteNotificationEvent(id: number): Promise<boolean>;
  getActiveNotificationEvents(): Promise<NotificationEvent[]>;
 
  // Notification Analytics operations
  getNotificationAnalytics(): Promise<NotificationAnalytics[]>;
- getNotificationAnalyticsByNotification(
-  notificationId: number
- ): Promise<NotificationAnalytics[]>;
- getNotificationAnalyticsByUser(
-  userId: number
- ): Promise<NotificationAnalytics[]>;
- createNotificationAnalytics(
-  analytics: InsertNotificationAnalytics
- ): Promise<NotificationAnalytics>;
+ getNotificationAnalyticsByNotification(notificationId: number): Promise<NotificationAnalytics[]>;
+ getNotificationAnalyticsByUser(userId: number): Promise<NotificationAnalytics[]>;
+ createNotificationAnalytics(analytics: InsertNotificationAnalytics): Promise<NotificationAnalytics>;
  getNotificationPerformanceStats(): Promise<{
   total_sent: number;
   total_delivered: number;
@@ -1136,10 +999,7 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getUserByUsername(username: string): Promise<User | undefined> {
-  const [user] = await db
-   .select()
-   .from(users)
-   .where(eq(users.username, username));
+  const [user] = await db.select().from(users).where(eq(users.username, username));
   return user || undefined;
  }
 
@@ -1173,58 +1033,48 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Convert date strings to proper Date objects
-  ["date_of_registration", "purchase_invoice_date", "sale_date"].forEach(
-   (dateField) => {
-    const value = processed[dateField as keyof InsertVehicle];
-    if (value && value !== "") {
-     try {
-      let dateToConvert = value;
+  ["date_of_registration", "purchase_invoice_date", "sale_date"].forEach(dateField => {
+   const value = processed[dateField as keyof InsertVehicle];
+   if (value && value !== "") {
+    try {
+     let dateToConvert = value;
 
-      // Handle different date formats
-      if (typeof value === "string") {
-       // Handle DD-MMM-YY format like "30-Sep-20"
-       if (value.match(/^\d{1,2}-\w{3}-\d{2}$/)) {
-        const [day, month, year] = value.split("-");
-        const fullYear = parseInt(year) < 50 ? `20${year}` : `19${year}`;
-        dateToConvert = `${day}-${month}-${fullYear}`;
-       }
-       // Handle YYYY-MM-DD format from form
-       else if (value.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        dateToConvert = value;
-       }
-       // Handle ISO string format
-       else if (value.includes("T")) {
-        dateToConvert = value;
-       }
-       // Reject clearly invalid dates
-       else if (
-        value.length < 4 ||
-        value.startsWith("+") ||
-        value.includes("02020")
-       ) {
-        (processed as any)[dateField] = null;
-        return;
-       }
+     // Handle different date formats
+     if (typeof value === "string") {
+      // Handle DD-MMM-YY format like "30-Sep-20"
+      if (value.match(/^\d{1,2}-\w{3}-\d{2}$/)) {
+       const [day, month, year] = value.split("-");
+       const fullYear = parseInt(year) < 50 ? `20${year}` : `19${year}`;
+       dateToConvert = `${day}-${month}-${fullYear}`;
       }
-
-      const date = new Date(dateToConvert);
-      if (
-       !isNaN(date.getTime()) &&
-       date.getFullYear() > 1900 &&
-       date.getFullYear() < 2100
-      ) {
-       (processed as any)[dateField] = date;
-      } else {
+      // Handle YYYY-MM-DD format from form
+      else if (value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+       dateToConvert = value;
+      }
+      // Handle ISO string format
+      else if (value.includes("T")) {
+       dateToConvert = value;
+      }
+      // Reject clearly invalid dates
+      else if (value.length < 4 || value.startsWith("+") || value.includes("02020")) {
        (processed as any)[dateField] = null;
+       return;
       }
-     } catch {
+     }
+
+     const date = new Date(dateToConvert);
+     if (!isNaN(date.getTime()) && date.getFullYear() > 1900 && date.getFullYear() < 2100) {
+      (processed as any)[dateField] = date;
+     } else {
       (processed as any)[dateField] = null;
      }
-    } else if (value === "" || value === null) {
+    } catch {
      (processed as any)[dateField] = null;
     }
+   } else if (value === "" || value === null) {
+    (processed as any)[dateField] = null;
    }
-  );
+  });
 
   // Ensure decimal fields are properly formatted
   const decimalFields = [
@@ -1256,7 +1106,7 @@ export class DatabaseStorage implements IStorage {
    "adj_gp",
   ];
 
-  decimalFields.forEach((field) => {
+  decimalFields.forEach(field => {
    const value = processed[field as keyof InsertVehicle];
    if (typeof value === "string" && value) {
     const cleanValue = value.replace(/[£,]/g, "");
@@ -1279,19 +1129,16 @@ export class DatabaseStorage implements IStorage {
      entity_id: vehicle.id,
      data: { url: "/vehicle-master" },
     },
-    0
+    0,
    )
-   .catch((error) => {
+   .catch(error => {
     console.error("Failed to trigger vehicle.added notification:", error);
    });
 
   return vehicle;
  }
 
- async updateVehicle(
-  id: number,
-  updateVehicle: Partial<InsertVehicle>
- ): Promise<Vehicle> {
+ async updateVehicle(id: number, updateVehicle: Partial<InsertVehicle>): Promise<Vehicle> {
   // Process the update data similar to create/import
   const processed = { ...updateVehicle };
 
@@ -1306,12 +1153,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Convert date strings to proper Date objects - only process fields that exist in the update
-  const dateFields = [
-   "date_of_registration",
-   "purchase_invoice_date",
-   "sale_date",
-  ];
-  dateFields.forEach((dateField) => {
+  const dateFields = ["date_of_registration", "purchase_invoice_date", "sale_date"];
+  dateFields.forEach(dateField => {
    if (dateField in processed) {
     const value = processed[dateField as keyof Partial<InsertVehicle>];
 
@@ -1336,22 +1179,14 @@ export class DatabaseStorage implements IStorage {
         dateToConvert = value;
        }
        // Reject clearly invalid dates
-       else if (
-        value.length < 4 ||
-        value.startsWith("+") ||
-        value.includes("02020")
-       ) {
+       else if (value.length < 4 || value.startsWith("+") || value.includes("02020")) {
         (processed as any)[dateField] = null;
         return;
        }
       }
 
       const date = new Date(dateToConvert);
-      if (
-       !isNaN(date.getTime()) &&
-       date.getFullYear() > 1900 &&
-       date.getFullYear() < 2100
-      ) {
+      if (!isNaN(date.getTime()) && date.getFullYear() > 1900 && date.getFullYear() < 2100) {
        (processed as any)[dateField] = date;
       } else {
        (processed as any)[dateField] = null;
@@ -1367,8 +1202,7 @@ export class DatabaseStorage implements IStorage {
 
   // Financial calculation helper functions
   const parseFinancialValue = (value: any): number => {
-   if (!value || value === "" || value === "null" || value === "undefined")
-    return 0;
+   if (!value || value === "" || value === "null" || value === "undefined") return 0;
    const cleanValue = value.toString().replace(/[£,\s]/g, "");
    const numValue = parseFloat(cleanValue);
    return isNaN(numValue) || !isFinite(numValue) ? 0 : numValue;
@@ -1405,7 +1239,7 @@ export class DatabaseStorage implements IStorage {
    "warranty_costs",
   ];
 
-  decimalFields.forEach((field) => {
+  decimalFields.forEach(field => {
    const value = processed[field as keyof Partial<InsertVehicle>];
    if (typeof value === "string" && value) {
     const cleanValue = value.replace(/[£,]/g, "");
@@ -1453,14 +1287,9 @@ export class DatabaseStorage implements IStorage {
   const updateData = { ...processed, updatedAt: new Date() };
 
   // Final validation of all date fields
-  Object.keys(updateData).forEach((key) => {
+  Object.keys(updateData).forEach(key => {
    const value = updateData[key as keyof typeof updateData];
-   if (
-    key.includes("date") ||
-    key.includes("Date") ||
-    key === "updatedAt" ||
-    key === "createdAt"
-   ) {
+   if (key.includes("date") || key.includes("Date") || key === "updatedAt" || key === "createdAt") {
     if (value !== null && value !== undefined && !(value instanceof Date)) {
      if (typeof value === "string") {
       const date = new Date(value);
@@ -1476,11 +1305,7 @@ export class DatabaseStorage implements IStorage {
    }
   });
 
-  const [vehicle] = await db
-   .update(vehicles)
-   .set(updateData)
-   .where(eq(vehicles.id, id))
-   .returning();
+  const [vehicle] = await db.update(vehicles).set(updateData).where(eq(vehicles.id, id)).returning();
 
   // Trigger notification event for vehicle updated
   this.notificationEventService
@@ -1493,17 +1318,14 @@ export class DatabaseStorage implements IStorage {
      entity_id: vehicle.id,
      data: { url: "/vehicle-master" },
     },
-    0
+    0,
    )
-   .catch((error) => {
+   .catch(error => {
     console.error("Failed to trigger vehicle.updated notification:", error);
    });
 
   // Trigger vehicle.sold notification if status changed to SOLD
-  if (
-   processed.sales_status &&
-   processed.sales_status.toString().toUpperCase() === "SOLD"
-  ) {
+  if (processed.sales_status && processed.sales_status.toString().toUpperCase() === "SOLD") {
    this.notificationEventService
     .triggerEvent(
      "vehicle.sold",
@@ -1513,48 +1335,36 @@ export class DatabaseStorage implements IStorage {
       entity_id: vehicle.id,
       data: { url: "/vehicle-master" },
      },
-     0
+     0,
     )
-    .catch((error) => {
+    .catch(error => {
      console.error("Failed to trigger vehicle.sold notification:", error);
     });
   }
 
   // 🚀 CRITICAL FIX: Broadcast vehicle update via WebSocket for real-time dashboard updates
-  console.log(
-   `🚨 STORAGE: Vehicle ${id} updated, triggering WebSocket broadcast`
-  );
+  console.log(`🚨 STORAGE: Vehicle ${id} updated, triggering WebSocket broadcast`);
   const webSocketService = (global as any).webSocketService;
   if (webSocketService) {
-   console.log(
-    `🚨 STORAGE: Broadcasting vehicle update for vehicle ${vehicle.id} (${vehicle.stock_number})`
-   );
+   console.log(`🚨 STORAGE: Broadcasting vehicle update for vehicle ${vehicle.id} (${vehicle.stock_number})`);
 
    try {
     // Broadcast vehicle updated event
     webSocketService.broadcastVehicleUpdated(vehicle);
 
     // Broadcast dashboard update event using the correct method
-    webSocketService.broadcastToRoom(
-     "dashboard_updates",
-     "dashboard:stats_updated",
-     {
-      trigger: "vehicle_updated",
-      vehicle_id: vehicle.id,
-      stock_number: vehicle.stock_number,
-     }
-    );
+    webSocketService.broadcastToRoom("dashboard_updates", "dashboard:stats_updated", {
+     trigger: "vehicle_updated",
+     vehicle_id: vehicle.id,
+     stock_number: vehicle.stock_number,
+    });
 
-    console.log(
-     `🚨 STORAGE: WebSocket broadcasts complete for vehicle ${vehicle.id}`
-    );
+    console.log(`🚨 STORAGE: WebSocket broadcasts complete for vehicle ${vehicle.id}`);
    } catch (broadcastError) {
     console.error("🚨 STORAGE: WebSocket broadcast error:", broadcastError);
    }
   } else {
-   console.log(
-    "🚨 STORAGE: WARNING - WebSocket service not available for vehicle update broadcast"
-   );
+   console.log("🚨 STORAGE: WARNING - WebSocket service not available for vehicle update broadcast");
   }
 
   return vehicle;
@@ -1563,11 +1373,7 @@ export class DatabaseStorage implements IStorage {
  async deleteVehicle(id: number): Promise<boolean> {
   try {
    // First, check if the vehicle exists
-   const existingVehicle = await db
-    .select()
-    .from(vehicles)
-    .where(eq(vehicles.id, id))
-    .limit(1);
+   const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, id)).limit(1);
 
    if (existingVehicle.length === 0) {
     console.log(`Vehicle with ID ${id} not found`);
@@ -1609,10 +1415,7 @@ export class DatabaseStorage implements IStorage {
    }
 
    // Now delete the vehicle itself
-   const result = await db
-    .delete(vehicles)
-    .where(eq(vehicles.id, id))
-    .returning();
+   const result = await db.delete(vehicles).where(eq(vehicles.id, id)).returning();
 
    if (result.length > 0) {
     console.log(`Successfully deleted vehicle ${id}`);
@@ -1627,9 +1430,7 @@ export class DatabaseStorage implements IStorage {
   }
  }
 
- async importVehiclesFromCsv(
-  vehiclesData: InsertVehicle[]
- ): Promise<Vehicle[]> {
+ async importVehiclesFromCsv(vehiclesData: InsertVehicle[]): Promise<Vehicle[]> {
   const allImportedVehicles: Vehicle[] = [];
 
   // Process each vehicle individually to handle updates vs inserts
@@ -1647,54 +1448,47 @@ export class DatabaseStorage implements IStorage {
    }
 
    // Convert date strings to proper Date objects
-   ["date_of_registration", "purchase_invoice_date", "sale_date"].forEach(
-    (dateField) => {
-     const value = processed[dateField as keyof InsertVehicle];
-     if (value && value !== "") {
-      try {
-       let dateToConvert = value;
+   ["date_of_registration", "purchase_invoice_date", "sale_date"].forEach(dateField => {
+    const value = processed[dateField as keyof InsertVehicle];
+    if (value && value !== "") {
+     try {
+      let dateToConvert = value;
 
-       // Handle different date formats
-       if (typeof value === "string") {
-        // Handle DD-MMM-YY format like "30-Sep-20"
-        if (value.match(/^\d{1,2}-\w{3}-\d{2}$/)) {
-         const [day, month, year] = value.split("-");
-         const fullYear = parseInt(year) < 50 ? `20${year}` : `19${year}`;
-         dateToConvert = `${day}-${month}-${fullYear}`;
-        }
-        // Handle YYYY-MM-DD format from form
-        else if (value.match(/^\d{4}-\d{2}-\d{2}$/)) {
-         dateToConvert = value;
-        }
-        // Handle ISO string format
-        else if (value.includes("T")) {
-         dateToConvert = value;
-        }
+      // Handle different date formats
+      if (typeof value === "string") {
+       // Handle DD-MMM-YY format like "30-Sep-20"
+       if (value.match(/^\d{1,2}-\w{3}-\d{2}$/)) {
+        const [day, month, year] = value.split("-");
+        const fullYear = parseInt(year) < 50 ? `20${year}` : `19${year}`;
+        dateToConvert = `${day}-${month}-${fullYear}`;
        }
+       // Handle YYYY-MM-DD format from form
+       else if (value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        dateToConvert = value;
+       }
+       // Handle ISO string format
+       else if (value.includes("T")) {
+        dateToConvert = value;
+       }
+      }
 
-       const date = new Date(dateToConvert);
-       if (
-        !isNaN(date.getTime()) &&
-        date.getFullYear() > 1900 &&
-        date.getFullYear() < 2100
-       ) {
-        (processed as any)[dateField] = date;
-       } else {
-        (processed as any)[dateField] = null;
-       }
-      } catch {
+      const date = new Date(dateToConvert);
+      if (!isNaN(date.getTime()) && date.getFullYear() > 1900 && date.getFullYear() < 2100) {
+       (processed as any)[dateField] = date;
+      } else {
        (processed as any)[dateField] = null;
       }
-     } else {
+     } catch {
       (processed as any)[dateField] = null;
      }
+    } else {
+     (processed as any)[dateField] = null;
     }
-   );
+   });
 
    // Financial calculation helper functions
    const parseFinancialValue = (value: any): number => {
-    if (!value || value === "" || value === "null" || value === "undefined")
-     return 0;
+    if (!value || value === "" || value === "null" || value === "undefined") return 0;
     const cleanValue = value.toString().replace(/[£,\s]/g, "");
     const numValue = parseFloat(cleanValue);
     return isNaN(numValue) || !isFinite(numValue) ? 0 : numValue;
@@ -1731,15 +1525,13 @@ export class DatabaseStorage implements IStorage {
     "warranty_costs",
    ];
 
-   decimalFields.forEach((field) => {
+   decimalFields.forEach(field => {
     const value = processed[field as keyof InsertVehicle];
     if (typeof value === "string" && value) {
      const cleanValue = value.replace(/[£,]/g, "");
      const numValue = parseFloat(cleanValue);
      // Preserve decimal formatting by using the original cleaned value if it's a valid number
-     processed[field as keyof InsertVehicle] = isNaN(numValue)
-      ? null
-      : (cleanValue as any);
+     processed[field as keyof InsertVehicle] = isNaN(numValue) ? null : (cleanValue as any);
     } else if (!value || value === "") {
      processed[field as keyof InsertVehicle] = null as any;
     }
@@ -1784,11 +1576,7 @@ export class DatabaseStorage implements IStorage {
      processed.sales_status = "Sold";
     } else if (status === "stock" || status === "stock ") {
      processed.sales_status = "Stock";
-    } else if (
-     status.includes("autolab") ||
-     status === "auto lab" ||
-     status === "auto-lab"
-    ) {
+    } else if (status.includes("autolab") || status === "auto lab" || status === "auto-lab") {
      processed.sales_status = "Autolab";
     }
    }
@@ -1806,9 +1594,7 @@ export class DatabaseStorage implements IStorage {
    for (const field of fieldsToCheck) {
     if (field && typeof field === "string") {
      const fieldValue = field.toString().toLowerCase().trim();
-     if (
-      autolabIndicators.some((indicator) => fieldValue.includes(indicator))
-     ) {
+     if (autolabIndicators.some(indicator => fieldValue.includes(indicator))) {
       processed.sales_status = "Autolab";
       break; // Once we identify it as Autolab, no need to check further
      }
@@ -1850,38 +1636,23 @@ export class DatabaseStorage implements IStorage {
       allImportedVehicles.push(updatedVehicle);
      } else {
       // Insert new vehicle
-      const [newVehicle] = await db
-       .insert(vehicles)
-       .values(processed)
-       .returning();
+      const [newVehicle] = await db.insert(vehicles).values(processed).returning();
       allImportedVehicles.push(newVehicle);
      }
     } catch (error) {
-     console.error(
-      `Error processing vehicle ${processed.stock_number}:`,
-      error
-     );
+     console.error(`Error processing vehicle ${processed.stock_number}:`, error);
      // Try to insert as new vehicle if update fails
      try {
-      const [newVehicle] = await db
-       .insert(vehicles)
-       .values(processed)
-       .returning();
+      const [newVehicle] = await db.insert(vehicles).values(processed).returning();
       allImportedVehicles.push(newVehicle);
      } catch (insertError) {
-      console.error(
-       `Failed to insert vehicle ${processed.stock_number}:`,
-       insertError
-      );
+      console.error(`Failed to insert vehicle ${processed.stock_number}:`, insertError);
      }
     }
    } else {
     // No stock number, just insert as new
     try {
-     const [newVehicle] = await db
-      .insert(vehicles)
-      .values(processed)
-      .returning();
+     const [newVehicle] = await db.insert(vehicles).values(processed).returning();
      allImportedVehicles.push(newVehicle);
     } catch (error) {
      console.error("Error inserting vehicle without stock number:", error);
@@ -1908,19 +1679,11 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getVehicleModelsByMake(makeId: number): Promise<VehicleModel[]> {
-  return await db
-   .select()
-   .from(vehicleModels)
-   .where(eq(vehicleModels.makeId, makeId));
+  return await db.select().from(vehicleModels).where(eq(vehicleModels.makeId, makeId));
  }
 
- async createVehicleModel(
-  insertModel: InsertVehicleModel
- ): Promise<VehicleModel> {
-  const [model] = await db
-   .insert(vehicleModels)
-   .values(insertModel)
-   .returning();
+ async createVehicleModel(insertModel: InsertVehicleModel): Promise<VehicleModel> {
+  const [model] = await db.insert(vehicleModels).values(insertModel).returning();
   return model;
  }
 
@@ -1935,25 +1698,16 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getCustomerById(id: number): Promise<Customer | undefined> {
-  const [customer] = await db
-   .select()
-   .from(customers)
-   .where(eq(customers.id, id));
+  const [customer] = await db.select().from(customers).where(eq(customers.id, id));
   return customer || undefined;
  }
 
  async createCustomer(insertCustomer: InsertCustomer): Promise<Customer> {
-  const [customer] = await db
-   .insert(customers)
-   .values(insertCustomer)
-   .returning();
+  const [customer] = await db.insert(customers).values(insertCustomer).returning();
   return customer;
  }
 
- async updateCustomer(
-  id: number,
-  updateCustomer: Partial<InsertCustomer>
- ): Promise<Customer> {
+ async updateCustomer(id: number, updateCustomer: Partial<InsertCustomer>): Promise<Customer> {
   const [customer] = await db
    .update(customers)
    .set({ ...updateCustomer, updated_at: new Date() })
@@ -1965,28 +1719,16 @@ export class DatabaseStorage implements IStorage {
  async deleteCustomer(id: number): Promise<boolean> {
   try {
    // First, update any leads that reference this customer as converted_customer_id
-   await db
-    .update(leads)
-    .set({ converted_customer_id: null })
-    .where(eq(leads.converted_customer_id, id));
+   await db.update(leads).set({ converted_customer_id: null }).where(eq(leads.converted_customer_id, id));
 
    // Update any appointments that reference this customer
-   await db
-    .update(appointments)
-    .set({ customer_id: null })
-    .where(eq(appointments.customer_id, id));
+   await db.update(appointments).set({ customer_id: null }).where(eq(appointments.customer_id, id));
 
    // Update any interactions that reference this customer
-   await db
-    .update(interactions)
-    .set({ customer_id: null })
-    .where(eq(interactions.customer_id, id));
+   await db.update(interactions).set({ customer_id: null }).where(eq(interactions.customer_id, id));
 
    // Update any jobs that reference this customer
-   await db
-    .update(jobs)
-    .set({ customer_id: null })
-    .where(eq(jobs.customer_id, id));
+   await db.update(jobs).set({ customer_id: null }).where(eq(jobs.customer_id, id));
 
    // Now delete the customer
    const result = await db.delete(customers).where(eq(customers.id, id));
@@ -2009,7 +1751,7 @@ export class DatabaseStorage implements IStorage {
         LOWER(${customers.email}) LIKE ${searchTerm} OR 
         ${customers.phone} LIKE ${searchTerm} OR
         ${customers.mobile} LIKE ${searchTerm}
-      `
+      `,
    )
    .orderBy(desc(customers.created_at));
  }
@@ -2029,9 +1771,7 @@ export class DatabaseStorage implements IStorage {
   }>;
  }> {
   // Get total customers count
-  const totalCustomersQuery = await db
-   .select({ count: sql<number>`COUNT(*)` })
-   .from(customers);
+  const totalCustomersQuery = await db.select({ count: sql<number>`COUNT(*)` }).from(customers);
 
   // Calculate active customers (customers with sales in last 12 months)
   const oneYearAgo = new Date();
@@ -2087,7 +1827,7 @@ export class DatabaseStorage implements IStorage {
    legacyCustomers: legacyCustomersQuery[0]?.count || 0,
    totalSpent: spendingQuery[0]?.totalSpent || 0,
    averageSpent: spendingQuery[0]?.averageSpent || 0,
-   topCustomers: topCustomersQuery.map((customer) => ({
+   topCustomers: topCustomersQuery.map(customer => ({
     id: customer.id,
     name: `${customer.first_name} ${customer.last_name}`,
     totalSpent: Number(customer.totalSpent || 0),
@@ -2178,25 +1918,19 @@ export class DatabaseStorage implements IStorage {
    const convertedLeadsMtdResult = await db
     .select({ count: sql<number>`COUNT(*)` })
     .from(leads)
-    .where(
-     sql`pipeline_stage = 'converted' AND updated_at >= DATE_TRUNC('month', CURRENT_DATE)`
-    );
+    .where(sql`pipeline_stage = 'converted' AND updated_at >= DATE_TRUNC('month', CURRENT_DATE)`);
 
    // Card 7: Hot Leads - current leads marked as hot
    const hotLeadsResult = await db
     .select({ count: sql<number>`COUNT(*)` })
     .from(leads)
-    .where(
-     sql`lead_quality = 'hot' AND pipeline_stage != 'converted' AND pipeline_stage != 'lost'`
-    );
+    .where(sql`lead_quality = 'hot' AND pipeline_stage != 'converted' AND pipeline_stage != 'lost'`);
 
    // Card 8: Top Priority Leads - leads marked as high priority
    const topPriorityLeadsResult = await db
     .select({ count: sql<number>`COUNT(*)` })
     .from(leads)
-    .where(
-     sql`priority = 'high' AND pipeline_stage != 'converted' AND pipeline_stage != 'lost'`
-    );
+    .where(sql`priority = 'high' AND pipeline_stage != 'converted' AND pipeline_stage != 'lost'`);
 
    // Top leads for display
    const topLeadsResult = await db.execute(sql`
@@ -2269,8 +2003,7 @@ export class DatabaseStorage implements IStorage {
    const top_priority_leads = topPriorityLeadsResult[0]?.count || 0;
 
    // Calculate conversion rate
-   const conversion_rate =
-    total_leads_mtd > 0 ? (converted_leads_mtd / total_leads_mtd) * 100 : 0;
+   const conversion_rate = total_leads_mtd > 0 ? (converted_leads_mtd / total_leads_mtd) * 100 : 0;
 
    // Format top leads
    const top_leads = extractRows(topLeadsResult).map((lead: any) => ({
@@ -2283,15 +2016,13 @@ export class DatabaseStorage implements IStorage {
    }));
 
    // Format recent activities
-   const recent_activities = extractRows(recentActivitiesResult).map(
-    (activity: any) => ({
-     id: activity.id,
-     type: activity.type,
-     description: activity.description,
-     date: activity.date,
-     customer_name: activity.customer_name || "Unknown",
-    })
-   );
+   const recent_activities = extractRows(recentActivitiesResult).map((activity: any) => ({
+    id: activity.id,
+    type: activity.type,
+    description: activity.description,
+    date: activity.date,
+    customer_name: activity.customer_name || "Unknown",
+   }));
 
    return {
     total_leads_mtd,
@@ -2343,33 +2074,19 @@ export class DatabaseStorage implements IStorage {
 
  // Purchase operations
  async getPurchases(): Promise<Purchase[]> {
-  return await db
-   .select()
-   .from(purchases)
-   .orderBy(desc(purchases.purchaseDate));
+  return await db.select().from(purchases).orderBy(desc(purchases.purchaseDate));
  }
 
- async getPurchasesByDateRange(
-  startDate: Date,
-  endDate: Date
- ): Promise<Purchase[]> {
+ async getPurchasesByDateRange(startDate: Date, endDate: Date): Promise<Purchase[]> {
   return await db
    .select()
    .from(purchases)
-   .where(
-    and(
-     gte(purchases.purchaseDate, startDate),
-     lte(purchases.purchaseDate, endDate)
-    )
-   )
+   .where(and(gte(purchases.purchaseDate, startDate), lte(purchases.purchaseDate, endDate)))
    .orderBy(desc(purchases.purchaseDate));
  }
 
  async createPurchase(insertPurchase: InsertPurchase): Promise<Purchase> {
-  const [purchase] = await db
-   .insert(purchases)
-   .values(insertPurchase)
-   .returning();
+  const [purchase] = await db.insert(purchases).values(insertPurchase).returning();
   return purchase;
  }
 
@@ -2437,10 +2154,8 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getCustomerPurchases(
-  customerId: number
- ): Promise<
-  Array<CustomerPurchase & { vehicle: Vehicle; salesperson?: User }>
- > {
+  customerId: number,
+ ): Promise<Array<CustomerPurchase & { vehicle: Vehicle; salesperson?: User }>> {
   return (await db
    .select({
     id: customer_purchases.id,
@@ -2501,19 +2216,14 @@ export class DatabaseStorage implements IStorage {
    .orderBy(desc(customer_purchases.purchase_date))) as any;
  }
 
- async createCustomerPurchase(
-  insertPurchase: InsertCustomerPurchase
- ): Promise<CustomerPurchase> {
-  const [purchase] = await db
-   .insert(customer_purchases)
-   .values(insertPurchase)
-   .returning();
+ async createCustomerPurchase(insertPurchase: InsertCustomerPurchase): Promise<CustomerPurchase> {
+  const [purchase] = await db.insert(customer_purchases).values(insertPurchase).returning();
   return purchase;
  }
 
  async updateCustomerPurchase(
   id: number,
-  updatePurchase: Partial<InsertCustomerPurchase>
+  updatePurchase: Partial<InsertCustomerPurchase>,
  ): Promise<CustomerPurchase> {
   const [purchase] = await db
    .update(customer_purchases)
@@ -2525,9 +2235,7 @@ export class DatabaseStorage implements IStorage {
 
  async deleteCustomerPurchase(id: number): Promise<boolean> {
   try {
-   const result = await db
-    .delete(customer_purchases)
-    .where(eq(customer_purchases.id, id));
+   const result = await db.delete(customer_purchases).where(eq(customer_purchases.id, id));
    return (result.rowCount ?? 0) > 0;
   } catch (error) {
    console.error("Error in deleteCustomerPurchase:", error);
@@ -2545,11 +2253,7 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getLeadsByStage(stage: string): Promise<Lead[]> {
-  return await db
-   .select()
-   .from(leads)
-   .where(eq(leads.pipeline_stage, stage))
-   .orderBy(desc(leads.createdAt));
+  return await db.select().from(leads).where(eq(leads.pipeline_stage, stage)).orderBy(desc(leads.createdAt));
  }
 
  async getLeadsBySalesperson(salespersonId: number): Promise<Lead[]> {
@@ -2578,9 +2282,9 @@ export class DatabaseStorage implements IStorage {
      entity_id: lead.id,
      data: { url: "/leads" },
     },
-    0
+    0,
    )
-   .catch((error) => {
+   .catch(error => {
     console.error("Failed to trigger lead.created notification:", error);
    });
 
@@ -2593,7 +2297,7 @@ export class DatabaseStorage implements IStorage {
 
   // Convert date strings to Date objects for timestamp fields
   const dateFields = ["last_contact_date", "next_follow_up_date"];
-  dateFields.forEach((field) => {
+  dateFields.forEach(field => {
    if (field in processedUpdate) {
     const value = processedUpdate[field];
     if (typeof value === "string" && value !== "") {
@@ -2616,16 +2320,10 @@ export class DatabaseStorage implements IStorage {
  async deleteLead(id: number): Promise<boolean> {
   try {
    // First, update any appointments that reference this lead
-   await db
-    .update(appointments)
-    .set({ lead_id: null })
-    .where(eq(appointments.lead_id, id));
+   await db.update(appointments).set({ lead_id: null }).where(eq(appointments.lead_id, id));
 
    // Update any interactions that reference this lead
-   await db
-    .update(interactions)
-    .set({ lead_id: null })
-    .where(eq(interactions.lead_id, id));
+   await db.update(interactions).set({ lead_id: null }).where(eq(interactions.lead_id, id));
 
    // Update any jobs that reference this lead
    await db.update(jobs).set({ lead_id: null }).where(eq(jobs.lead_id, id));
@@ -2641,13 +2339,10 @@ export class DatabaseStorage implements IStorage {
 
  async convertLeadToCustomer(
   leadId: number,
-  customerData: InsertCustomer
+  customerData: InsertCustomer,
  ): Promise<{ lead: Lead; customer: Customer }> {
   // Create customer from lead data
-  const [customer] = await db
-   .insert(customers)
-   .values(customerData)
-   .returning();
+  const [customer] = await db.insert(customers).values(customerData).returning();
 
   // Update lead to mark as converted
   const [lead] = await db
@@ -2705,24 +2400,15 @@ export class DatabaseStorage implements IStorage {
   const newLeadsQuery = await db
    .select({ count: sql<number>`COUNT(*)` })
    .from(leads)
-   .where(
-    and(eq(leads.pipeline_stage, "new"), isNull(leads.converted_customer_id))
-   );
+   .where(and(eq(leads.pipeline_stage, "new"), isNull(leads.converted_customer_id)));
   const qualifiedLeadsQuery = await db
    .select({ count: sql<number>`COUNT(*)` })
    .from(leads)
-   .where(
-    and(
-     eq(leads.pipeline_stage, "qualified"),
-     isNull(leads.converted_customer_id)
-    )
-   );
+   .where(and(eq(leads.pipeline_stage, "qualified"), isNull(leads.converted_customer_id)));
   const hotLeadsQuery = await db
    .select({ count: sql<number>`COUNT(*)` })
    .from(leads)
-   .where(
-    and(eq(leads.lead_quality, "hot"), isNull(leads.converted_customer_id))
-   );
+   .where(and(eq(leads.lead_quality, "hot"), isNull(leads.converted_customer_id)));
   const convertedLeadsQuery = await db
    .select({ count: sql<number>`COUNT(*)` })
    .from(leads)
@@ -2758,15 +2444,12 @@ export class DatabaseStorage implements IStorage {
    .from(leads)
    .where(isNotNull(leads.assigned_salesperson_id))
    .groupBy(leads.assigned_salesperson_id)
-   .orderBy(
-    sql`COUNT(CASE WHEN ${leads.converted_customer_id} IS NULL THEN 1 END) DESC`
-   )
+   .orderBy(sql`COUNT(CASE WHEN ${leads.converted_customer_id} IS NULL THEN 1 END) DESC`)
    .limit(5);
 
   const totalLeads = totalLeadsQuery[0]?.count || 0;
   const convertedLeads = convertedLeadsQuery[0]?.count || 0;
-  const conversionRate =
-   totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
+  const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
 
   return {
    totalLeads,
@@ -2774,31 +2457,27 @@ export class DatabaseStorage implements IStorage {
    qualifiedLeads: qualifiedLeadsQuery[0]?.count || 0,
    hotLeads: hotLeadsQuery[0]?.count || 0,
    conversionRate,
-   leadsByStage: leadsByStageQuery.map((row) => ({
+   leadsByStage: leadsByStageQuery.map(row => ({
     stage: row.stage || "unknown",
     count: row.count,
    })),
-   leadsBySource: leadsBySourceQuery.map((row) => ({
+   leadsBySource: leadsBySourceQuery.map(row => ({
     source: row.source || "unknown",
     count: row.count,
    })),
-   topPerformers: topPerformersQuery.map((row) => ({
+   topPerformers: topPerformersQuery.map(row => ({
     salespersonId: row.salespersonId || 0,
     name: `Salesperson ${row.salespersonId}`, // TODO: Join with users table for actual names
     leadsAssigned: row.leadsAssigned,
     conversions: row.conversions,
-    conversionRate:
-     row.leadsAssigned > 0 ? (row.conversions / row.leadsAssigned) * 100 : 0,
+    conversionRate: row.leadsAssigned > 0 ? (row.conversions / row.leadsAssigned) * 100 : 0,
    })),
   };
  }
 
  // Appointment operations
  async getAppointments(): Promise<Appointment[]> {
-  return await db
-   .select()
-   .from(appointments)
-   .orderBy(desc(appointments.appointment_date));
+  return await db.select().from(appointments).orderBy(desc(appointments.appointment_date));
  }
 
  async getAppointmentsByDate(date: Date): Promise<Appointment[]> {
@@ -2810,41 +2489,23 @@ export class DatabaseStorage implements IStorage {
   return await db
    .select()
    .from(appointments)
-   .where(
-    and(
-     gte(appointments.appointment_date, startOfDay),
-     lte(appointments.appointment_date, endOfDay)
-    )
-   )
+   .where(and(gte(appointments.appointment_date, startOfDay), lte(appointments.appointment_date, endOfDay)))
    .orderBy(appointments.appointment_date);
  }
 
- async getAppointmentsByMonth(
-  year: number,
-  month: number
- ): Promise<Appointment[]> {
+ async getAppointmentsByMonth(year: number, month: number): Promise<Appointment[]> {
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 0, 23, 59, 59, 999);
 
   return await db
    .select()
    .from(appointments)
-   .where(
-    and(
-     gte(appointments.appointment_date, startDate),
-     lte(appointments.appointment_date, endDate)
-    )
-   )
+   .where(and(gte(appointments.appointment_date, startDate), lte(appointments.appointment_date, endDate)))
    .orderBy(appointments.appointment_date);
  }
 
- async createAppointment(
-  insertAppointment: InsertAppointment
- ): Promise<Appointment> {
-  const [appointment] = await db
-   .insert(appointments)
-   .values([insertAppointment])
-   .returning();
+ async createAppointment(insertAppointment: InsertAppointment): Promise<Appointment> {
+  const [appointment] = await db.insert(appointments).values([insertAppointment]).returning();
 
   // Trigger notification event for appointment booked
   this.notificationEventService
@@ -2856,19 +2517,16 @@ export class DatabaseStorage implements IStorage {
      entity_id: appointment.id,
      data: { url: "/appointments" },
     },
-    0
+    0,
    )
-   .catch((error) => {
+   .catch(error => {
     console.error("Failed to trigger appointment.booked notification:", error);
    });
 
   return appointment;
  }
 
- async updateAppointment(
-  id: number,
-  updateAppointment: Partial<InsertAppointment>
- ): Promise<Appointment> {
+ async updateAppointment(id: number, updateAppointment: Partial<InsertAppointment>): Promise<Appointment> {
   const [appointment] = await db
    .update(appointments)
    .set({ ...updateAppointment, updated_at: new Date() })
@@ -2888,11 +2546,7 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getTasksByUser(userId: number): Promise<Task[]> {
-  return await db
-   .select()
-   .from(tasks)
-   .where(eq(tasks.assignedToId, userId))
-   .orderBy(desc(tasks.createdAt));
+  return await db.select().from(tasks).where(eq(tasks.assignedToId, userId)).orderBy(desc(tasks.createdAt));
  }
 
  async createTask(insertTask: InsertTask): Promise<Task> {
@@ -2931,8 +2585,8 @@ export class DatabaseStorage implements IStorage {
     and(
      sql`LOWER(${vehicles.sales_status}) = 'sold'`,
      gte(vehicles.sale_date, today),
-     lt(vehicles.sale_date, tomorrow)
-    )
+     lt(vehicles.sale_date, tomorrow),
+    ),
    );
 
   return {
@@ -2960,8 +2614,8 @@ export class DatabaseStorage implements IStorage {
     and(
      sql`UPPER(${vehicles.sales_status}) = 'STOCK'`,
      isNotNull(vehicles.dfc_outstanding_amount),
-     gt(vehicles.dfc_outstanding_amount, 0)
-    )
+     gt(vehicles.dfc_outstanding_amount, 0),
+    ),
    )
    .groupBy(vehicles.department);
 
@@ -2983,8 +2637,7 @@ export class DatabaseStorage implements IStorage {
 
   const totalBudget = 3000000; // £3,000,000 (AL: £2,700,000 + MSR: £300,000 + ALS: £0)
   const totalOutstanding = alOutstanding + msrOutstanding + alsOutstanding;
-  const totalUtilisation =
-   totalBudget > 0 ? (totalOutstanding / totalBudget) * 100 : 0;
+  const totalUtilisation = totalBudget > 0 ? (totalOutstanding / totalBudget) * 100 : 0;
   const remainingFacility = totalBudget - totalOutstanding;
 
   return {
@@ -3085,9 +2738,7 @@ export class DatabaseStorage implements IStorage {
     totalValue: sql<number>`COALESCE(SUM(CAST(${vehicles.total_sale_price} AS DECIMAL)), 0)`,
    })
    .from(vehicles)
-   .where(
-    sql`${vehicles.sale_date} >= ${thisWeekStart} AND ${vehicles.sale_date} <= ${now}`
-   );
+   .where(sql`${vehicles.sale_date} >= ${thisWeekStart} AND ${vehicles.sale_date} <= ${now}`);
 
   const lastWeekSalesQuery = await db
    .select({
@@ -3095,9 +2746,7 @@ export class DatabaseStorage implements IStorage {
     totalValue: sql<number>`COALESCE(SUM(CAST(${vehicles.total_sale_price} AS DECIMAL)), 0)`,
    })
    .from(vehicles)
-   .where(
-    sql`${vehicles.sale_date} >= ${lastWeekStart} AND ${vehicles.sale_date} < ${thisWeekStart}`
-   );
+   .where(sql`${vehicles.sale_date} >= ${lastWeekStart} AND ${vehicles.sale_date} < ${thisWeekStart}`);
 
   // 3. Monthly Sales - based on sale_date
   const monthlySalesQuery = await db
@@ -3136,7 +2785,7 @@ export class DatabaseStorage implements IStorage {
    })
    .from(vehicles)
    .where(
-    sql`${vehicles.sale_date} >= ${thisMonthStart} AND LOWER(${vehicles.sales_status}) = 'sold' AND CAST(${vehicles.finance_payment} AS DECIMAL) > 0`
+    sql`${vehicles.sale_date} >= ${thisMonthStart} AND LOWER(${vehicles.sales_status}) = 'sold' AND CAST(${vehicles.finance_payment} AS DECIMAL) > 0`,
    );
 
   // Stock by Make
@@ -3201,17 +2850,17 @@ export class DatabaseStorage implements IStorage {
     monthlyFinanceValue: Number(financeSalesQuery[0]?.totalValue || 0),
    },
    dfFunded: await this.calculateDfFundedSummary(),
-   stockByMake: stockByMakeQuery.map((item) => ({
+   stockByMake: stockByMakeQuery.map(item => ({
     makeName: item.makeName,
     count: item.count,
     value: Number(item.value),
    })),
-   recentPurchases: recentPurchasesQuery.map((item) => ({
+   recentPurchases: recentPurchasesQuery.map(item => ({
     vehicleName: item.vehicleName.trim(),
     price: Number(item.price || 0),
     date: item.date || new Date(),
    })),
-   salesByMake: salesByMakeQuery.map((item) => ({
+   salesByMake: salesByMakeQuery.map(item => ({
     makeName: item.makeName,
     soldCount: item.soldCount,
    })),
@@ -3270,19 +2919,13 @@ export class DatabaseStorage implements IStorage {
   const stockVehiclesQuery = await db
    .select()
    .from(vehicles)
-   .where(
-    sql`LOWER(${vehicles.sales_status}) = 'stock' AND ${vehicles.purchase_invoice_date} IS NOT NULL`
-   );
+   .where(sql`LOWER(${vehicles.sales_status}) = 'stock' AND ${vehicles.purchase_invoice_date} IS NOT NULL`);
 
   // Process stock details with JavaScript calculations to avoid SQL complexity
-  const stockDetails = stockVehiclesQuery.map((vehicle) => {
-   const purchaseDate = vehicle.purchase_invoice_date
-    ? new Date(vehicle.purchase_invoice_date)
-    : new Date();
+  const stockDetails = stockVehiclesQuery.map(vehicle => {
+   const purchaseDate = vehicle.purchase_invoice_date ? new Date(vehicle.purchase_invoice_date) : new Date();
    const now = new Date();
-   const daysInStock = Math.floor(
-    (now.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24)
-   );
+   const daysInStock = Math.floor((now.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24));
    const purchasePrice = Number(vehicle.purchase_price_total || 0);
    const dailyCarryingCost = purchasePrice * dailyCarryingCostRate;
    const totalCarryingCost = dailyCarryingCost * daysInStock;
@@ -3302,8 +2945,7 @@ export class DatabaseStorage implements IStorage {
     colour: vehicle.colour || "",
     year: vehicle.year || 0,
     mileage: vehicle.mileage || 0,
-    purchase_invoice_date:
-     vehicle.purchase_invoice_date?.toISOString().split("T")[0] || "",
+    purchase_invoice_date: vehicle.purchase_invoice_date?.toISOString().split("T")[0] || "",
     purchase_price_total: purchasePrice,
     days_in_stock: daysInStock,
     carrying_cost_daily: Number(dailyCarryingCost.toFixed(2)),
@@ -3314,23 +2956,13 @@ export class DatabaseStorage implements IStorage {
 
   // Calculate summary statistics
   const totalVehicles = stockDetails.length;
-  const totalValue = stockDetails.reduce(
-   (sum, vehicle) => sum + vehicle.purchase_price_total,
-   0
-  );
+  const totalValue = stockDetails.reduce((sum, vehicle) => sum + vehicle.purchase_price_total, 0);
   const averageAge =
    totalVehicles > 0
-    ? Math.round(
-       stockDetails.reduce((sum, vehicle) => sum + vehicle.days_in_stock, 0) /
-        totalVehicles
-      )
+    ? Math.round(stockDetails.reduce((sum, vehicle) => sum + vehicle.days_in_stock, 0) / totalVehicles)
     : 0;
-  const slowMovingStock = stockDetails.filter(
-   (v) => v.days_in_stock > 90
-  ).length;
-  const fastMovingStock = stockDetails.filter(
-   (v) => v.days_in_stock < 30
-  ).length;
+  const slowMovingStock = stockDetails.filter(v => v.days_in_stock > 90).length;
+  const fastMovingStock = stockDetails.filter(v => v.days_in_stock < 30).length;
 
   // Calculate age distribution
   const ageRanges = [
@@ -3341,17 +2973,13 @@ export class DatabaseStorage implements IStorage {
    { range: "180+ days", min: 181, max: Infinity },
   ];
 
-  const ageDistribution = ageRanges.map((range) => {
+  const ageDistribution = ageRanges.map(range => {
    const vehiclesInRange = stockDetails.filter(
-    (v) => v.days_in_stock >= range.min && v.days_in_stock <= range.max
+    v => v.days_in_stock >= range.min && v.days_in_stock <= range.max,
    );
    const count = vehiclesInRange.length;
-   const totalValue = vehiclesInRange.reduce(
-    (sum, v) => sum + v.purchase_price_total,
-    0
-   );
-   const percentage =
-    totalVehicles > 0 ? Number(((count / totalVehicles) * 100).toFixed(1)) : 0;
+   const totalValue = vehiclesInRange.reduce((sum, v) => sum + v.purchase_price_total, 0);
+   const percentage = totalVehicles > 0 ? Number(((count / totalVehicles) * 100).toFixed(1)) : 0;
 
    return {
     ageRange: range.range,
@@ -3362,48 +2990,37 @@ export class DatabaseStorage implements IStorage {
   });
 
   // Calculate make performance
-  const makeGroups = stockDetails.reduce((acc, vehicle) => {
-   const make = vehicle.make || "Unknown";
-   if (!acc[make]) {
-    acc[make] = [];
-   }
-   acc[make].push(vehicle);
-   return acc;
-  }, {} as Record<string, typeof stockDetails>);
+  const makeGroups = stockDetails.reduce(
+   (acc, vehicle) => {
+    const make = vehicle.make || "Unknown";
+    if (!acc[make]) {
+     acc[make] = [];
+    }
+    acc[make].push(vehicle);
+    return acc;
+   },
+   {} as Record<string, typeof stockDetails>,
+  );
 
   const makePerformance = Object.entries(makeGroups)
    .map(([make, vehicles]) => ({
     make,
     totalVehicles: vehicles.length,
-    averageAge: Math.round(
-     vehicles.reduce((sum, v) => sum + v.days_in_stock, 0) / vehicles.length
-    ),
+    averageAge: Math.round(vehicles.reduce((sum, v) => sum + v.days_in_stock, 0) / vehicles.length),
     totalValue: vehicles.reduce((sum, v) => sum + v.purchase_price_total, 0),
-    slowMovingCount: vehicles.filter((v) => v.days_in_stock > 90).length,
+    slowMovingCount: vehicles.filter(v => v.days_in_stock > 90).length,
    }))
    .sort((a, b) => b.totalVehicles - a.totalVehicles);
 
   // Calculate cost analysis
-  const totalCarryingCost = stockDetails.reduce(
-   (sum, vehicle) => sum + vehicle.total_carrying_cost,
-   0
-  );
-  const dailyCarryingCost = stockDetails.reduce(
-   (sum, vehicle) => sum + vehicle.carrying_cost_daily,
-   0
-  );
+  const totalCarryingCost = stockDetails.reduce((sum, vehicle) => sum + vehicle.total_carrying_cost, 0);
+  const dailyCarryingCost = stockDetails.reduce((sum, vehicle) => sum + vehicle.carrying_cost_daily, 0);
   const highRiskVehicles = stockDetails.filter(
-   (v) => v.depreciation_risk === "high" || v.depreciation_risk === "critical"
+   v => v.depreciation_risk === "high" || v.depreciation_risk === "critical",
   );
-  const highRiskValue = highRiskVehicles.reduce(
-   (sum, vehicle) => sum + vehicle.purchase_price_total,
-   0
-  );
+  const highRiskValue = highRiskVehicles.reduce((sum, vehicle) => sum + vehicle.purchase_price_total, 0);
   const potentialSavings =
-   highRiskVehicles.reduce(
-    (sum, vehicle) => sum + vehicle.total_carrying_cost,
-    0
-   ) * 0.3; // 30% potential savings
+   highRiskVehicles.reduce((sum, vehicle) => sum + vehicle.total_carrying_cost, 0) * 0.3; // 30% potential savings
 
   return {
    stockAgeSummary: {
@@ -3427,10 +3044,7 @@ export class DatabaseStorage implements IStorage {
 
  // Interaction operations
  async getInteractions(): Promise<Interaction[]> {
-  return await db
-   .select()
-   .from(interactions)
-   .orderBy(desc(interactions.created_at));
+  return await db.select().from(interactions).orderBy(desc(interactions.created_at));
  }
 
  async getInteractionsByLead(leadId: number): Promise<Interaction[]> {
@@ -3449,20 +3063,12 @@ export class DatabaseStorage implements IStorage {
    .orderBy(desc(interactions.created_at));
  }
 
- async createInteraction(
-  insertInteraction: InsertInteraction
- ): Promise<Interaction> {
-  const [interaction] = await db
-   .insert(interactions)
-   .values(insertInteraction)
-   .returning();
+ async createInteraction(insertInteraction: InsertInteraction): Promise<Interaction> {
+  const [interaction] = await db.insert(interactions).values(insertInteraction).returning();
   return interaction;
  }
 
- async updateInteraction(
-  id: number,
-  updateInteraction: Partial<InsertInteraction>
- ): Promise<Interaction> {
+ async updateInteraction(id: number, updateInteraction: Partial<InsertInteraction>): Promise<Interaction> {
   const [interaction] = await db
    .update(interactions)
    .set({ ...updateInteraction, updated_at: new Date() })
@@ -3513,9 +3119,7 @@ export class DatabaseStorage implements IStorage {
   const result = await db
    .select()
    .from(jobs)
-   .where(
-    and(gte(jobs.scheduled_date, startDate), lte(jobs.scheduled_date, endDate))
-   )
+   .where(and(gte(jobs.scheduled_date, startDate), lte(jobs.scheduled_date, endDate)))
    .orderBy(desc(jobs.scheduled_date));
   return result as Job[];
  }
@@ -3527,8 +3131,7 @@ export class DatabaseStorage implements IStorage {
 
  async createJob(insertJob: InsertJob): Promise<Job> {
   // Generate job number
-  const jobType =
-   typeof insertJob.job_type === "string" ? insertJob.job_type : "JOB";
+  const jobType = typeof insertJob.job_type === "string" ? insertJob.job_type : "JOB";
   const prefix = jobType.substring(0, 3).toUpperCase();
   const timestamp = Date.now().toString().slice(-6);
   const job_number = `${prefix}-${timestamp}`;
@@ -3550,9 +3153,9 @@ export class DatabaseStorage implements IStorage {
      entity_id: job.id,
      data: { url: "/calendar" },
     },
-    0
+    0,
    )
-   .catch((error) => {
+   .catch(error => {
     console.error("Failed to trigger job.booked notification:", error);
    });
 
@@ -3595,11 +3198,7 @@ export class DatabaseStorage implements IStorage {
    updateData.actual_end_date = new Date();
   }
 
-  const [job] = await db
-   .update(jobs)
-   .set(updateData)
-   .where(eq(jobs.id, jobId))
-   .returning();
+  const [job] = await db.update(jobs).set(updateData).where(eq(jobs.id, jobId)).returning();
   return job;
  }
 
@@ -3619,9 +3218,7 @@ export class DatabaseStorage implements IStorage {
    averageRating: number;
   }>;
  }> {
-  const totalJobsQuery = await db
-   .select({ count: sql<number>`count(*)` })
-   .from(jobs);
+  const totalJobsQuery = await db.select({ count: sql<number>`count(*)` }).from(jobs);
   const pendingJobsQuery = await db
    .select({ count: sql<number>`count(*)` })
    .from(jobs)
@@ -3638,9 +3235,7 @@ export class DatabaseStorage implements IStorage {
   const overdueJobsQuery = await db
    .select({ count: sql<number>`count(*)` })
    .from(jobs)
-   .where(
-    and(eq(jobs.job_status, "in_progress"), sql`${jobs.scheduled_date} < NOW()`)
-   );
+   .where(and(eq(jobs.job_status, "in_progress"), sql`${jobs.scheduled_date} < NOW()`));
 
   const jobsByTypeQuery = await db
    .select({
@@ -3664,11 +3259,11 @@ export class DatabaseStorage implements IStorage {
    inProgressJobs: inProgressJobsQuery[0]?.count || 0,
    completedJobs: completedJobsQuery[0]?.count || 0,
    overdueJobs: overdueJobsQuery[0]?.count || 0,
-   jobsByType: jobsByTypeQuery.map((item) => ({
+   jobsByType: jobsByTypeQuery.map(item => ({
     jobType: item.jobType,
     count: item.count,
    })),
-   jobsByStatus: jobsByStatusQuery.map((item) => ({
+   jobsByStatus: jobsByStatusQuery.map(item => ({
     status: item.status,
     count: item.count,
    })),
@@ -3679,10 +3274,7 @@ export class DatabaseStorage implements IStorage {
 
  // Staff Schedule operations
  async getStaffSchedules(): Promise<StaffSchedule[]> {
-  return await db
-   .select()
-   .from(staff_schedules)
-   .orderBy(desc(staff_schedules.schedule_date));
+  return await db.select().from(staff_schedules).orderBy(desc(staff_schedules.schedule_date));
  }
 
  async getStaffSchedulesByUser(userId: number): Promise<StaffSchedule[]> {
@@ -3701,36 +3293,20 @@ export class DatabaseStorage implements IStorage {
    .orderBy(staff_schedules.shift_start_time);
  }
 
- async getStaffSchedulesByDateRange(
-  startDate: Date,
-  endDate: Date
- ): Promise<StaffSchedule[]> {
+ async getStaffSchedulesByDateRange(startDate: Date, endDate: Date): Promise<StaffSchedule[]> {
   return await db
    .select()
    .from(staff_schedules)
-   .where(
-    and(
-     gte(staff_schedules.schedule_date, startDate),
-     lte(staff_schedules.schedule_date, endDate)
-    )
-   )
+   .where(and(gte(staff_schedules.schedule_date, startDate), lte(staff_schedules.schedule_date, endDate)))
    .orderBy(staff_schedules.schedule_date);
  }
 
- async createStaffSchedule(
-  insertSchedule: InsertStaffSchedule
- ): Promise<StaffSchedule> {
-  const [schedule] = await db
-   .insert(staff_schedules)
-   .values(insertSchedule)
-   .returning();
+ async createStaffSchedule(insertSchedule: InsertStaffSchedule): Promise<StaffSchedule> {
+  const [schedule] = await db.insert(staff_schedules).values(insertSchedule).returning();
   return schedule;
  }
 
- async updateStaffSchedule(
-  id: number,
-  updateSchedule: Partial<InsertStaffSchedule>
- ): Promise<StaffSchedule> {
+ async updateStaffSchedule(id: number, updateSchedule: Partial<InsertStaffSchedule>): Promise<StaffSchedule> {
   const [schedule] = await db
    .update(staff_schedules)
    .set({ ...updateSchedule, updated_at: new Date() })
@@ -3740,33 +3316,20 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deleteStaffSchedule(id: number): Promise<boolean> {
-  const result = await db
-   .delete(staff_schedules)
-   .where(eq(staff_schedules.id, id));
+  const result = await db.delete(staff_schedules).where(eq(staff_schedules.id, id));
   return (result.rowCount || 0) > 0;
  }
 
- async getStaffAvailability(
-  userId: number,
-  date: Date
- ): Promise<StaffSchedule[]> {
+ async getStaffAvailability(userId: number, date: Date): Promise<StaffSchedule[]> {
   return await db
    .select()
    .from(staff_schedules)
-   .where(
-    and(
-     eq(staff_schedules.user_id, userId),
-     eq(staff_schedules.schedule_date, date)
-    )
-   );
+   .where(and(eq(staff_schedules.user_id, userId), eq(staff_schedules.schedule_date, date)));
  }
 
  // Job Progress operations
  async getJobProgress(): Promise<JobProgress[]> {
-  return await db
-   .select()
-   .from(job_progress)
-   .orderBy(desc(job_progress.created_at));
+  return await db.select().from(job_progress).orderBy(desc(job_progress.created_at));
  }
 
  async getJobProgressByJob(jobId: number): Promise<JobProgress[]> {
@@ -3777,20 +3340,12 @@ export class DatabaseStorage implements IStorage {
    .orderBy(job_progress.created_at);
  }
 
- async createJobProgress(
-  insertProgress: InsertJobProgress
- ): Promise<JobProgress> {
-  const [progress] = await db
-   .insert(job_progress)
-   .values(insertProgress)
-   .returning();
+ async createJobProgress(insertProgress: InsertJobProgress): Promise<JobProgress> {
+  const [progress] = await db.insert(job_progress).values(insertProgress).returning();
   return progress;
  }
 
- async updateJobProgress(
-  id: number,
-  updateProgress: Partial<InsertJobProgress>
- ): Promise<JobProgress> {
+ async updateJobProgress(id: number, updateProgress: Partial<InsertJobProgress>): Promise<JobProgress> {
   const [progress] = await db
    .update(job_progress)
    .set(updateProgress)
@@ -3801,15 +3356,10 @@ export class DatabaseStorage implements IStorage {
 
  // Vehicle Logistics operations
  async getVehicleLogistics(): Promise<VehicleLogistics[]> {
-  return await db
-   .select()
-   .from(vehicle_logistics)
-   .orderBy(desc(vehicle_logistics.created_at));
+  return await db.select().from(vehicle_logistics).orderBy(desc(vehicle_logistics.created_at));
  }
 
- async getVehicleLogisticsByVehicle(
-  vehicleId: number
- ): Promise<VehicleLogistics | undefined> {
+ async getVehicleLogisticsByVehicle(vehicleId: number): Promise<VehicleLogistics | undefined> {
   const [logistics] = await db
    .select()
    .from(vehicle_logistics)
@@ -3817,19 +3367,14 @@ export class DatabaseStorage implements IStorage {
   return logistics || undefined;
  }
 
- async createVehicleLogistics(
-  insertLogistics: InsertVehicleLogistics
- ): Promise<VehicleLogistics> {
-  const [logistics] = await db
-   .insert(vehicle_logistics)
-   .values(insertLogistics)
-   .returning();
+ async createVehicleLogistics(insertLogistics: InsertVehicleLogistics): Promise<VehicleLogistics> {
+  const [logistics] = await db.insert(vehicle_logistics).values(insertLogistics).returning();
   return logistics;
  }
 
  async updateVehicleLogistics(
   id: number,
-  updateLogistics: Partial<InsertVehicleLogistics>
+  updateLogistics: Partial<InsertVehicleLogistics>,
  ): Promise<VehicleLogistics> {
   const [logistics] = await db
    .update(vehicle_logistics)
@@ -3840,18 +3385,13 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deleteVehicleLogistics(id: number): Promise<boolean> {
-  const result = await db
-   .delete(vehicle_logistics)
-   .where(eq(vehicle_logistics.id, id));
+  const result = await db.delete(vehicle_logistics).where(eq(vehicle_logistics.id, id));
   return (result.rowCount || 0) > 0;
  }
 
  // Job Templates operations
  async getJobTemplates(): Promise<JobTemplate[]> {
-  return await db
-   .select()
-   .from(job_templates)
-   .orderBy(job_templates.template_name);
+  return await db.select().from(job_templates).orderBy(job_templates.template_name);
  }
 
  async getJobTemplatesByCategory(category: string): Promise<JobTemplate[]> {
@@ -3863,27 +3403,16 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getJobTemplateById(id: number): Promise<JobTemplate | undefined> {
-  const [template] = await db
-   .select()
-   .from(job_templates)
-   .where(eq(job_templates.id, id));
+  const [template] = await db.select().from(job_templates).where(eq(job_templates.id, id));
   return template || undefined;
  }
 
- async createJobTemplate(
-  insertTemplate: InsertJobTemplate
- ): Promise<JobTemplate> {
-  const [template] = await db
-   .insert(job_templates)
-   .values(insertTemplate)
-   .returning();
+ async createJobTemplate(insertTemplate: InsertJobTemplate): Promise<JobTemplate> {
+  const [template] = await db.insert(job_templates).values(insertTemplate).returning();
   return template;
  }
 
- async updateJobTemplate(
-  id: number,
-  updateTemplate: Partial<InsertJobTemplate>
- ): Promise<JobTemplate> {
+ async updateJobTemplate(id: number, updateTemplate: Partial<InsertJobTemplate>): Promise<JobTemplate> {
   const [template] = await db
    .update(job_templates)
    .set({ ...updateTemplate, updated_at: new Date() })
@@ -3899,27 +3428,16 @@ export class DatabaseStorage implements IStorage {
 
  // Bought Vehicles operations - Separate monitoring system
  async getBoughtVehicles(): Promise<BoughtVehicle[]> {
-  return await db
-   .select()
-   .from(bought_vehicles)
-   .orderBy(desc(bought_vehicles.created_at));
+  return await db.select().from(bought_vehicles).orderBy(desc(bought_vehicles.created_at));
  }
 
  async getBoughtVehicleById(id: number): Promise<BoughtVehicle | undefined> {
-  const [vehicle] = await db
-   .select()
-   .from(bought_vehicles)
-   .where(eq(bought_vehicles.id, id));
+  const [vehicle] = await db.select().from(bought_vehicles).where(eq(bought_vehicles.id, id));
   return vehicle || undefined;
  }
 
- async createBoughtVehicle(
-  vehicle: InsertBoughtVehicle
- ): Promise<BoughtVehicle> {
-  const [newVehicle] = await db
-   .insert(bought_vehicles)
-   .values(vehicle)
-   .returning();
+ async createBoughtVehicle(vehicle: InsertBoughtVehicle): Promise<BoughtVehicle> {
+  const [newVehicle] = await db.insert(bought_vehicles).values(vehicle).returning();
 
   // Trigger notification event for vehicle bought
   this.notificationEventService
@@ -3931,19 +3449,16 @@ export class DatabaseStorage implements IStorage {
      entity_id: newVehicle.id,
      data: { url: "/bought-vehicles" },
     },
-    0
+    0,
    )
-   .catch((error) => {
+   .catch(error => {
     console.error("Failed to trigger vehicle.bought notification:", error);
    });
 
   return newVehicle;
  }
 
- async updateBoughtVehicle(
-  id: number,
-  updateVehicle: Partial<InsertBoughtVehicle>
- ): Promise<BoughtVehicle> {
+ async updateBoughtVehicle(id: number, updateVehicle: Partial<InsertBoughtVehicle>): Promise<BoughtVehicle> {
   const [vehicle] = await db
    .update(bought_vehicles)
    .set({ ...updateVehicle, updated_at: new Date() })
@@ -3953,9 +3468,7 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deleteBoughtVehicle(id: number): Promise<boolean> {
-  const result = await db
-   .delete(bought_vehicles)
-   .where(eq(bought_vehicles.id, id));
+  const result = await db.delete(bought_vehicles).where(eq(bought_vehicles.id, id));
   return (result.rowCount || 0) > 0;
  }
 
@@ -3973,9 +3486,7 @@ export class DatabaseStorage implements IStorage {
    totalValue: number;
   }>;
  }> {
-  const totalVehiclesQuery = await db
-   .select({ count: sql<number>`COUNT(*)` })
-   .from(bought_vehicles);
+  const totalVehiclesQuery = await db.select({ count: sql<number>`COUNT(*)` }).from(bought_vehicles);
   const totalValueQuery = await db
    .select({
     total: sql<number>`COALESCE(SUM(CAST(${bought_vehicles.retail_price_1} AS DECIMAL)), 0)`,
@@ -4022,7 +3533,7 @@ export class DatabaseStorage implements IStorage {
    processed: processedQuery[0]?.count || 0,
    averageValue,
    recentAdditions: recentAdditionsQuery,
-   byStatus: byStatusQuery.map((row) => ({
+   byStatus: byStatusQuery.map(row => ({
     status: row.status || "unknown",
     count: row.count,
     totalValue: row.totalValue,
@@ -4032,33 +3543,22 @@ export class DatabaseStorage implements IStorage {
 
  // Purchase Invoice operations
  async getPurchaseInvoices(): Promise<PurchaseInvoice[]> {
-  return await db
-   .select()
-   .from(purchase_invoices)
-   .orderBy(desc(purchase_invoices.upload_date));
+  return await db.select().from(purchase_invoices).orderBy(desc(purchase_invoices.upload_date));
  }
 
- async getPurchaseInvoiceById(
-  id: number
- ): Promise<PurchaseInvoice | undefined> {
-  const result = await db
-   .select()
-   .from(purchase_invoices)
-   .where(eq(purchase_invoices.id, id))
-   .limit(1);
+ async getPurchaseInvoiceById(id: number): Promise<PurchaseInvoice | undefined> {
+  const result = await db.select().from(purchase_invoices).where(eq(purchase_invoices.id, id)).limit(1);
   return result[0];
  }
 
- async createPurchaseInvoice(
-  invoice: InsertPurchaseInvoice
- ): Promise<PurchaseInvoice> {
+ async createPurchaseInvoice(invoice: InsertPurchaseInvoice): Promise<PurchaseInvoice> {
   const result = await db.insert(purchase_invoices).values(invoice).returning();
   return result[0];
  }
 
  async updatePurchaseInvoice(
   id: number,
-  updateInvoice: Partial<InsertPurchaseInvoice>
+  updateInvoice: Partial<InsertPurchaseInvoice>,
  ): Promise<PurchaseInvoice> {
   const result = await db
    .update(purchase_invoices)
@@ -4069,9 +3569,7 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deletePurchaseInvoice(id: number): Promise<boolean> {
-  const result = await db
-   .delete(purchase_invoices)
-   .where(eq(purchase_invoices.id, id));
+  const result = await db.delete(purchase_invoices).where(eq(purchase_invoices.id, id));
   return result.rowCount! > 0;
  }
 
@@ -4080,9 +3578,7 @@ export class DatabaseStorage implements IStorage {
   totalBySellerType: { [key: string]: number };
   recentUploads: PurchaseInvoice[];
  }> {
-  const totalInvoicesQuery = await db
-   .select({ count: sql<number>`COUNT(*)` })
-   .from(purchase_invoices);
+  const totalInvoicesQuery = await db.select({ count: sql<number>`COUNT(*)` }).from(purchase_invoices);
 
   const sellerTypeQuery = await db
    .select({
@@ -4099,10 +3595,13 @@ export class DatabaseStorage implements IStorage {
    .limit(5);
 
   const totalInvoices = totalInvoicesQuery[0]?.count || 0;
-  const totalBySellerType = sellerTypeQuery.reduce((acc, row) => {
-   acc[row.seller_type || "unknown"] = row.count;
-   return acc;
-  }, {} as { [key: string]: number });
+  const totalBySellerType = sellerTypeQuery.reduce(
+   (acc, row) => {
+    acc[row.seller_type || "unknown"] = row.count;
+    return acc;
+   },
+   {} as { [key: string]: number },
+  );
 
   return {
    totalInvoices,
@@ -4113,18 +3612,11 @@ export class DatabaseStorage implements IStorage {
 
  // Sales Invoice operations
  async getSalesInvoices(): Promise<SalesInvoice[]> {
-  return await db
-   .select()
-   .from(sales_invoices)
-   .orderBy(desc(sales_invoices.upload_date));
+  return await db.select().from(sales_invoices).orderBy(desc(sales_invoices.upload_date));
  }
 
  async getSalesInvoiceById(id: number): Promise<SalesInvoice | undefined> {
-  const result = await db
-   .select()
-   .from(sales_invoices)
-   .where(eq(sales_invoices.id, id))
-   .limit(1);
+  const result = await db.select().from(sales_invoices).where(eq(sales_invoices.id, id)).limit(1);
   return result[0];
  }
 
@@ -4133,10 +3625,7 @@ export class DatabaseStorage implements IStorage {
   return result[0];
  }
 
- async updateSalesInvoice(
-  id: number,
-  invoice: Partial<InsertSalesInvoice>
- ): Promise<SalesInvoice> {
+ async updateSalesInvoice(id: number, invoice: Partial<InsertSalesInvoice>): Promise<SalesInvoice> {
   const result = await db
    .update(sales_invoices)
    .set({ ...invoice, updated_at: new Date() })
@@ -4146,9 +3635,7 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deleteSalesInvoice(id: number): Promise<boolean> {
-  const result = await db
-   .delete(sales_invoices)
-   .where(eq(sales_invoices.id, id));
+  const result = await db.delete(sales_invoices).where(eq(sales_invoices.id, id));
   return result.rowCount > 0;
  }
 
@@ -4178,10 +3665,13 @@ export class DatabaseStorage implements IStorage {
    .limit(5);
 
   const totalInvoices = totalInvoicesQuery[0]?.count || 0;
-  const totalByDeliveryType = deliveryTypeQuery.reduce((acc, row) => {
-   acc[row.delivery_collection || "unknown"] = row.count;
-   return acc;
-  }, {} as { [key: string]: number });
+  const totalByDeliveryType = deliveryTypeQuery.reduce(
+   (acc, row) => {
+    acc[row.delivery_collection || "unknown"] = row.count;
+    return acc;
+   },
+   {} as { [key: string]: number },
+  );
 
   return {
    totalInvoices,
@@ -4224,15 +3714,12 @@ export class DatabaseStorage implements IStorage {
   // Calculate performance indicators
   const salesGrowth =
    dashboardStats.weeklySales.lastWeekValue > 0
-    ? ((dashboardStats.weeklySales.thisWeekValue -
-       dashboardStats.weeklySales.lastWeekValue) /
+    ? ((dashboardStats.weeklySales.thisWeekValue - dashboardStats.weeklySales.lastWeekValue) /
        dashboardStats.weeklySales.lastWeekValue) *
       100
     : 0;
-  const profitMargin =
-   totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
-  const stockTurnover =
-   stockAnalytics.avgStockAge > 0 ? 365 / stockAnalytics.avgStockAge : 0;
+  const profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+  const stockTurnover = stockAnalytics.avgStockAge > 0 ? 365 / stockAnalytics.avgStockAge : 0;
   const customerRetention = 85; // Calculated from repeat customers
 
   // Generate alerts
@@ -4292,12 +3779,12 @@ export class DatabaseStorage implements IStorage {
      revenue: sql<number>`COALESCE(SUM(CASE WHEN sale_date >= ${month} AND sale_date < ${new Date(
       currentYear,
       i + 1,
-      1
+      1,
      )} THEN CAST(total_sale_price AS DECIMAL) END), 0)`,
      expenses: sql<number>`COALESCE(SUM(CASE WHEN purchase_invoice_date >= ${month} AND purchase_invoice_date < ${new Date(
       currentYear,
       i + 1,
-      1
+      1,
      )} THEN CAST(purchase_price_total AS DECIMAL) END), 0)`,
     })
     .from(vehicles);
@@ -4317,10 +3804,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   return {
-   revenue: periods.map((p) => ({ period: p.period, value: p.revenue })),
-   expenses: periods.map((p) => ({ period: p.period, value: p.expenses })),
-   profit: periods.map((p) => ({ period: p.period, value: p.profit })),
-   margins: periods.map((p) => ({ period: p.period, margin: p.margin })),
+   revenue: periods.map(p => ({ period: p.period, value: p.revenue })),
+   expenses: periods.map(p => ({ period: p.period, value: p.expenses })),
+   profit: periods.map(p => ({ period: p.period, value: p.profit })),
+   margins: periods.map(p => ({ period: p.period, margin: p.margin })),
   };
  }
 
@@ -4348,9 +3835,7 @@ export class DatabaseStorage implements IStorage {
      unitsSold: sql<number>`COUNT(CASE WHEN sale_date IS NOT NULL THEN 1 END)`,
     })
     .from(vehicles)
-    .where(
-     and(gte(vehicles.sale_date, startDate), lte(vehicles.sale_date, endDate))
-    );
+    .where(and(gte(vehicles.sale_date, startDate), lte(vehicles.sale_date, endDate)));
 
    const revenue = Number(quarterlyData[0]?.revenue || 0);
    const expenses = Number(quarterlyData[0]?.expenses || 0);
@@ -4435,29 +3920,23 @@ export class DatabaseStorage implements IStorage {
   ];
 
   // Map actual data to departments
-  departmentData.forEach((dept) => {
+  departmentData.forEach(dept => {
    const deptName = (dept.department || "").toUpperCase();
    if (deptName === "AL") {
     departments[0].stockCount = Number(dept.stockCount);
     departments[0].stockValue = Number(dept.stockValue);
     departments[0].soldCount = Number(dept.soldCount);
-    departments[0].dfc_outstanding_total = Number(
-     dept.dfc_outstanding_total || 0
-    );
+    departments[0].dfc_outstanding_total = Number(dept.dfc_outstanding_total || 0);
    } else if (deptName === "MSR") {
     departments[1].stockCount = Number(dept.stockCount);
     departments[1].stockValue = Number(dept.stockValue);
     departments[1].soldCount = Number(dept.soldCount);
-    departments[1].dfc_outstanding_total = Number(
-     dept.dfc_outstanding_total || 0
-    );
+    departments[1].dfc_outstanding_total = Number(dept.dfc_outstanding_total || 0);
    } else if (deptName === "ALS") {
     departments[2].stockCount = Number(dept.stockCount);
     departments[2].stockValue = Number(dept.stockValue);
     departments[2].soldCount = Number(dept.soldCount);
-    departments[2].dfc_outstanding_total = Number(
-     dept.dfc_outstanding_total || 0
-    );
+    departments[2].dfc_outstanding_total = Number(dept.dfc_outstanding_total || 0);
    }
   });
 
@@ -4476,9 +3955,7 @@ export class DatabaseStorage implements IStorage {
     dfc_outstanding_amount: departments[0].dfc_outstanding_total,
     remaining_facility: 2700000 - departments[0].dfc_outstanding_total,
     facility_utilisation:
-     departments[0].dfc_outstanding_total > 0
-      ? (departments[0].dfc_outstanding_total / 2700000) * 100
-      : 0,
+     departments[0].dfc_outstanding_total > 0 ? (departments[0].dfc_outstanding_total / 2700000) * 100 : 0,
    },
    {
     department_name: "MSR Department",
@@ -4486,9 +3963,7 @@ export class DatabaseStorage implements IStorage {
     dfc_outstanding_amount: departments[1].dfc_outstanding_total,
     remaining_facility: 300000 - departments[1].dfc_outstanding_total,
     facility_utilisation:
-     departments[1].dfc_outstanding_total > 0
-      ? (departments[1].dfc_outstanding_total / 300000) * 100
-      : 0,
+     departments[1].dfc_outstanding_total > 0 ? (departments[1].dfc_outstanding_total / 300000) * 100 : 0,
    },
    {
     department_name: "Autolab Select",
@@ -4502,10 +3977,7 @@ export class DatabaseStorage implements IStorage {
     budget_amount: total_budget, // £3,000,000 total budget
     dfc_outstanding_amount: total_dfc_outstanding,
     remaining_facility: total_budget - total_dfc_outstanding,
-    facility_utilisation:
-     total_dfc_outstanding > 0
-      ? (total_dfc_outstanding / total_budget) * 100
-      : 0,
+    facility_utilisation: total_dfc_outstanding > 0 ? (total_dfc_outstanding / total_budget) * 100 : 0,
    },
   ];
 
@@ -4521,11 +3993,8 @@ export class DatabaseStorage implements IStorage {
    .groupBy(vehicles.make)
    .orderBy(sql`COUNT(*) DESC`);
 
-  const totalValue = makeComposition.reduce(
-   (sum, item) => sum + Number(item.value),
-   0
-  );
-  const composition = makeComposition.map((item) => ({
+  const totalValue = makeComposition.reduce((sum, item) => sum + Number(item.value), 0);
+  const composition = makeComposition.map(item => ({
    make: item.make || "Unknown",
    count: Number(item.count),
    value: Number(item.value),
@@ -4554,7 +4023,7 @@ export class DatabaseStorage implements IStorage {
    { ageRange: "90+ days", count: 0, value: 0 },
   ];
 
-  agingData.forEach((vehicle) => {
+  agingData.forEach(vehicle => {
    const daysInStock = Number(vehicle.days_in_stock || 0);
    const value = Number(vehicle.purchase_price_total || 0);
 
@@ -4620,8 +4089,8 @@ export class DatabaseStorage implements IStorage {
      and(
       gte(vehicles.sale_date, month),
       sql`${vehicles.sale_date} < ${nextMonth}`,
-      isNotNull(vehicles.sale_date)
-     )
+      isNotNull(vehicles.sale_date),
+     ),
     );
 
    const units = Number(monthlyData[0]?.units || 0);
@@ -4666,7 +4135,7 @@ export class DatabaseStorage implements IStorage {
 
   return {
    salesData,
-   topPerformers: topPerformers.map((p) => ({
+   topPerformers: topPerformers.map(p => ({
     make: p.make || "Unknown",
     model: p.model || "Unknown",
     unitsSold: Number(p.unitsSold),
@@ -4752,16 +4221,13 @@ export class DatabaseStorage implements IStorage {
   // Financial indicators
   const revenueGrowth =
    dashboardStats.weeklySales.lastWeekValue > 0
-    ? ((dashboardStats.weeklySales.thisWeekValue -
-       dashboardStats.weeklySales.lastWeekValue) /
+    ? ((dashboardStats.weeklySales.thisWeekValue - dashboardStats.weeklySales.lastWeekValue) /
        dashboardStats.weeklySales.lastWeekValue) *
       100
     : 0;
   const profitMargin =
    dashboardStats.monthlySales.thisMonthValue > 0
-    ? (dashboardStats.monthlySales.grossProfit /
-       dashboardStats.monthlySales.thisMonthValue) *
-      100
+    ? (dashboardStats.monthlySales.grossProfit / dashboardStats.monthlySales.thisMonthValue) * 100
     : 0;
   const costRatio = 0.75; // Cost of goods sold ratio
 
@@ -4850,8 +4316,7 @@ export class DatabaseStorage implements IStorage {
    currentMonth >= 3 // April is month 3 (0-based)
     ? `${currentYear}-04-01`
     : `${currentYear - 1}-04-01`;
-  const financialYearEnd =
-   currentMonth >= 3 ? `${currentYear + 1}-03-31` : `${currentYear}-03-31`;
+  const financialYearEnd = currentMonth >= 3 ? `${currentYear + 1}-03-31` : `${currentYear}-03-31`;
 
   const revenueData = await db
    .select({
@@ -4864,8 +4329,8 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    );
 
   const revenueByMake = await db
@@ -4878,8 +4343,8 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    )
    .groupBy(vehicles.make)
    .orderBy(sql`COALESCE(SUM(CAST(total_sale_price AS DECIMAL)), 0) DESC`);
@@ -4894,8 +4359,8 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    )
    .groupBy(vehicles.department);
 
@@ -4933,8 +4398,7 @@ export class DatabaseStorage implements IStorage {
   const totalCost = Number(costData[0]?.total_cost || 0);
   const stockCount = Number(stockVehicles[0]?.count || 0);
   const avgAge = Number(stockVehicles[0]?.avg_age || 0);
-  const holdingCosts =
-   Number(stockVehicles[0]?.total_value || 0) * 0.02 * (avgAge / 30); // 2% per month
+  const holdingCosts = Number(stockVehicles[0]?.total_value || 0) * 0.02 * (avgAge / 30); // 2% per month
 
   // Profitability Analysis - Financial Year
   const profitData = await db
@@ -4947,8 +4411,8 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    );
 
   const profitByMake = await db
@@ -4962,8 +4426,8 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    )
    .groupBy(vehicles.make);
 
@@ -4978,8 +4442,8 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    )
    .groupBy(vehicles.department);
 
@@ -5001,8 +4465,8 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    );
 
   return {
@@ -5010,61 +4474,47 @@ export class DatabaseStorage implements IStorage {
     total_revenue: totalRevenue,
     cash_revenue: Number(revenueData[0]?.cash_revenue || 0),
     finance_revenue: Number(revenueData[0]?.finance_revenue || 0),
-    revenue_by_make: revenueByMake.map((item) => ({
+    revenue_by_make: revenueByMake.map(item => ({
      make: item.make || "Unknown",
      revenue: Number(item.revenue),
-     percentage:
-      totalRevenue > 0 ? (Number(item.revenue) / totalRevenue) * 100 : 0,
+     percentage: totalRevenue > 0 ? (Number(item.revenue) / totalRevenue) * 100 : 0,
     })),
-    revenue_by_department: revenueByDept.map((item) => ({
+    revenue_by_department: revenueByDept.map(item => ({
      department: item.department || "Unknown",
      revenue: Number(item.revenue),
-     percentage:
-      totalRevenue > 0 ? (Number(item.revenue) / totalRevenue) * 100 : 0,
+     percentage: totalRevenue > 0 ? (Number(item.revenue) / totalRevenue) * 100 : 0,
     })),
    },
    cost_analysis: {
     total_purchase_cost: totalCost,
     total_operational_cost: Number(costData[0]?.operational_cost || 0),
-    cost_by_department: costByDept.map((item) => ({
+    cost_by_department: costByDept.map(item => ({
      department: item.department || "Unknown",
      cost: Number(item.cost),
      percentage: totalCost > 0 ? (Number(item.cost) / totalCost) * 100 : 0,
     })),
     holding_costs: Math.round(holdingCosts),
-    average_cost_per_vehicle:
-     stockCount > 0 ? Math.round(totalCost / stockCount) : 0,
+    average_cost_per_vehicle: stockCount > 0 ? Math.round(totalCost / stockCount) : 0,
    },
    profitability_analysis: {
     gross_profit: Number(profitData[0]?.gross_profit || 0),
     net_profit: Number(profitData[0]?.net_profit || 0),
-    profit_margin:
-     totalRevenue > 0
-      ? (Number(profitData[0]?.gross_profit || 0) / totalRevenue) * 100
-      : 0,
-    profit_by_make: profitByMake.map((item) => ({
+    profit_margin: totalRevenue > 0 ? (Number(profitData[0]?.gross_profit || 0) / totalRevenue) * 100 : 0,
+    profit_by_make: profitByMake.map(item => ({
      make: item.make || "Unknown",
      profit: Number(item.profit),
-     margin:
-      Number(item.revenue) > 0
-       ? (Number(item.profit) / Number(item.revenue)) * 100
-       : 0,
+     margin: Number(item.revenue) > 0 ? (Number(item.profit) / Number(item.revenue)) * 100 : 0,
     })),
-    profit_by_department: profitByDept.map((item) => ({
+    profit_by_department: profitByDept.map(item => ({
      department: item.department || "Unknown",
      profit: Number(item.profit),
-     margin:
-      Number(item.revenue) > 0
-       ? (Number(item.profit) / Number(item.revenue)) * 100
-       : 0,
+     margin: Number(item.revenue) > 0 ? (Number(item.profit) / Number(item.revenue)) * 100 : 0,
     })),
    },
    cash_flow_analysis: {
     cash_inflow: Number(cashFlowData[0]?.cash_in || 0),
     cash_outflow: Number(cashFlowData[0]?.cash_out || 0),
-    net_cash_flow:
-     Number(cashFlowData[0]?.cash_in || 0) -
-     Number(cashFlowData[0]?.cash_out || 0),
+    net_cash_flow: Number(cashFlowData[0]?.cash_in || 0) - Number(cashFlowData[0]?.cash_out || 0),
     pending_payments: 0, // Would need payment tracking
     overdue_payments: 0, // Would need payment tracking
    },
@@ -5120,8 +4570,7 @@ export class DatabaseStorage implements IStorage {
    currentMonth >= 3 // April is month 3 (0-based)
     ? `${currentYear}-04-01`
     : `${currentYear - 1}-04-01`;
-  const financialYearEnd =
-   currentMonth >= 3 ? `${currentYear + 1}-03-31` : `${currentYear}-03-31`;
+  const financialYearEnd = currentMonth >= 3 ? `${currentYear + 1}-03-31` : `${currentYear}-03-31`;
 
   // Turnover Metrics - Financial Year
   const turnoverData = await db
@@ -5137,8 +4586,8 @@ export class DatabaseStorage implements IStorage {
      isNotNull(vehicles.sale_date),
      isNotNull(vehicles.purchase_invoice_date),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    )
    .groupBy(vehicles.make);
 
@@ -5155,13 +4604,11 @@ export class DatabaseStorage implements IStorage {
      isNotNull(vehicles.sale_date),
      isNotNull(vehicles.purchase_invoice_date),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    );
 
-  const sortedBySpeed = [...turnoverData].sort(
-   (a, b) => Number(a.avg_days) - Number(b.avg_days)
-  );
+  const sortedBySpeed = [...turnoverData].sort((a, b) => Number(a.avg_days) - Number(b.avg_days));
   const fastest = sortedBySpeed.slice(0, 5);
   const slowest = sortedBySpeed.slice(-5).reverse();
 
@@ -5177,8 +4624,8 @@ export class DatabaseStorage implements IStorage {
      eq(sql`UPPER(sales_status)`, "SOLD"),
      gt(sql`CAST(purchase_price_total AS DECIMAL)`, 0),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    );
 
   // Discount analysis based on markup from purchase price
@@ -5201,8 +4648,8 @@ export class DatabaseStorage implements IStorage {
      gt(sql`CAST(purchase_price_total AS DECIMAL)`, 0),
      gt(sql`CAST(total_sale_price AS DECIMAL)`, 0),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    ).groupBy(sql`CASE 
           WHEN ((CAST(total_sale_price AS DECIMAL) - CAST(purchase_price_total AS DECIMAL)) / NULLIF(CAST(purchase_price_total AS DECIMAL), 0)) * 100 < 10 THEN '0-10%'
           WHEN ((CAST(total_sale_price AS DECIMAL) - CAST(purchase_price_total AS DECIMAL)) / NULLIF(CAST(purchase_price_total AS DECIMAL), 0)) * 100 < 20 THEN '10-20%'
@@ -5221,34 +4668,32 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    );
 
   return {
    turnover_metrics: {
     average_days_to_sell: Math.round(Number(overallTurnover[0]?.avg_days || 0)),
-    fastest_selling_makes: fastest.map((item) => ({
+    fastest_selling_makes: fastest.map(item => ({
      make: item.make || "Unknown",
      avg_days: Math.round(Number(item.avg_days)),
      count: Number(item.count),
     })),
-    slowest_selling_makes: slowest.map((item) => ({
+    slowest_selling_makes: slowest.map(item => ({
      make: item.make || "Unknown",
      avg_days: Math.round(Number(item.avg_days)),
      count: Number(item.count),
     })),
     stock_turnover_rate:
      Number(overallTurnover[0]?.stock_count) > 0
-      ? (Number(overallTurnover[0]?.total_sold) /
-         Number(overallTurnover[0]?.stock_count)) *
-        12
+      ? (Number(overallTurnover[0]?.total_sold) / Number(overallTurnover[0]?.stock_count)) * 12
       : 0,
    },
    pricing_metrics: {
     average_markup: Math.round(Number(pricingData[0]?.markup || 0) * 10) / 10,
     pricing_accuracy: 85, // Placeholder
-    discount_analysis: discountRanges.map((item) => ({
+    discount_analysis: discountRanges.map(item => ({
      range: item.range || "0-5%",
      count: Number(item.count),
      avg_discount: Math.round(Number(item.avg_discount) * 10) / 10,
@@ -5256,10 +4701,8 @@ export class DatabaseStorage implements IStorage {
     optimal_price_points: [], // Would need more data
    },
    quality_metrics: {
-    warranty_cost_ratio:
-     Math.round(Number(qualityData[0]?.warranty_ratio || 0) * 10) / 10,
-    parts_cost_ratio:
-     Math.round(Number(qualityData[0]?.parts_ratio || 0) * 10) / 10,
+    warranty_cost_ratio: Math.round(Number(qualityData[0]?.warranty_ratio || 0) * 10) / 10,
+    parts_cost_ratio: Math.round(Number(qualityData[0]?.parts_ratio || 0) * 10) / 10,
     customer_satisfaction_by_make: [], // Would need review data
     return_rate: 0, // Would need return tracking
    },
@@ -5304,8 +4747,7 @@ export class DatabaseStorage implements IStorage {
    currentMonth >= 3 // April is month 3 (0-based)
     ? `${currentYear}-04-01`
     : `${currentYear - 1}-04-01`;
-  const financialYearEnd =
-   currentMonth >= 3 ? `${currentYear + 1}-03-31` : `${currentYear}-03-31`;
+  const financialYearEnd = currentMonth >= 3 ? `${currentYear + 1}-03-31` : `${currentYear}-03-31`;
 
   // Sales Team Performance - Financial Year (using buyer as salesperson for now)
   const salesTeamData = await db
@@ -5321,8 +4763,8 @@ export class DatabaseStorage implements IStorage {
      eq(sql`UPPER(sales_status)`, "SOLD"),
      isNotNull(vehicles.buyer),
      sql`sale_date >= ${financialYearStart}`,
-     sql`sale_date <= ${financialYearEnd}`
-    )
+     sql`sale_date <= ${financialYearEnd}`,
+    ),
    )
    .groupBy(vehicles.buyer)
    .orderBy(sql`COALESCE(SUM(CAST(total_sale_price AS DECIMAL)), 0) DESC`)
@@ -5357,22 +4799,18 @@ export class DatabaseStorage implements IStorage {
    .where(
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
-     gte(vehicles.sale_date, sql`DATE_TRUNC('month', CURRENT_DATE)`)
-    )
+     gte(vehicles.sale_date, sql`DATE_TRUNC('month', CURRENT_DATE)`),
+    ),
    );
 
-  const daysInMonth = new Date(
-   new Date().getFullYear(),
-   new Date().getMonth() + 1,
-   0
-  ).getDate();
+  const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
   const daysElapsed = new Date().getDate();
   const currentRevenue = Number(currentMonthSales[0]?.revenue || 0);
   const monthlyTarget = 2000000; // £2M target
   const projectedRevenue = (currentRevenue / daysElapsed) * daysInMonth;
 
   return {
-   sales_team_performance: salesTeamData.map((item) => ({
+   sales_team_performance: salesTeamData.map(item => ({
     salesperson: item.salesperson || "Unknown",
     total_sales: Number(item.total_sales),
     revenue_generated: Number(item.revenue),
@@ -5385,7 +4823,7 @@ export class DatabaseStorage implements IStorage {
     pipeline_value: Number(pipelineData[0]?.total || 0) * 35000, // Estimated avg value
     conversion_forecast: Number(pipelineData[0]?.total || 0) * 0.25, // 25% conversion
     average_sales_cycle: 14, // Days
-    bottlenecks: leadsByStage.map((item) => ({
+    bottlenecks: leadsByStage.map(item => ({
      stage: item.stage || "unknown",
      stuck_count: Number(item.count),
      avg_days: Math.round(Number(item.avg_age)),
@@ -5396,7 +4834,7 @@ export class DatabaseStorage implements IStorage {
     current_achievement: currentRevenue,
     achievement_percentage: (currentRevenue / monthlyTarget) * 100,
     projected_month_end: projectedRevenue,
-    top_performers: salesTeamData.slice(0, 5).map((item) => ({
+    top_performers: salesTeamData.slice(0, 5).map(item => ({
      name: item.salesperson || "Unknown",
      achievement: Number(item.revenue),
     })),
@@ -5452,8 +4890,8 @@ export class DatabaseStorage implements IStorage {
    .where(
     and(
      eq(sql`UPPER(sales_status)`, "SOLD"),
-     gte(vehicles.sale_date, sql`DATE_TRUNC('month', CURRENT_DATE)`)
-    )
+     gte(vehicles.sale_date, sql`DATE_TRUNC('month', CURRENT_DATE)`),
+    ),
    );
 
   const lastYearRevenue = await db
@@ -5462,10 +4900,7 @@ export class DatabaseStorage implements IStorage {
    })
    .from(vehicles)
    .where(
-    and(
-     eq(sql`UPPER(sales_status)`, "SOLD"),
-     gte(vehicles.sale_date, sql`CURRENT_DATE - INTERVAL '1 year'`)
-    )
+    and(eq(sql`UPPER(sales_status)`, "SOLD"), gte(vehicles.sale_date, sql`CURRENT_DATE - INTERVAL '1 year'`)),
    );
 
   // Inventory Needs Analysis
@@ -5478,7 +4913,7 @@ export class DatabaseStorage implements IStorage {
    .from(vehicles)
    .groupBy(vehicles.make)
    .having(
-    sql`COUNT(CASE WHEN UPPER(sales_status) = 'SOLD' AND sale_date >= CURRENT_DATE - INTERVAL '3 months' THEN 1 END) > 0`
+    sql`COUNT(CASE WHEN UPPER(sales_status) = 'SOLD' AND sale_date >= CURRENT_DATE - INTERVAL '3 months' THEN 1 END) > 0`,
    );
 
   return {
@@ -5533,7 +4968,7 @@ export class DatabaseStorage implements IStorage {
    forecast: {
     revenue_forecast_3m: Number(monthlyData[0]?.revenue || 0) * 3.2, // Growth factor
     profit_forecast_3m: Number(monthlyData[0]?.profit || 0) * 3.1,
-    inventory_needs: inventoryNeeds.map((item) => ({
+    inventory_needs: inventoryNeeds.map(item => ({
      make: item.make || "Unknown",
      recommended_stock: Math.ceil((Number(item.sold_last_3m) / 3) * 1.2), // 20% buffer
      current_stock: Number(item.current_stock),
@@ -5679,16 +5114,12 @@ export class DatabaseStorage implements IStorage {
   const grossProfit = Number(salesSummary.rows[0]?.gross_profit || 0);
   const netProfit = Number(salesSummary.rows[0]?.net_profit || 0);
   const avgSellingPrice = Number(salesSummary.rows[0]?.avg_selling_price || 0);
-  const profitMargin =
-   totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
+  const profitMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
 
   const purchaseCosts = Number(costBreakdown.rows[0]?.purchase_costs || 0);
-  const operationalCosts = Number(
-   costBreakdown.rows[0]?.operational_costs || 0
-  );
+  const operationalCosts = Number(costBreakdown.rows[0]?.operational_costs || 0);
   const avgAge = Number(stockValue.rows[0]?.avg_age || 0);
-  const holdingCosts =
-   Number(stockValue.rows[0]?.total_value || 0) * 0.02 * (avgAge / 30); // 2% per month
+  const holdingCosts = Number(stockValue.rows[0]?.total_value || 0) * 0.02 * (avgAge / 30); // 2% per month
   const totalCosts = purchaseCosts + operationalCosts + holdingCosts;
 
   // Finance data
@@ -5742,10 +5173,8 @@ export class DatabaseStorage implements IStorage {
     total_costs: Math.round(totalCosts),
    },
    performance_metrics: {
-    vehicles_sold_vs_target:
-     unitsTarget > 0 ? (totalUnits / unitsTarget) * 100 : 0,
-    revenue_vs_target:
-     monthlyTarget > 0 ? (totalRevenue / monthlyTarget) * 100 : 0,
+    vehicles_sold_vs_target: unitsTarget > 0 ? (totalUnits / unitsTarget) * 100 : 0,
+    revenue_vs_target: monthlyTarget > 0 ? (totalRevenue / monthlyTarget) * 100 : 0,
     profit_vs_target: profitTarget > 0 ? (grossProfit / profitTarget) * 100 : 0,
     inventory_turnover: avgAge > 0 ? 365 / avgAge : 0,
    },
@@ -5760,19 +5189,14 @@ export class DatabaseStorage implements IStorage {
    .orderBy(page_definitions.page_category, page_definitions.page_name);
  }
 
- async createPageDefinition(
-  pageDefinition: InsertPageDefinition
- ): Promise<PageDefinition> {
-  const [page] = await db
-   .insert(page_definitions)
-   .values(pageDefinition)
-   .returning();
+ async createPageDefinition(pageDefinition: InsertPageDefinition): Promise<PageDefinition> {
+  const [page] = await db.insert(page_definitions).values(pageDefinition).returning();
   return page;
  }
 
  async updatePageDefinition(
   id: number,
-  pageDefinition: Partial<InsertPageDefinition>
+  pageDefinition: Partial<InsertPageDefinition>,
  ): Promise<PageDefinition> {
   const [page] = await db
    .update(page_definitions)
@@ -5783,48 +5207,30 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deletePageDefinition(id: number): Promise<boolean> {
-  const result = await db
-   .delete(page_definitions)
-   .where(eq(page_definitions.id, id));
+  const result = await db.delete(page_definitions).where(eq(page_definitions.id, id));
   return (result.rowCount ?? 0) > 0;
  }
 
  async getUserPermissions(userId: number): Promise<UserPermission[]> {
-  return await db
-   .select()
-   .from(user_permissions)
-   .where(eq(user_permissions.user_id, userId));
+  return await db.select().from(user_permissions).where(eq(user_permissions.user_id, userId));
  }
 
- async getUserPermissionsByPageKey(
-  userId: number,
-  pageKey: string
- ): Promise<UserPermission | undefined> {
+ async getUserPermissionsByPageKey(userId: number, pageKey: string): Promise<UserPermission | undefined> {
   const [permission] = await db
    .select()
    .from(user_permissions)
-   .where(
-    and(
-     eq(user_permissions.user_id, userId),
-     eq(user_permissions.page_key, pageKey)
-    )
-   );
+   .where(and(eq(user_permissions.user_id, userId), eq(user_permissions.page_key, pageKey)));
   return permission || undefined;
  }
 
- async createUserPermission(
-  userPermission: InsertUserPermission
- ): Promise<UserPermission> {
-  const [permission] = await db
-   .insert(user_permissions)
-   .values(userPermission)
-   .returning();
+ async createUserPermission(userPermission: InsertUserPermission): Promise<UserPermission> {
+  const [permission] = await db.insert(user_permissions).values(userPermission).returning();
   return permission;
  }
 
  async updateUserPermission(
   id: number,
-  userPermission: Partial<InsertUserPermission>
+  userPermission: Partial<InsertUserPermission>,
  ): Promise<UserPermission> {
   const [permission] = await db
    .update(user_permissions)
@@ -5835,22 +5241,16 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deleteUserPermission(id: number): Promise<boolean> {
-  const result = await db
-   .delete(user_permissions)
-   .where(eq(user_permissions.id, id));
+  const result = await db.delete(user_permissions).where(eq(user_permissions.id, id));
   return (result.rowCount ?? 0) > 0;
  }
 
  async deleteUserPermissionsByUserId(userId: number): Promise<boolean> {
-  const result = await db
-   .delete(user_permissions)
-   .where(eq(user_permissions.user_id, userId));
+  const result = await db.delete(user_permissions).where(eq(user_permissions.user_id, userId));
   return (result.rowCount ?? 0) > 0;
  }
 
- async getUsersWithPermissions(): Promise<
-  Array<User & { permissions: UserPermission[] }>
- > {
+ async getUsersWithPermissions(): Promise<Array<User & { permissions: UserPermission[] }>> {
   const allUsers = await this.getUsers();
   const result = [];
 
@@ -5882,12 +5282,7 @@ export class DatabaseStorage implements IStorage {
     can_export: user_permissions.can_export,
    })
    .from(user_permissions)
-   .where(
-    and(
-     eq(user_permissions.user_id, userId),
-     sql`${user_permissions.permission_level} != 'hidden'`
-    )
-   );
+   .where(and(eq(user_permissions.user_id, userId), sql`${user_permissions.permission_level} != 'hidden'`));
 
   return permissions;
  }
@@ -6040,7 +5435,7 @@ export class DatabaseStorage implements IStorage {
   const existingPages = await this.getPageDefinitions();
 
   for (const page of defaultPages) {
-   const exists = existingPages.find((p) => p.page_key === page.page_key);
+   const exists = existingPages.find(p => p.page_key === page.page_key);
    if (!exists) {
     await this.createPageDefinition(page);
    }
@@ -6050,10 +5445,7 @@ export class DatabaseStorage implements IStorage {
  // Notification system implementation - Phase 1 simplified
 
  async getNotifications(): Promise<Notification[]> {
-  return await db
-   .select()
-   .from(notifications)
-   .orderBy(desc(notifications.created_at));
+  return await db.select().from(notifications).orderBy(desc(notifications.created_at));
  }
 
  async getNotificationsByUser(userId: number): Promise<Notification[]> {
@@ -6065,27 +5457,16 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getNotificationById(id: number): Promise<Notification | undefined> {
-  const [notification] = await db
-   .select()
-   .from(notifications)
-   .where(eq(notifications.id, id));
+  const [notification] = await db.select().from(notifications).where(eq(notifications.id, id));
   return notification || undefined;
  }
 
- async createNotification(
-  notification: InsertNotification
- ): Promise<Notification> {
-  const [newNotification] = await db
-   .insert(notifications)
-   .values(notification)
-   .returning();
+ async createNotification(notification: InsertNotification): Promise<Notification> {
+  const [newNotification] = await db.insert(notifications).values(notification).returning();
   return newNotification;
  }
 
- async updateNotification(
-  id: number,
-  notification: Partial<InsertNotification>
- ): Promise<Notification> {
+ async updateNotification(id: number, notification: Partial<InsertNotification>): Promise<Notification> {
   const [updatedNotification] = await db
    .update(notifications)
    .set({ ...notification, updated_at: new Date() })
@@ -6107,9 +5488,7 @@ export class DatabaseStorage implements IStorage {
   by_priority: Array<{ priority: string; count: number }>;
   by_type: Array<{ type: string; count: number }>;
  }> {
-  const totalQuery = await db
-   .select({ count: sql<number>`count(*)` })
-   .from(notifications);
+  const totalQuery = await db.select({ count: sql<number>`count(*)` }).from(notifications);
   const unreadQuery = await db
    .select({ count: sql<number>`count(*)` })
    .from(notifications)
@@ -6144,20 +5523,18 @@ export class DatabaseStorage implements IStorage {
    unread_notifications: unreadQuery[0]?.count || 0,
    read_notifications: readQuery[0]?.count || 0,
    dismissed_notifications: dismissedQuery[0]?.count || 0,
-   by_priority: byPriorityQuery.map((item) => ({
+   by_priority: byPriorityQuery.map(item => ({
     priority: item.priority,
     count: item.count,
    })),
-   by_type: byTypeQuery.map((item) => ({
+   by_type: byTypeQuery.map(item => ({
     type: item.type,
     count: item.count,
    })),
   };
  }
 
- async getNotificationPreferencesByUser(
-  userId: number
- ): Promise<NotificationPreference | undefined> {
+ async getNotificationPreferencesByUser(userId: number): Promise<NotificationPreference | undefined> {
   const [preferences] = await db
    .select()
    .from(notification_preferences)
@@ -6166,18 +5543,15 @@ export class DatabaseStorage implements IStorage {
  }
 
  async createNotificationPreferences(
-  preferences: InsertNotificationPreference
+  preferences: InsertNotificationPreference,
  ): Promise<NotificationPreference> {
-  const [newPreferences] = await db
-   .insert(notification_preferences)
-   .values(preferences)
-   .returning();
+  const [newPreferences] = await db.insert(notification_preferences).values(preferences).returning();
   return newPreferences;
  }
 
  async updateNotificationPreferences(
   id: number,
-  preferences: Partial<InsertNotificationPreference>
+  preferences: Partial<InsertNotificationPreference>,
  ): Promise<NotificationPreference> {
   const [updatedPreferences] = await db
    .update(notification_preferences)
@@ -6188,44 +5562,26 @@ export class DatabaseStorage implements IStorage {
  }
 
  async getNotificationSubscriptions(): Promise<PushSubscription[]> {
-  return await db
-   .select()
-   .from(push_subscriptions)
-   .orderBy(desc(push_subscriptions.created_at));
+  return await db.select().from(push_subscriptions).orderBy(desc(push_subscriptions.created_at));
  }
 
- async getNotificationSubscriptionsByUser(
-  userId: number
- ): Promise<PushSubscription[]> {
-  return await db
-   .select()
-   .from(push_subscriptions)
-   .where(eq(push_subscriptions.user_id, userId));
+ async getNotificationSubscriptionsByUser(userId: number): Promise<PushSubscription[]> {
+  return await db.select().from(push_subscriptions).where(eq(push_subscriptions.user_id, userId));
  }
 
- async createNotificationSubscription(
-  subscription: InsertPushSubscription
- ): Promise<PushSubscription> {
-  const [newSubscription] = await db
-   .insert(push_subscriptions)
-   .values(subscription)
-   .returning();
+ async createNotificationSubscription(subscription: InsertPushSubscription): Promise<PushSubscription> {
+  const [newSubscription] = await db.insert(push_subscriptions).values(subscription).returning();
   return newSubscription;
  }
 
  async deleteNotificationSubscription(id: number): Promise<boolean> {
-  const result = await db
-   .delete(push_subscriptions)
-   .where(eq(push_subscriptions.id, id));
+  const result = await db.delete(push_subscriptions).where(eq(push_subscriptions.id, id));
   return (result.rowCount || 0) > 0;
  }
 
  // Notification Rules methods (Phase 2.1)
  async getNotificationRules(): Promise<NotificationRule[]> {
-  return await db
-   .select()
-   .from(notification_rules)
-   .orderBy(desc(notification_rules.created_at));
+  return await db.select().from(notification_rules).orderBy(desc(notification_rules.created_at));
  }
 
  async getNotificationRulesByUser(userId: number): Promise<NotificationRule[]> {
@@ -6236,30 +5592,17 @@ export class DatabaseStorage implements IStorage {
    .orderBy(desc(notification_rules.created_at));
  }
 
- async getNotificationRuleById(
-  id: number
- ): Promise<NotificationRule | undefined> {
-  const [rule] = await db
-   .select()
-   .from(notification_rules)
-   .where(eq(notification_rules.id, id));
+ async getNotificationRuleById(id: number): Promise<NotificationRule | undefined> {
+  const [rule] = await db.select().from(notification_rules).where(eq(notification_rules.id, id));
   return rule || undefined;
  }
 
- async createNotificationRule(
-  rule: InsertNotificationRule
- ): Promise<NotificationRule> {
-  const [newRule] = await db
-   .insert(notification_rules)
-   .values(rule)
-   .returning();
+ async createNotificationRule(rule: InsertNotificationRule): Promise<NotificationRule> {
+  const [newRule] = await db.insert(notification_rules).values(rule).returning();
   return newRule;
  }
 
- async updateNotificationRule(
-  id: number,
-  rule: Partial<InsertNotificationRule>
- ): Promise<NotificationRule> {
+ async updateNotificationRule(id: number, rule: Partial<InsertNotificationRule>): Promise<NotificationRule> {
   const [updatedRule] = await db
    .update(notification_rules)
    .set({ ...rule, updated_at: new Date() })
@@ -6269,31 +5612,19 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deleteNotificationRule(id: number): Promise<boolean> {
-  const result = await db
-   .delete(notification_rules)
-   .where(eq(notification_rules.id, id));
+  const result = await db.delete(notification_rules).where(eq(notification_rules.id, id));
   return (result.rowCount || 0) > 0;
  }
 
  async getActiveNotificationRules(): Promise<NotificationRule[]> {
-  return await db
-   .select()
-   .from(notification_rules)
-   .where(eq(notification_rules.is_active, true));
+  return await db.select().from(notification_rules).where(eq(notification_rules.is_active, true));
  }
 
- async getNotificationRulesByTrigger(
-  triggerEvent: string
- ): Promise<NotificationRule[]> {
+ async getNotificationRulesByTrigger(triggerEvent: string): Promise<NotificationRule[]> {
   return await db
    .select()
    .from(notification_rules)
-   .where(
-    and(
-     eq(notification_rules.trigger_event, triggerEvent),
-     eq(notification_rules.is_active, true)
-    )
-   );
+   .where(and(eq(notification_rules.trigger_event, triggerEvent), eq(notification_rules.is_active, true)));
  }
 
  async updateNotificationRuleLastTriggered(id: number): Promise<void> {
@@ -6313,17 +5644,11 @@ export class DatabaseStorage implements IStorage {
 
  async getNotificationAnalytics(): Promise<NotificationAnalytics[]> {}
 
- async getNotificationAnalyticsByNotification(
-  notificationId: number
- ): Promise<NotificationAnalytics[]> {}
+ async getNotificationAnalyticsByNotification(notificationId: number): Promise<NotificationAnalytics[]> {}
 
- async getNotificationAnalyticsByUser(
-  userId: number
- ): Promise<NotificationAnalytics[]> {}
+ async getNotificationAnalyticsByUser(userId: number): Promise<NotificationAnalytics[]> {}
 
- async createNotificationAnalytics(
-  analytics: InsertNotificationAnalytics
- ): Promise<NotificationAnalytics> {
+ async createNotificationAnalytics(analytics: InsertNotificationAnalytics): Promise<NotificationAnalytics> {
   return newAnalytics;
  }
 
@@ -6408,8 +5733,8 @@ export class DatabaseStorage implements IStorage {
    .where(
     and(
      eq(push_subscriptions.user_id, subscription.user_id),
-     eq(push_subscriptions.endpoint, subscription.endpoint)
-    )
+     eq(push_subscriptions.endpoint, subscription.endpoint),
+    ),
    );
 
   // Clean up old inactive subscriptions
@@ -6436,12 +5761,7 @@ export class DatabaseStorage implements IStorage {
   const uniqueSubscriptions = await db
    .select()
    .from(push_subscriptions)
-   .where(
-    and(
-     eq(push_subscriptions.user_id, userId),
-     eq(push_subscriptions.is_active, true)
-    )
-   )
+   .where(and(eq(push_subscriptions.user_id, userId), eq(push_subscriptions.is_active, true)))
    .orderBy(desc(push_subscriptions.created_at));
 
   // Deduplicate by endpoint - keep only the most recent for each endpoint
@@ -6460,20 +5780,12 @@ export class DatabaseStorage implements IStorage {
   return await db
    .select()
    .from(push_subscriptions)
-   .where(
-    and(
-     eq(push_subscriptions.user_id, userId),
-     eq(push_subscriptions.is_active, true)
-    )
-   )
+   .where(and(eq(push_subscriptions.user_id, userId), eq(push_subscriptions.is_active, true)))
    .orderBy(desc(push_subscriptions.created_at));
  }
 
  async getPushSubscriptionById(id: number): Promise<any | undefined> {
-  const [subscription] = await db
-   .select()
-   .from(push_subscriptions)
-   .where(eq(push_subscriptions.id, id));
+  const [subscription] = await db.select().from(push_subscriptions).where(eq(push_subscriptions.id, id));
   return subscription || undefined;
  }
 
@@ -6482,7 +5794,7 @@ export class DatabaseStorage implements IStorage {
   updates: Partial<{
    is_active: boolean;
    updated_at: string;
-  }>
+  }>,
  ): Promise<any> {
   const [updatedSubscription] = await db
    .update(push_subscriptions)
@@ -6492,18 +5804,10 @@ export class DatabaseStorage implements IStorage {
   return updatedSubscription;
  }
 
- async deletePushSubscription(
-  userId: number,
-  endpoint: string
- ): Promise<boolean> {
+ async deletePushSubscription(userId: number, endpoint: string): Promise<boolean> {
   const result = await db
    .delete(push_subscriptions)
-   .where(
-    and(
-     eq(push_subscriptions.user_id, userId),
-     eq(push_subscriptions.endpoint, endpoint)
-    )
-   );
+   .where(and(eq(push_subscriptions.user_id, userId), eq(push_subscriptions.endpoint, endpoint)));
   return (result.rowCount || 0) > 0;
  }
 
@@ -6518,8 +5822,8 @@ export class DatabaseStorage implements IStorage {
     and(
      eq(push_subscriptions.user_id, userId),
      eq(push_subscriptions.is_active, false),
-     lt(push_subscriptions.created_at, thirtyDaysAgo)
-    )
+     lt(push_subscriptions.created_at, thirtyDaysAgo),
+    ),
    );
  }
 
@@ -6527,12 +5831,7 @@ export class DatabaseStorage implements IStorage {
   return await db
    .select()
    .from(notifications)
-   .where(
-    and(
-     eq(notifications.recipient_user_id, userId),
-     eq(notifications.status, "pending")
-    )
-   )
+   .where(and(eq(notifications.recipient_user_id, userId), eq(notifications.status, "pending")))
    .orderBy(desc(notifications.created_at));
  }
 
@@ -6541,12 +5840,7 @@ export class DatabaseStorage implements IStorage {
   const results = await this.db
    .select()
    .from(notifications)
-   .where(
-    and(
-     eq(notifications.recipient_user_id, userId),
-     eq(notifications.status, "pending")
-    )
-   )
+   .where(and(eq(notifications.recipient_user_id, userId), eq(notifications.status, "pending")))
    .orderBy(desc(notifications.created_at))
    .limit(10);
 
@@ -6566,34 +5860,19 @@ export class DatabaseStorage implements IStorage {
 
  // Device Registration operations
  async getDeviceRegistrations(): Promise<DeviceRegistration[]> {
-  return await db
-   .select()
-   .from(device_registrations)
-   .orderBy(desc(device_registrations.created_at));
+  return await db.select().from(device_registrations).orderBy(desc(device_registrations.created_at));
  }
 
- async getDeviceRegistrationsByUser(
-  userId: number
- ): Promise<DeviceRegistration[]> {
-  return await db
-   .select()
-   .from(device_registrations)
-   .where(eq(device_registrations.user_id, userId));
+ async getDeviceRegistrationsByUser(userId: number): Promise<DeviceRegistration[]> {
+  return await db.select().from(device_registrations).where(eq(device_registrations.user_id, userId));
  }
 
- async getDeviceRegistrationById(
-  id: number
- ): Promise<DeviceRegistration | undefined> {
-  const [device] = await db
-   .select()
-   .from(device_registrations)
-   .where(eq(device_registrations.id, id));
+ async getDeviceRegistrationById(id: number): Promise<DeviceRegistration | undefined> {
+  const [device] = await db.select().from(device_registrations).where(eq(device_registrations.id, id));
   return device || undefined;
  }
 
- async getDeviceRegistrationByToken(
-  deviceToken: string
- ): Promise<DeviceRegistration | undefined> {
+ async getDeviceRegistrationByToken(deviceToken: string): Promise<DeviceRegistration | undefined> {
   const [device] = await db
    .select()
    .from(device_registrations)
@@ -6601,19 +5880,14 @@ export class DatabaseStorage implements IStorage {
   return device || undefined;
  }
 
- async createDeviceRegistration(
-  registration: InsertDeviceRegistration
- ): Promise<DeviceRegistration> {
-  const [device] = await db
-   .insert(device_registrations)
-   .values(registration)
-   .returning();
+ async createDeviceRegistration(registration: InsertDeviceRegistration): Promise<DeviceRegistration> {
+  const [device] = await db.insert(device_registrations).values(registration).returning();
   return device;
  }
 
  async updateDeviceRegistration(
   id: number,
-  registration: Partial<InsertDeviceRegistration>
+  registration: Partial<InsertDeviceRegistration>,
  ): Promise<DeviceRegistration> {
   const [device] = await db
    .update(device_registrations)
@@ -6624,9 +5898,7 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deleteDeviceRegistration(id: number): Promise<boolean> {
-  const result = await db
-   .delete(device_registrations)
-   .where(eq(device_registrations.id, id));
+  const result = await db.delete(device_registrations).where(eq(device_registrations.id, id));
   return (result.rowCount || 0) > 0;
  }
 
@@ -6641,27 +5913,15 @@ export class DatabaseStorage implements IStorage {
   return await db
    .select()
    .from(device_registrations)
-   .where(
-    and(
-     eq(device_registrations.user_id, userId),
-     eq(device_registrations.is_active, true)
-    )
-   )
+   .where(and(eq(device_registrations.user_id, userId), eq(device_registrations.is_active, true)))
    .orderBy(desc(device_registrations.last_active));
  }
 
- async getDeviceRegistrationsByPlatform(
-  platform: string
- ): Promise<DeviceRegistration[]> {
+ async getDeviceRegistrationsByPlatform(platform: string): Promise<DeviceRegistration[]> {
   return await db
    .select()
    .from(device_registrations)
-   .where(
-    and(
-     eq(device_registrations.platform, platform),
-     eq(device_registrations.is_active, true)
-    )
-   )
+   .where(and(eq(device_registrations.platform, platform), eq(device_registrations.is_active, true)))
    .orderBy(desc(device_registrations.last_active));
  }
 
@@ -6678,12 +5938,7 @@ export class DatabaseStorage implements IStorage {
 
   const result = await db
    .delete(device_registrations)
-   .where(
-    and(
-     eq(device_registrations.is_active, true),
-     sql`last_active < ${cutoffDate}`
-    )
-   );
+   .where(and(eq(device_registrations.is_active, true), sql`last_active < ${cutoffDate}`));
 
   return result.rowCount || 0;
  }
@@ -6704,10 +5959,7 @@ export class DatabaseStorage implements IStorage {
     expires_at: pinned_messages.expires_at,
     created_at: pinned_messages.created_at,
     updated_at: pinned_messages.updated_at,
-    author_name:
-     sql<string>`${users.first_name} || ' ' || ${users.last_name}`.as(
-      "author_name"
-     ),
+    author_name: sql<string>`${users.first_name} || ' ' || ${users.last_name}`.as("author_name"),
     author_username: users.username,
    })
    .from(pinned_messages)
@@ -6715,11 +5967,8 @@ export class DatabaseStorage implements IStorage {
    .where(
     and(
      eq(pinned_messages.is_pinned, true),
-     or(
-      isNull(pinned_messages.expires_at),
-      gt(pinned_messages.expires_at, new Date())
-     )
-    )
+     or(isNull(pinned_messages.expires_at), gt(pinned_messages.expires_at, new Date())),
+    ),
    )
    .orderBy(desc(pinned_messages.created_at));
  }
@@ -6739,10 +5988,7 @@ export class DatabaseStorage implements IStorage {
     expires_at: pinned_messages.expires_at,
     created_at: pinned_messages.created_at,
     updated_at: pinned_messages.updated_at,
-    author_name:
-     sql<string>`${users.first_name} || ' ' || ${users.last_name}`.as(
-      "author_name"
-     ),
+    author_name: sql<string>`${users.first_name} || ' ' || ${users.last_name}`.as("author_name"),
     author_username: users.username,
    })
    .from(pinned_messages)
@@ -6750,16 +5996,13 @@ export class DatabaseStorage implements IStorage {
    .where(
     and(
      eq(pinned_messages.is_pinned, true),
-     or(
-      isNull(pinned_messages.expires_at),
-      gt(pinned_messages.expires_at, new Date())
-     ),
+     or(isNull(pinned_messages.expires_at), gt(pinned_messages.expires_at, new Date())),
      or(
       eq(pinned_messages.is_public, true),
       sql`${userId} = ANY(${pinned_messages.target_user_ids})`,
-      eq(pinned_messages.author_id, userId)
-     )
-    )
+      eq(pinned_messages.author_id, userId),
+     ),
+    ),
    )
    .orderBy(desc(pinned_messages.created_at));
  }
@@ -6779,10 +6022,7 @@ export class DatabaseStorage implements IStorage {
     expires_at: pinned_messages.expires_at,
     created_at: pinned_messages.created_at,
     updated_at: pinned_messages.updated_at,
-    author_name:
-     sql<string>`${users.first_name} || ' ' || ${users.last_name}`.as(
-      "author_name"
-     ),
+    author_name: sql<string>`${users.first_name} || ' ' || ${users.last_name}`.as("author_name"),
     author_username: users.username,
    })
    .from(pinned_messages)
@@ -6793,21 +6033,13 @@ export class DatabaseStorage implements IStorage {
   return result[0];
  }
 
- async createPinnedMessage(
-  pinnedMessage: InsertPinnedMessage
- ): Promise<PinnedMessage> {
-  const result = await db
-   .insert(pinned_messages)
-   .values(pinnedMessage)
-   .returning();
+ async createPinnedMessage(pinnedMessage: InsertPinnedMessage): Promise<PinnedMessage> {
+  const result = await db.insert(pinned_messages).values(pinnedMessage).returning();
 
   return result[0];
  }
 
- async updatePinnedMessage(
-  id: number,
-  pinnedMessage: Partial<InsertPinnedMessage>
- ): Promise<PinnedMessage> {
+ async updatePinnedMessage(id: number, pinnedMessage: Partial<InsertPinnedMessage>): Promise<PinnedMessage> {
   const result = await db
    .update(pinned_messages)
    .set({ ...pinnedMessage, updated_at: new Date() })
@@ -6818,9 +6050,7 @@ export class DatabaseStorage implements IStorage {
  }
 
  async deletePinnedMessage(id: number): Promise<boolean> {
-  const result = await db
-   .delete(pinned_messages)
-   .where(eq(pinned_messages.id, id));
+  const result = await db.delete(pinned_messages).where(eq(pinned_messages.id, id));
 
   return (result.rowCount || 0) > 0;
  }
@@ -6832,33 +6062,22 @@ export class DatabaseStorage implements IStorage {
    .where(
     and(
      eq(pinned_messages.is_pinned, true),
-     or(
-      isNull(pinned_messages.expires_at),
-      gt(pinned_messages.expires_at, new Date())
-     )
-    )
+     or(isNull(pinned_messages.expires_at), gt(pinned_messages.expires_at, new Date())),
+    ),
    )
    .orderBy(desc(pinned_messages.created_at));
  }
 
- async getActivePinnedMessagesForUser(
-  userId: number
- ): Promise<PinnedMessage[]> {
+ async getActivePinnedMessagesForUser(userId: number): Promise<PinnedMessage[]> {
   return await db
    .select()
    .from(pinned_messages)
    .where(
     and(
      eq(pinned_messages.is_pinned, true),
-     or(
-      isNull(pinned_messages.expires_at),
-      gt(pinned_messages.expires_at, new Date())
-     ),
-     or(
-      eq(pinned_messages.is_public, true),
-      sql`${userId} = ANY(${pinned_messages.target_user_ids})`
-     )
-    )
+     or(isNull(pinned_messages.expires_at), gt(pinned_messages.expires_at, new Date())),
+     or(eq(pinned_messages.is_public, true), sql`${userId} = ANY(${pinned_messages.target_user_ids})`),
+    ),
    )
    .orderBy(desc(pinned_messages.created_at));
  }

@@ -44,19 +44,19 @@
 
 ```typescript
 class WebPushService {
-  // Core functionality
-  async sendWebPush(subscription, payload): Promise<WebPushResult>;
+ // Core functionality
+ async sendWebPush(subscription, payload): Promise<WebPushResult>;
 
-  // Error handling
-  private async handleWebPushError(error, subscription): Promise<WebPushResult>;
-  private async markSubscriptionInactive(subscriptionId): Promise<void>;
+ // Error handling
+ private async handleWebPushError(error, subscription): Promise<WebPushResult>;
+ private async markSubscriptionInactive(subscriptionId): Promise<void>;
 
-  // User management
-  async getUserSubscriptions(userId): Promise<WebPushSubscription[]>;
-  async sendToUser(userId, payload): Promise<{ sent; failed; errors }>;
+ // User management
+ async getUserSubscriptions(userId): Promise<WebPushSubscription[]>;
+ async sendToUser(userId, payload): Promise<{ sent; failed; errors }>;
 
-  // Testing
-  async testSend(subscriptionId): Promise<WebPushResult>;
+ // Testing
+ async testSend(subscriptionId): Promise<WebPushResult>;
 }
 ```
 

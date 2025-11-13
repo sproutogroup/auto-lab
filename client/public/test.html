@@ -1,300 +1,273 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Phase 3.1 - VAPID Sync Test</title>
-    <style>
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background: #f5f5f5;
-      }
-      .container {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        color: #dc2626;
-      }
-      h2 {
-        color: #374151;
-        margin-top: 30px;
-      }
-      .step {
-        background: #f8f9fa;
-        padding: 20px;
-        margin: 20px 0;
-        border-radius: 8px;
-        border-left: 4px solid #dc2626;
-      }
-      button {
-        background: #dc2626;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        margin: 10px 0;
-      }
-      button:hover {
-        background: #b91c1c;
-      }
-      .success {
-        color: #10b981;
-      }
-      .error {
-        color: #ef4444;
-      }
-      .output {
-        background: #111827;
-        color: #f9fafb;
-        padding: 15px;
-        border-radius: 6px;
-        font-family: "Monaco", "Consolas", monospace;
-        font-size: 14px;
-        white-space: pre-wrap;
-        margin: 10px 0;
-        max-height: 300px;
-        overflow-y: auto;
-      }
-      .key-info {
-        background: #dbeafe;
-        padding: 15px;
-        border-radius: 6px;
-        margin: 10px 0;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>🚀 Phase 3.1 - VAPID Sync Test</h1>
-      <p>
-        This test will generate a real browser subscription and test the
-        complete push notification flow.
-      </p>
+ <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 3.1 - VAPID Sync Test</title>
+  <style>
+   body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f5f5f5;
+   }
+   .container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   }
+   h1 {
+    color: #dc2626;
+   }
+   h2 {
+    color: #374151;
+    margin-top: 30px;
+   }
+   .step {
+    background: #f8f9fa;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    border-left: 4px solid #dc2626;
+   }
+   button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px 0;
+   }
+   button:hover {
+    background: #b91c1c;
+   }
+   .success {
+    color: #10b981;
+   }
+   .error {
+    color: #ef4444;
+   }
+   .output {
+    background: #111827;
+    color: #f9fafb;
+    padding: 15px;
+    border-radius: 6px;
+    font-family: "Monaco", "Consolas", monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    margin: 10px 0;
+    max-height: 300px;
+    overflow-y: auto;
+   }
+   .key-info {
+    background: #dbeafe;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 10px 0;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <h1>🚀 Phase 3.1 - VAPID Sync Test</h1>
+   <p>This test will generate a real browser subscription and test the complete push notification flow.</p>
 
-      <div class="step">
-        <h2>Step 1: VAPID Configuration</h2>
-        <div class="key-info">
-          <strong>New VAPID Public Key:</strong><br />
-          <code
-            >BAo_FnrKbB2p6gzRN8xTF65HGV94Xu-TSYf2VfaaISf9_Gn5j91I5X8v_1pb48aRFwV_dZrvUdVSWKRMDDVKHu8</code
-          >
-        </div>
-        <p>✅ Server environment variables updated</p>
-        <p>✅ Client configuration updated</p>
-      </div>
-
-      <div class="step">
-        <h2>Step 2: Generate Real Browser Subscription</h2>
-        <button onclick="generateSubscription()">
-          Generate Real Subscription
-        </button>
-        <div id="subscriptionOutput" class="output" style="display: none"></div>
-      </div>
-
-      <div class="step">
-        <h2>Step 3: Test Push Notification</h2>
-        <button onclick="testPushNotification()" id="testPushBtn" disabled>
-          Test Push Notification
-        </button>
-        <div id="pushOutput" class="output" style="display: none"></div>
-      </div>
-
-      <div class="step">
-        <h2>Step 4: Results</h2>
-        <div id="results">
-          <p>Complete steps 2 and 3 to see results...</p>
-        </div>
-      </div>
+   <div class="step">
+    <h2>Step 1: VAPID Configuration</h2>
+    <div class="key-info">
+     <strong>New VAPID Public Key:</strong><br />
+     <code>BAo_FnrKbB2p6gzRN8xTF65HGV94Xu-TSYf2VfaaISf9_Gn5j91I5X8v_1pb48aRFwV_dZrvUdVSWKRMDDVKHu8</code>
     </div>
+    <p>✅ Server environment variables updated</p>
+    <p>✅ Client configuration updated</p>
+   </div>
 
-    <script>
-      let realSubscription = null;
-      let subscriptionId = null;
+   <div class="step">
+    <h2>Step 2: Generate Real Browser Subscription</h2>
+    <button onclick="generateSubscription()">Generate Real Subscription</button>
+    <div id="subscriptionOutput" class="output" style="display: none"></div>
+   </div>
 
-      function log(message, isError = false) {
-        console.log(message);
-        const timestamp = new Date().toISOString();
-        return `[${timestamp}] ${isError ? "ERROR: " : ""}${message}\n`;
-      }
+   <div class="step">
+    <h2>Step 3: Test Push Notification</h2>
+    <button onclick="testPushNotification()" id="testPushBtn" disabled>Test Push Notification</button>
+    <div id="pushOutput" class="output" style="display: none"></div>
+   </div>
 
-      function urlBase64ToUint8Array(base64String) {
-        const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-        const base64 = (base64String + padding)
-          .replace(/\-/g, "+")
-          .replace(/_/g, "/");
+   <div class="step">
+    <h2>Step 4: Results</h2>
+    <div id="results">
+     <p>Complete steps 2 and 3 to see results...</p>
+    </div>
+   </div>
+  </div>
 
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
+  <script>
+   let realSubscription = null;
+   let subscriptionId = null;
 
-        for (let i = 0; i < rawData.length; ++i) {
-          outputArray[i] = rawData.charCodeAt(i);
-        }
-        return outputArray;
-      }
+   function log(message, isError = false) {
+    console.log(message);
+    const timestamp = new Date().toISOString();
+    return `[${timestamp}] ${isError ? "ERROR: " : ""}${message}\n`;
+   }
 
-      async function generateSubscription() {
-        const output = document.getElementById("subscriptionOutput");
-        output.style.display = "block";
-        output.textContent = "";
+   function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
 
-        try {
-          output.textContent += log(
-            "Starting real browser subscription generation...",
-          );
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
 
-          // Check if service worker is available
-          if (!("serviceWorker" in navigator)) {
-            throw new Error("Service Worker not supported");
-          }
+    for (let i = 0; i < rawData.length; ++i) {
+     outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+   }
 
-          if (!("PushManager" in window)) {
-            throw new Error("Push messaging not supported");
-          }
+   async function generateSubscription() {
+    const output = document.getElementById("subscriptionOutput");
+    output.style.display = "block";
+    output.textContent = "";
 
-          output.textContent += log(
-            "✅ Service Worker and Push Manager available",
-          );
+    try {
+     output.textContent += log("Starting real browser subscription generation...");
 
-          // Wait for service worker registration
-          const registration = await navigator.serviceWorker.ready;
-          output.textContent += log("✅ Service Worker registered");
+     // Check if service worker is available
+     if (!("serviceWorker" in navigator)) {
+      throw new Error("Service Worker not supported");
+     }
 
-          // VAPID public key (fresh Phase 3.1 key)
-          const vapidPublicKey =
-            "BAo_FnrKbB2p6gzRN8xTF65HGV94Xu-TSYf2VfaaISf9_Gn5j91I5X8v_1pb48aRFwV_dZrvUdVSWKRMDDVKHu8";
+     if (!("PushManager" in window)) {
+      throw new Error("Push messaging not supported");
+     }
 
-          // Convert to Uint8Array
-          const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
-          output.textContent += log("✅ VAPID key converted to Uint8Array");
+     output.textContent += log("✅ Service Worker and Push Manager available");
 
-          // Generate real subscription
-          const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: applicationServerKey,
-          });
+     // Wait for service worker registration
+     const registration = await navigator.serviceWorker.ready;
+     output.textContent += log("✅ Service Worker registered");
 
-          realSubscription = subscription;
+     // VAPID public key (fresh Phase 3.1 key)
+     const vapidPublicKey =
+      "BAo_FnrKbB2p6gzRN8xTF65HGV94Xu-TSYf2VfaaISf9_Gn5j91I5X8v_1pb48aRFwV_dZrvUdVSWKRMDDVKHu8";
 
-          output.textContent += log("✅ Real browser subscription generated!");
-          output.textContent += log("Subscription details:");
-          output.textContent += log(
-            JSON.stringify(
-              {
-                endpoint: subscription.endpoint,
-                keys: {
-                  p256dh: subscription.keys.p256dh,
-                  auth: subscription.keys.auth,
-                },
-              },
-              null,
-              2,
-            ),
-          );
+     // Convert to Uint8Array
+     const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
+     output.textContent += log("✅ VAPID key converted to Uint8Array");
 
-          // Register with our API
-          const response = await fetch("/api/subscriptions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_id: 1,
-              endpoint: subscription.endpoint,
-              keys: {
-                p256dh: subscription.keys.p256dh,
-                auth: subscription.keys.auth,
-              },
-              device_type: navigator.userAgent.includes("iPhone")
-                ? "iOS"
-                : "Browser",
-              user_agent: navigator.userAgent,
-            }),
-          });
+     // Generate real subscription
+     const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: applicationServerKey,
+     });
 
-          const result = await response.json();
+     realSubscription = subscription;
 
-          if (result.success) {
-            subscriptionId = result.subscription_id;
-            output.textContent += log(
-              `✅ Subscription registered with ID: ${subscriptionId}`,
-            );
-            document.getElementById("testPushBtn").disabled = false;
-          } else {
-            throw new Error(`API registration failed: ${result.message}`);
-          }
-        } catch (error) {
-          output.textContent += log(
-            `Subscription generation failed: ${error.message}`,
-            true,
-          );
-          console.error("Subscription error:", error);
-        }
-      }
+     output.textContent += log("✅ Real browser subscription generated!");
+     output.textContent += log("Subscription details:");
+     output.textContent += log(
+      JSON.stringify(
+       {
+        endpoint: subscription.endpoint,
+        keys: {
+         p256dh: subscription.keys.p256dh,
+         auth: subscription.keys.auth,
+        },
+       },
+       null,
+       2,
+      ),
+     );
 
-      async function testPushNotification() {
-        if (!subscriptionId) {
-          alert("Please generate a subscription first");
-          return;
-        }
+     // Register with our API
+     const response = await fetch("/api/subscriptions", {
+      method: "POST",
+      headers: {
+       "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+       user_id: 1,
+       endpoint: subscription.endpoint,
+       keys: {
+        p256dh: subscription.keys.p256dh,
+        auth: subscription.keys.auth,
+       },
+       device_type: navigator.userAgent.includes("iPhone") ? "iOS" : "Browser",
+       user_agent: navigator.userAgent,
+      }),
+     });
 
-        const output = document.getElementById("pushOutput");
-        output.style.display = "block";
-        output.textContent = "";
+     const result = await response.json();
 
-        try {
-          output.textContent += log("Testing push notification...");
+     if (result.success) {
+      subscriptionId = result.subscription_id;
+      output.textContent += log(`✅ Subscription registered with ID: ${subscriptionId}`);
+      document.getElementById("testPushBtn").disabled = false;
+     } else {
+      throw new Error(`API registration failed: ${result.message}`);
+     }
+    } catch (error) {
+     output.textContent += log(`Subscription generation failed: ${error.message}`, true);
+     console.error("Subscription error:", error);
+    }
+   }
 
-          const response = await fetch("/debug/send-test-push", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              subscriptionId: subscriptionId,
-            }),
-          });
+   async function testPushNotification() {
+    if (!subscriptionId) {
+     alert("Please generate a subscription first");
+     return;
+    }
 
-          const result = await response.json();
+    const output = document.getElementById("pushOutput");
+    output.style.display = "block";
+    output.textContent = "";
 
-          if (result.success) {
-            output.textContent += log(
-              "✅ Push notification sent successfully!",
-            );
-            output.textContent += log(
-              "Result: " + JSON.stringify(result, null, 2),
-            );
+    try {
+     output.textContent += log("Testing push notification...");
 
-            // Update results
-            document.getElementById("results").innerHTML = `
+     const response = await fetch("/debug/send-test-push", {
+      method: "POST",
+      headers: {
+       "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+       subscriptionId: subscriptionId,
+      }),
+     });
+
+     const result = await response.json();
+
+     if (result.success) {
+      output.textContent += log("✅ Push notification sent successfully!");
+      output.textContent += log("Result: " + JSON.stringify(result, null, 2));
+
+      // Update results
+      document.getElementById("results").innerHTML = `
                         <p class="success">✅ Phase 3.1 VAPID Sync Test - SUCCESS!</p>
                         <p>🔑 Fresh VAPID keys configured</p>
                         <p>📱 Real browser subscription generated</p>
                         <p>🚀 Push notification sent without errors</p>
                         <p>📊 Subscription ID: ${subscriptionId}</p>
                     `;
-          } else {
-            throw new Error(`Push test failed: ${result.message}`);
-          }
-        } catch (error) {
-          output.textContent += log(`Push test failed: ${error.message}`, true);
-          console.error("Push test error:", error);
+     } else {
+      throw new Error(`Push test failed: ${result.message}`);
+     }
+    } catch (error) {
+     output.textContent += log(`Push test failed: ${error.message}`, true);
+     console.error("Push test error:", error);
 
-          // Update results with error
-          document.getElementById("results").innerHTML = `
+     // Update results with error
+     document.getElementById("results").innerHTML = `
                     <p class="error">❌ Phase 3.1 VAPID Sync Test - FAILED</p>
                     <p>Error: ${error.message}</p>
                 `;
-        }
-      }
-    </script>
-  </body>
+    }
+   }
+  </script>
+ </body>
 </html>

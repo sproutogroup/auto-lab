@@ -165,16 +165,16 @@ Your dealership management system is now **production-ready** with enterprise-gr
 
 ```json
 {
-  "timestamp": "2025-07-08T14:16:24.123Z",
-  "level": "info",
-  "message": "Request completed",
-  "requestId": "abc123def",
-  "method": "GET",
-  "url": "/api/vehicles",
-  "statusCode": 200,
-  "duration": 45,
-  "userId": 1,
-  "username": "admin"
+ "timestamp": "2025-07-08T14:16:24.123Z",
+ "level": "info",
+ "message": "Request completed",
+ "requestId": "abc123def",
+ "method": "GET",
+ "url": "/api/vehicles",
+ "statusCode": 200,
+ "duration": 45,
+ "userId": 1,
+ "username": "admin"
 }
 ```
 

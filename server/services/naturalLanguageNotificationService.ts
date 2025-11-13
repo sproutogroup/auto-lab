@@ -39,9 +39,7 @@ export class NaturalLanguageNotificationService {
   salesperson: ["assigned_salesperson"],
  };
 
- async parseNotificationRule(
-  request: NotificationRuleRequest
- ): Promise<ParsedNotificationRule> {
+ async parseNotificationRule(request: NotificationRuleRequest): Promise<ParsedNotificationRule> {
   try {
    const prompt = `
         Analyze this notification request and extract the key components:
@@ -87,10 +85,7 @@ export class NaturalLanguageNotificationService {
    // Validate and normalize the result
    return this.validateAndNormalizeRule(result);
   } catch (error) {
-   console.error(
-    "OpenAI API error, falling back to rule-based parsing:",
-    error
-   );
+   console.error("OpenAI API error, falling back to rule-based parsing:", error);
 
    // Fallback to rule-based parsing
    try {
@@ -142,10 +137,7 @@ export class NaturalLanguageNotificationService {
   ) {
    trigger = "sale_completed";
    recipients = ["current_user"];
-  } else if (
-   lowercasePrompt.includes("inventory") &&
-   lowercasePrompt.includes("low")
-  ) {
+  } else if (lowercasePrompt.includes("inventory") && lowercasePrompt.includes("low")) {
    trigger = "inventory_low";
    recipients = ["current_user"];
    priority = "high";
@@ -177,52 +169,28 @@ export class NaturalLanguageNotificationService {
   }
 
   // Priority detection (normalize to valid values)
-  if (
-   lowercasePrompt.includes("urgent") ||
-   lowercasePrompt.includes("immediately")
-  ) {
+  if (lowercasePrompt.includes("urgent") || lowercasePrompt.includes("immediately")) {
    priority = "high"; // map urgent to high since only high/medium/low are valid
    confidence = 0.8;
-  } else if (
-   lowercasePrompt.includes("critical") ||
-   lowercasePrompt.includes("emergency")
-  ) {
+  } else if (lowercasePrompt.includes("critical") || lowercasePrompt.includes("emergency")) {
    priority = "high"; // map critical to high since only high/medium/low are valid
    confidence = 0.8;
-  } else if (
-   lowercasePrompt.includes("high") ||
-   lowercasePrompt.includes("important")
-  ) {
+  } else if (lowercasePrompt.includes("high") || lowercasePrompt.includes("important")) {
    priority = "high";
    confidence = 0.8;
-  } else if (
-   lowercasePrompt.includes("low") ||
-   lowercasePrompt.includes("minor")
-  ) {
+  } else if (lowercasePrompt.includes("low") || lowercasePrompt.includes("minor")) {
    priority = "low";
    confidence = 0.8;
   }
 
   // Recipient detection
-  if (
-   lowercasePrompt.includes("sales team") ||
-   lowercasePrompt.includes("salespeople")
-  ) {
+  if (lowercasePrompt.includes("sales team") || lowercasePrompt.includes("salespeople")) {
    recipients = ["sales_team"];
-  } else if (
-   lowercasePrompt.includes("managers") ||
-   lowercasePrompt.includes("management")
-  ) {
+  } else if (lowercasePrompt.includes("managers") || lowercasePrompt.includes("management")) {
    recipients = ["managers"];
-  } else if (
-   lowercasePrompt.includes("everyone") ||
-   lowercasePrompt.includes("all")
-  ) {
+  } else if (lowercasePrompt.includes("everyone") || lowercasePrompt.includes("all")) {
    recipients = ["all_users"];
-  } else if (
-   lowercasePrompt.includes("me") ||
-   lowercasePrompt.includes("myself")
-  ) {
+  } else if (lowercasePrompt.includes("me") || lowercasePrompt.includes("myself")) {
    recipients = ["current_user"];
   }
 
@@ -243,10 +211,7 @@ export class NaturalLanguageNotificationService {
   };
  }
 
- async generateNotificationMessage(
-  trigger: string,
-  entityData: any
- ): Promise<string> {
+ async generateNotificationMessage(trigger: string, entityData: any): Promise<string> {
   try {
    const prompt = `
         Generate a professional notification message for a luxury car dealership.
@@ -280,10 +245,7 @@ export class NaturalLanguageNotificationService {
     max_tokens: 150,
    });
 
-   return (
-    response.choices[0].message.content?.trim() ||
-    "New event requires attention"
-   );
+   return response.choices[0].message.content?.trim() || "New event requires attention";
   } catch (error) {
    console.error("Error generating notification message:", error);
    return "New event requires attention";
@@ -328,9 +290,7 @@ export class NaturalLanguageNotificationService {
     temperature: 0.8,
    });
 
-   const result = JSON.parse(
-    response.choices[0].message.content || '{"suggestions": []}'
-   );
+   const result = JSON.parse(response.choices[0].message.content || '{"suggestions": []}');
    return result.suggestions || [];
   } catch (error) {
    console.error("Error suggesting notification rules:", error);
@@ -347,9 +307,7 @@ export class NaturalLanguageNotificationService {
 
   // Validate priority
   const validPriorities = ["high", "medium", "low"];
-  const normalizedPriority = validPriorities.includes(
-   rule.priority?.toLowerCase()
-  )
+  const normalizedPriority = validPriorities.includes(rule.priority?.toLowerCase())
    ? rule.priority.toLowerCase()
    : "medium";
 
@@ -394,10 +352,7 @@ export class NaturalLanguageNotificationService {
 
   for (const recipient of recipients) {
    const lowerRecipient = recipient.toString().toLowerCase();
-   const mapped =
-    this.recipientMappings[
-     lowerRecipient as keyof typeof this.recipientMappings
-    ];
+   const mapped = this.recipientMappings[lowerRecipient as keyof typeof this.recipientMappings];
 
    if (mapped) {
     normalized.push(...mapped);
@@ -410,5 +365,4 @@ export class NaturalLanguageNotificationService {
  }
 }
 
-export const naturalLanguageNotificationService =
- new NaturalLanguageNotificationService();
+export const naturalLanguageNotificationService = new NaturalLanguageNotificationService();

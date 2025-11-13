@@ -6,31 +6,31 @@ import { execSync } from "child_process";
 
 // Colors for console output
 const colors = {
-  green: "\x1b[32m",
-  red: "\x1b[31m",
-  yellow: "\x1b[33m",
-  blue: "\x1b[34m",
-  reset: "\x1b[0m",
-  bold: "\x1b[1m",
+ green: "\x1b[32m",
+ red: "\x1b[31m",
+ yellow: "\x1b[33m",
+ blue: "\x1b[34m",
+ reset: "\x1b[0m",
+ bold: "\x1b[1m",
 };
 
 function log(message, color = "reset") {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+ console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
 function setupSSL() {
-  log("🔐 Setting up SSL/HTTPS Configuration...", "blue");
-  log("=".repeat(50), "blue");
+ log("🔐 Setting up SSL/HTTPS Configuration...", "blue");
+ log("=".repeat(50), "blue");
 
-  // Create SSL directory
-  const sslDir = "./ssl";
-  if (!fs.existsSync(sslDir)) {
-    fs.mkdirSync(sslDir, { recursive: true });
-    log("✅ Created SSL directory", "green");
-  }
+ // Create SSL directory
+ const sslDir = "./ssl";
+ if (!fs.existsSync(sslDir)) {
+  fs.mkdirSync(sslDir, { recursive: true });
+  log("✅ Created SSL directory", "green");
+ }
 
-  // Create SSL configuration file
-  const sslConfig = `# SSL/HTTPS Configuration Guide
+ // Create SSL configuration file
+ const sslConfig = `# SSL/HTTPS Configuration Guide
 
 ## For Production Deployment
 
@@ -118,11 +118,11 @@ The application includes comprehensive security headers:
    - Security Headers: https://securityheaders.com/
 `;
 
-  fs.writeFileSync(path.join(sslDir, "setup-guide.md"), sslConfig);
-  log("✅ Created SSL setup guide", "green");
+ fs.writeFileSync(path.join(sslDir, "setup-guide.md"), sslConfig);
+ log("✅ Created SSL setup guide", "green");
 
-  // Create HTTPS server configuration
-  const httpsConfig = `// HTTPS Server Configuration
+ // Create HTTPS server configuration
+ const httpsConfig = `// HTTPS Server Configuration
 import https from 'https';
 import fs from 'fs';
 import express from 'express';
@@ -167,11 +167,11 @@ export function forceHTTPS(req, res, next) {
 }
 `;
 
-  fs.writeFileSync(path.join(sslDir, "https-config.js"), httpsConfig);
-  log("✅ Created HTTPS configuration", "green");
+ fs.writeFileSync(path.join(sslDir, "https-config.js"), httpsConfig);
+ log("✅ Created HTTPS configuration", "green");
 
-  // Create SSL check script
-  const sslCheckScript = `#!/usr/bin/env node
+ // Create SSL check script
+ const sslCheckScript = `#!/usr/bin/env node
 
 import https from 'https';
 import { URL } from 'url';
@@ -241,28 +241,25 @@ if (!domain) {
 validateSSL(domain);
 `;
 
-  fs.writeFileSync(path.join(sslDir, "ssl-check.js"), sslCheckScript);
-  log("✅ Created SSL validation script", "green");
+ fs.writeFileSync(path.join(sslDir, "ssl-check.js"), sslCheckScript);
+ log("✅ Created SSL validation script", "green");
 
-  log("\n📋 SSL Setup Complete:", "green");
-  log("   - SSL directory created", "reset");
-  log("   - Setup guide created (ssl/setup-guide.md)", "reset");
-  log("   - HTTPS configuration created (ssl/https-config.js)", "reset");
-  log("   - SSL check script created (ssl/ssl-check.js)", "reset");
+ log("\n📋 SSL Setup Complete:", "green");
+ log("   - SSL directory created", "reset");
+ log("   - Setup guide created (ssl/setup-guide.md)", "reset");
+ log("   - HTTPS configuration created (ssl/https-config.js)", "reset");
+ log("   - SSL check script created (ssl/ssl-check.js)", "reset");
 
-  log("\n💡 Next Steps:", "yellow");
-  log("   1. Read ssl/setup-guide.md for detailed instructions", "reset");
-  log(
-    "   2. Choose your SSL provider (Let's Encrypt, Cloudflare, etc.)",
-    "reset",
-  );
-  log("   3. Configure your domain and DNS settings", "reset");
-  log("   4. Test SSL with: node ssl/ssl-check.js yourdomain.com", "reset");
+ log("\n💡 Next Steps:", "yellow");
+ log("   1. Read ssl/setup-guide.md for detailed instructions", "reset");
+ log("   2. Choose your SSL provider (Let's Encrypt, Cloudflare, etc.)", "reset");
+ log("   3. Configure your domain and DNS settings", "reset");
+ log("   4. Test SSL with: node ssl/ssl-check.js yourdomain.com", "reset");
 }
 
 // Main execution
 if (import.meta.url === `file://${process.argv[1]}`) {
-  setupSSL();
+ setupSSL();
 }
 
 export { setupSSL };

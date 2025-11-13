@@ -17,19 +17,19 @@ console.log("Auth key length:", Buffer.from(authKey, "base64").length);
 
 console.log("\nTest subscription object:");
 console.log(
-  JSON.stringify(
-    {
-      user_id: 1,
-      endpoint: "https://fcm.googleapis.com/fcm/send/test-phase3-real-key",
-      keys: {
-        p256dh: p256dhKey,
-        auth: authKey,
-      },
-      device_type: "iOS",
-      user_agent:
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
-    },
-    null,
-    2,
-  ),
+ JSON.stringify(
+  {
+   user_id: 1,
+   endpoint: "https://fcm.googleapis.com/fcm/send/test-phase3-real-key",
+   keys: {
+    p256dh: p256dhKey,
+    auth: authKey,
+   },
+   device_type: "iOS",
+   user_agent:
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+  },
+  null,
+  2,
+ ),
 );

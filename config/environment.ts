@@ -4,9 +4,7 @@ import { z } from "zod";
 const environmentSchema = z.object({
  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
  DATABASE_URL: z.string().url("DATABASE_URL must be a valid URL"),
- SESSION_SECRET: z
-  .string()
-  .min(32, "SESSION_SECRET must be at least 32 characters"),
+ SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters"),
  ALLOWED_ORIGINS: z.string().optional(),
  PORT: z.string().transform(Number).default("5000"),
  LOG_LEVEL: z.enum(["error", "warn", "info", "debug"]).default("info"),
@@ -41,7 +39,7 @@ export const config = {
  // Security
  security: {
   sessionSecret: env.SESSION_SECRET,
-  allowedOrigins: env.ALLOWED_ORIGINS?.split(",").map((o) => o.trim()) || [],
+  allowedOrigins: env.ALLOWED_ORIGINS?.split(",").map(o => o.trim()) || [],
   rateLimiting: {
    maxRequests: env.RATE_LIMIT_MAX_REQUESTS,
    windowMs: 15 * 60 * 1000, // 15 minutes

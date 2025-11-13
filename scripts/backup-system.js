@@ -6,31 +6,31 @@ import { execSync } from "child_process";
 
 // Colors for console output
 const colors = {
-  green: "\x1b[32m",
-  red: "\x1b[31m",
-  yellow: "\x1b[33m",
-  blue: "\x1b[34m",
-  reset: "\x1b[0m",
-  bold: "\x1b[1m",
+ green: "\x1b[32m",
+ red: "\x1b[31m",
+ yellow: "\x1b[33m",
+ blue: "\x1b[34m",
+ reset: "\x1b[0m",
+ bold: "\x1b[1m",
 };
 
 function log(message, color = "reset") {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+ console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
 function createBackupSystem() {
-  log("💾 Setting up Automated Backup System...", "blue");
-  log("=".repeat(50), "blue");
+ log("💾 Setting up Automated Backup System...", "blue");
+ log("=".repeat(50), "blue");
 
-  // Create backup directory
-  const backupDir = "./backups";
-  if (!fs.existsSync(backupDir)) {
-    fs.mkdirSync(backupDir, { recursive: true });
-    log("✅ Created backup directory", "green");
-  }
+ // Create backup directory
+ const backupDir = "./backups";
+ if (!fs.existsSync(backupDir)) {
+  fs.mkdirSync(backupDir, { recursive: true });
+  log("✅ Created backup directory", "green");
+ }
 
-  // Create database backup script
-  const dbBackupScript = `#!/bin/bash
+ // Create database backup script
+ const dbBackupScript = `#!/bin/bash
 
 # Database Backup Script
 # This script creates automated backups of the PostgreSQL database
@@ -94,12 +94,12 @@ else
 fi
 `;
 
-  fs.writeFileSync(path.join(backupDir, "backup-db.sh"), dbBackupScript);
-  execSync(`chmod +x ${path.join(backupDir, "backup-db.sh")}`);
-  log("✅ Created database backup script", "green");
+ fs.writeFileSync(path.join(backupDir, "backup-db.sh"), dbBackupScript);
+ execSync(`chmod +x ${path.join(backupDir, "backup-db.sh")}`);
+ log("✅ Created database backup script", "green");
 
-  // Create file system backup script
-  const fileBackupScript = `#!/bin/bash
+ // Create file system backup script
+ const fileBackupScript = `#!/bin/bash
 
 # File System Backup Script
 # This script creates backups of uploaded files and logs
@@ -159,12 +159,12 @@ else
 fi
 `;
 
-  fs.writeFileSync(path.join(backupDir, "backup-files.sh"), fileBackupScript);
-  execSync(`chmod +x ${path.join(backupDir, "backup-files.sh")}`);
-  log("✅ Created file system backup script", "green");
+ fs.writeFileSync(path.join(backupDir, "backup-files.sh"), fileBackupScript);
+ execSync(`chmod +x ${path.join(backupDir, "backup-files.sh")}`);
+ log("✅ Created file system backup script", "green");
 
-  // Create backup restoration script
-  const restoreScript = `#!/bin/bash
+ // Create backup restoration script
+ const restoreScript = `#!/bin/bash
 
 # Backup Restoration Script
 # This script restores database and file backups
@@ -234,24 +234,24 @@ else
 fi
 `;
 
-  fs.writeFileSync(path.join(backupDir, "restore.sh"), restoreScript);
-  execSync(`chmod +x ${path.join(backupDir, "restore.sh")}`);
-  log("✅ Created backup restoration script", "green");
+ fs.writeFileSync(path.join(backupDir, "restore.sh"), restoreScript);
+ execSync(`chmod +x ${path.join(backupDir, "restore.sh")}`);
+ log("✅ Created backup restoration script", "green");
 
-  log("\n📋 Backup System Setup Complete:", "green");
-  log("   - Database backup script created", "reset");
-  log("   - File system backup script created", "reset");
-  log("   - Restoration script created", "reset");
+ log("\n📋 Backup System Setup Complete:", "green");
+ log("   - Database backup script created", "reset");
+ log("   - File system backup script created", "reset");
+ log("   - Restoration script created", "reset");
 
-  log("\n💡 Next Steps:", "yellow");
-  log("   1. Test database backup: ./backups/backup-db.sh", "reset");
-  log("   2. Test file backup: ./backups/backup-files.sh", "reset");
-  log("   3. Test restoration: ./backups/restore.sh <backup-file>", "reset");
+ log("\n💡 Next Steps:", "yellow");
+ log("   1. Test database backup: ./backups/backup-db.sh", "reset");
+ log("   2. Test file backup: ./backups/backup-files.sh", "reset");
+ log("   3. Test restoration: ./backups/restore.sh <backup-file>", "reset");
 }
 
 // Main execution
 if (import.meta.url === `file://${process.argv[1]}`) {
-  createBackupSystem();
+ createBackupSystem();
 }
 
 export { createBackupSystem };

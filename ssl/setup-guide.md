@@ -37,6 +37,7 @@
 ### Option 3: Using Reverse Proxy (Nginx/Apache)
 
 1. Configure Nginx with SSL:
+
    ```nginx
    server {
        listen 443 ssl;

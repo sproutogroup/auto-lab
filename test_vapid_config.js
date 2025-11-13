@@ -4,26 +4,17 @@
 
 // Test VAPID keys are loaded
 console.log("=== VAPID Configuration Test ===");
-console.log(
-  "VAPID_PUBLIC_KEY:",
-  process.env.VAPID_PUBLIC_KEY ? "SET" : "NOT SET",
-);
-console.log(
-  "VAPID_PRIVATE_KEY:",
-  process.env.VAPID_PRIVATE_KEY ? "SET" : "NOT SET",
-);
+console.log("VAPID_PUBLIC_KEY:", process.env.VAPID_PUBLIC_KEY ? "SET" : "NOT SET");
+console.log("VAPID_PRIVATE_KEY:", process.env.VAPID_PRIVATE_KEY ? "SET" : "NOT SET");
 console.log("VAPID_SUBJECT:", process.env.VAPID_SUBJECT ? "SET" : "NOT SET");
 
 if (process.env.VAPID_PUBLIC_KEY) {
-  console.log("Public key length:", process.env.VAPID_PUBLIC_KEY.length);
-  console.log(
-    "Public key starts with:",
-    process.env.VAPID_PUBLIC_KEY.substring(0, 10),
-  );
+ console.log("Public key length:", process.env.VAPID_PUBLIC_KEY.length);
+ console.log("Public key starts with:", process.env.VAPID_PUBLIC_KEY.substring(0, 10));
 }
 
 if (process.env.VAPID_PRIVATE_KEY) {
-  console.log("Private key length:", process.env.VAPID_PRIVATE_KEY.length);
+ console.log("Private key length:", process.env.VAPID_PRIVATE_KEY.length);
 }
 
 console.log("\n=== Client-Side Test Script ===");

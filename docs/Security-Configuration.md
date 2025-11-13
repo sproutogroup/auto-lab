@@ -60,11 +60,11 @@ Comprehensive security hardening has been implemented including security headers
 
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2025-07-08T13:43:34.470Z",
-  "uptime": 16.603976369,
-  "environment": "development",
-  "version": "1.0.0"
+ "status": "healthy",
+ "timestamp": "2025-07-08T13:43:34.470Z",
+ "uptime": 16.603976369,
+ "environment": "development",
+ "version": "1.0.0"
 }
 ```
 
@@ -72,20 +72,20 @@ Comprehensive security hardening has been implemented including security headers
 
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2025-07-08T13:43:34.470Z",
-  "uptime": 16.603976369,
-  "environment": "development",
-  "version": "1.0.0",
-  "database": {
-    "status": "connected",
-    "responseTime": "686ms"
-  },
-  "memory": {
-    "used": 279,
-    "total": 306,
-    "unit": "MB"
-  }
+ "status": "healthy",
+ "timestamp": "2025-07-08T13:43:34.470Z",
+ "uptime": 16.603976369,
+ "environment": "development",
+ "version": "1.0.0",
+ "database": {
+  "status": "connected",
+  "responseTime": "686ms"
+ },
+ "memory": {
+  "used": 279,
+  "total": 306,
+  "unit": "MB"
+ }
 }
 ```
 

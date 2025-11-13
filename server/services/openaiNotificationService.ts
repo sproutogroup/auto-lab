@@ -3,53 +3,51 @@ import { Notification } from "../../shared/schema";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+ apiKey: process.env.OPENAI_API_KEY,
 });
 
 export interface SmartNotificationRequest {
-  context: string;
-  entityType: string;
-  entityData: any;
-  userRole: string;
-  urgency?: "low" | "medium" | "high" | "urgent" | "critical";
-  customInstructions?: string;
+ context: string;
+ entityType: string;
+ entityData: any;
+ userRole: string;
+ urgency?: "low" | "medium" | "high" | "urgent" | "critical";
+ customInstructions?: string;
 }
 
 export interface SmartNotificationResponse {
-  title: string;
-  message: string;
-  priority: "low" | "medium" | "high" | "urgent" | "critical";
-  type: string;
-  scheduledFor?: Date;
-  actionUrl?: string;
-  metadata?: any;
+ title: string;
+ message: string;
+ priority: "low" | "medium" | "high" | "urgent" | "critical";
+ type: string;
+ scheduledFor?: Date;
+ actionUrl?: string;
+ metadata?: any;
 }
 
 export class OpenAINotificationService {
-  private static instance: OpenAINotificationService;
+ private static instance: OpenAINotificationService;
 
-  public static getInstance(): OpenAINotificationService {
-    if (!OpenAINotificationService.instance) {
-      OpenAINotificationService.instance = new OpenAINotificationService();
-    }
-    return OpenAINotificationService.instance;
+ public static getInstance(): OpenAINotificationService {
+  if (!OpenAINotificationService.instance) {
+   OpenAINotificationService.instance = new OpenAINotificationService();
   }
+  return OpenAINotificationService.instance;
+ }
 
-  /**
-   * Generate intelligent notification content based on dealership context
-   */
-  async generateSmartNotification(
-    request: SmartNotificationRequest,
-  ): Promise<SmartNotificationResponse> {
-    try {
-      const prompt = this.buildNotificationPrompt(request);
+ /**
+  * Generate intelligent notification content based on dealership context
+  */
+ async generateSmartNotification(request: SmartNotificationRequest): Promise<SmartNotificationResponse> {
+  try {
+   const prompt = this.buildNotificationPrompt(request);
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are an AI assistant for a luxury automotive dealership management system. Your role is to generate intelligent, context-aware notifications that help dealership staff manage their operations efficiently. 
+   const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+     {
+      role: "system",
+      content: `You are an AI assistant for a luxury automotive dealership management system. Your role is to generate intelligent, context-aware notifications that help dealership staff manage their operations efficiently. 
 
             Always respond in JSON format with the following structure:
             {
@@ -69,51 +67,49 @@ export class OpenAINotificationService {
             - Include specific details from the provided context
             - Suggest optimal timing for notifications based on dealership operations
             - Match notification type to the business context`,
-          },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.7,
-        max_tokens: 500,
-      });
+     },
+     {
+      role: "user",
+      content: prompt,
+     },
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.7,
+    max_tokens: 500,
+   });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
+   const result = JSON.parse(response.choices[0].message.content || "{}");
 
-      return {
-        title: result.title || "Dealership Update",
-        message: result.message || "New update available",
-        priority: this.validatePriority(result.priority) || "medium",
-        type: this.validateType(result.type) || "system",
-        scheduledFor: result.scheduledFor
-          ? new Date(result.scheduledFor)
-          : undefined,
-        actionUrl: result.actionUrl,
-        metadata: result.metadata,
-      };
-    } catch (error) {
-      console.error("OpenAI notification generation failed:", error);
-      return this.fallbackNotification(request);
-    }
+   return {
+    title: result.title || "Dealership Update",
+    message: result.message || "New update available",
+    priority: this.validatePriority(result.priority) || "medium",
+    type: this.validateType(result.type) || "system",
+    scheduledFor: result.scheduledFor ? new Date(result.scheduledFor) : undefined,
+    actionUrl: result.actionUrl,
+    metadata: result.metadata,
+   };
+  } catch (error) {
+   console.error("OpenAI notification generation failed:", error);
+   return this.fallbackNotification(request);
   }
+ }
 
-  /**
-   * Analyze notification content and optimize for engagement
-   */
-  async optimizeNotificationContent(
-    title: string,
-    message: string,
-    context: string,
-  ): Promise<{ title: string; message: string; engagementScore: number }> {
-    try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are an expert in notification optimization for luxury automotive dealerships. Analyze and improve notification content for maximum engagement and clarity.
+ /**
+  * Analyze notification content and optimize for engagement
+  */
+ async optimizeNotificationContent(
+  title: string,
+  message: string,
+  context: string,
+ ): Promise<{ title: string; message: string; engagementScore: number }> {
+  try {
+   const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+     {
+      role: "system",
+      content: `You are an expert in notification optimization for luxury automotive dealerships. Analyze and improve notification content for maximum engagement and clarity.
 
             Respond in JSON format:
             {
@@ -129,49 +125,49 @@ export class OpenAINotificationService {
             - Urgency without being pushy
             - Personalization where possible
             - Clear call-to-action`,
-          },
-          {
-            role: "user",
-            content: `Optimize this notification:
+     },
+     {
+      role: "user",
+      content: `Optimize this notification:
             Title: ${title}
             Message: ${message}
             Context: ${context}`,
-          },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.5,
-        max_tokens: 400,
-      });
+     },
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.5,
+    max_tokens: 400,
+   });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
+   const result = JSON.parse(response.choices[0].message.content || "{}");
 
-      return {
-        title: result.title || title,
-        message: result.message || message,
-        engagementScore: result.engagementScore || 5,
-      };
-    } catch (error) {
-      console.error("Notification optimization failed:", error);
-      return { title, message, engagementScore: 5 };
-    }
+   return {
+    title: result.title || title,
+    message: result.message || message,
+    engagementScore: result.engagementScore || 5,
+   };
+  } catch (error) {
+   console.error("Notification optimization failed:", error);
+   return { title, message, engagementScore: 5 };
   }
+ }
 
-  /**
-   * Analyze user behavior and suggest optimal notification timing
-   */
-  async suggestOptimalTiming(
-    userId: number,
-    notificationType: string,
-    urgency: string,
-    userActivity?: any,
-  ): Promise<{ scheduledFor: Date; reasoning: string }> {
-    try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are a scheduling optimization expert for dealership notifications. Analyze user patterns and suggest optimal delivery timing.
+ /**
+  * Analyze user behavior and suggest optimal notification timing
+  */
+ async suggestOptimalTiming(
+  userId: number,
+  notificationType: string,
+  urgency: string,
+  userActivity?: any,
+ ): Promise<{ scheduledFor: Date; reasoning: string }> {
+  try {
+   const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+     {
+      role: "system",
+      content: `You are a scheduling optimization expert for dealership notifications. Analyze user patterns and suggest optimal delivery timing.
 
             Respond in JSON format:
             {
@@ -186,53 +182,51 @@ export class OpenAINotificationService {
             - User role and responsibilities
             - Avoiding notification fatigue
             - Peak engagement times for automotive sales`,
-          },
-          {
-            role: "user",
-            content: `Suggest optimal timing for:
+     },
+     {
+      role: "user",
+      content: `Suggest optimal timing for:
             User ID: ${userId}
             Notification Type: ${notificationType}
             Urgency: ${urgency}
             User Activity: ${JSON.stringify(userActivity || {})}`,
-          },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.3,
-        max_tokens: 300,
-      });
+     },
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.3,
+    max_tokens: 300,
+   });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
+   const result = JSON.parse(response.choices[0].message.content || "{}");
 
-      return {
-        scheduledFor: result.scheduledFor
-          ? new Date(result.scheduledFor)
-          : new Date(),
-        reasoning: result.reasoning || "Immediate delivery recommended",
-      };
-    } catch (error) {
-      console.error("Timing optimization failed:", error);
-      return {
-        scheduledFor: new Date(),
-        reasoning: "Default immediate delivery",
-      };
-    }
+   return {
+    scheduledFor: result.scheduledFor ? new Date(result.scheduledFor) : new Date(),
+    reasoning: result.reasoning || "Immediate delivery recommended",
+   };
+  } catch (error) {
+   console.error("Timing optimization failed:", error);
+   return {
+    scheduledFor: new Date(),
+    reasoning: "Default immediate delivery",
+   };
   }
+ }
 
-  /**
-   * Generate contextual follow-up notifications
-   */
-  async generateFollowUpNotification(
-    originalNotification: Notification,
-    userResponse: "read" | "dismissed" | "clicked" | "ignored",
-    timeElapsed: number,
-  ): Promise<SmartNotificationResponse | null> {
-    try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are a follow-up notification specialist for luxury automotive dealerships. Generate appropriate follow-up notifications based on user interaction with previous notifications.
+ /**
+  * Generate contextual follow-up notifications
+  */
+ async generateFollowUpNotification(
+  originalNotification: Notification,
+  userResponse: "read" | "dismissed" | "clicked" | "ignored",
+  timeElapsed: number,
+ ): Promise<SmartNotificationResponse | null> {
+  try {
+   const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+     {
+      role: "system",
+      content: `You are a follow-up notification specialist for luxury automotive dealerships. Generate appropriate follow-up notifications based on user interaction with previous notifications.
 
             Respond in JSON format or null if no follow-up is needed:
             {
@@ -250,55 +244,53 @@ export class OpenAINotificationService {
             - Escalate priority for ignored critical items
             - Use different messaging approach for follow-ups
             - Consider time elapsed since original notification`,
-          },
-          {
-            role: "user",
-            content: `Generate follow-up for:
+     },
+     {
+      role: "user",
+      content: `Generate follow-up for:
             Original: ${JSON.stringify(originalNotification)}
             User Response: ${userResponse}
             Time Elapsed: ${timeElapsed} minutes`,
-          },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.4,
-        max_tokens: 300,
-      });
+     },
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.4,
+    max_tokens: 300,
+   });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
+   const result = JSON.parse(response.choices[0].message.content || "{}");
 
-      if (!result.shouldSend) {
-        return null;
-      }
+   if (!result.shouldSend) {
+    return null;
+   }
 
-      return {
-        title: result.title || "Follow-up Required",
-        message: result.message || "Previous notification requires attention",
-        priority: this.validatePriority(result.priority) || "medium",
-        type: this.validateType(result.type) || originalNotification.type,
-        scheduledFor: result.scheduledFor
-          ? new Date(result.scheduledFor)
-          : undefined,
-      };
-    } catch (error) {
-      console.error("Follow-up generation failed:", error);
-      return null;
-    }
+   return {
+    title: result.title || "Follow-up Required",
+    message: result.message || "Previous notification requires attention",
+    priority: this.validatePriority(result.priority) || "medium",
+    type: this.validateType(result.type) || originalNotification.type,
+    scheduledFor: result.scheduledFor ? new Date(result.scheduledFor) : undefined,
+   };
+  } catch (error) {
+   console.error("Follow-up generation failed:", error);
+   return null;
   }
+ }
 
-  /**
-   * Analyze dealership data to predict notification needs
-   */
-  async predictNotificationNeeds(
-    dealershipData: any,
-    timeframe: "today" | "this_week" | "this_month" = "today",
-  ): Promise<SmartNotificationResponse[]> {
-    try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are a predictive analytics specialist for luxury automotive dealerships. Analyze dealership data and predict what notifications should be sent to optimize operations.
+ /**
+  * Analyze dealership data to predict notification needs
+  */
+ async predictNotificationNeeds(
+  dealershipData: any,
+  timeframe: "today" | "this_week" | "this_month" = "today",
+ ): Promise<SmartNotificationResponse[]> {
+  try {
+   const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+     {
+      role: "system",
+      content: `You are a predictive analytics specialist for luxury automotive dealerships. Analyze dealership data and predict what notifications should be sent to optimize operations.
 
             Respond with a JSON array of notification recommendations:
             [{
@@ -318,43 +310,41 @@ export class OpenAINotificationService {
             - Financial milestone alerts
             - Staff task assignments
             - Appointment scheduling optimization`,
-          },
-          {
-            role: "user",
-            content: `Analyze dealership data and predict notification needs for ${timeframe}:
+     },
+     {
+      role: "user",
+      content: `Analyze dealership data and predict notification needs for ${timeframe}:
             ${JSON.stringify(dealershipData)}`,
-          },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.6,
-        max_tokens: 800,
-      });
+     },
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.6,
+    max_tokens: 800,
+   });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
-      const predictions = result.predictions || [];
+   const result = JSON.parse(response.choices[0].message.content || "{}");
+   const predictions = result.predictions || [];
 
-      return predictions.map((pred: any) => ({
-        title: pred.title || "Predicted Update",
-        message: pred.message || "System prediction",
-        priority: this.validatePriority(pred.priority) || "medium",
-        type: this.validateType(pred.type) || "system",
-        scheduledFor: pred.scheduledFor
-          ? new Date(pred.scheduledFor)
-          : undefined,
-        metadata: {
-          targetUsers: pred.targetUsers || [],
-          reasoning: pred.reasoning || "AI prediction",
-          confidence: pred.confidence || 0.5,
-        },
-      }));
-    } catch (error) {
-      console.error("Notification prediction failed:", error);
-      return [];
-    }
+   return predictions.map((pred: any) => ({
+    title: pred.title || "Predicted Update",
+    message: pred.message || "System prediction",
+    priority: this.validatePriority(pred.priority) || "medium",
+    type: this.validateType(pred.type) || "system",
+    scheduledFor: pred.scheduledFor ? new Date(pred.scheduledFor) : undefined,
+    metadata: {
+     targetUsers: pred.targetUsers || [],
+     reasoning: pred.reasoning || "AI prediction",
+     confidence: pred.confidence || 0.5,
+    },
+   }));
+  } catch (error) {
+   console.error("Notification prediction failed:", error);
+   return [];
   }
+ }
 
-  private buildNotificationPrompt(request: SmartNotificationRequest): string {
-    return `Generate a smart notification for a luxury automotive dealership:
+ private buildNotificationPrompt(request: SmartNotificationRequest): string {
+  return `Generate a smart notification for a luxury automotive dealership:
 
     Context: ${request.context}
     Entity Type: ${request.entityType}
@@ -372,42 +362,29 @@ export class OpenAINotificationService {
     6. Provides a relevant action URL if applicable
 
     Consider the user's role and tailor the message accordingly.`;
-  }
+ }
 
-  private validatePriority(
-    priority: string,
-  ): "low" | "medium" | "high" | "urgent" | "critical" {
-    const validPriorities = ["low", "medium", "high", "urgent", "critical"];
-    return validPriorities.includes(priority) ? (priority as any) : "medium";
-  }
+ private validatePriority(priority: string): "low" | "medium" | "high" | "urgent" | "critical" {
+  const validPriorities = ["low", "medium", "high", "urgent", "critical"];
+  return validPriorities.includes(priority) ? (priority as any) : "medium";
+ }
 
-  private validateType(type: string): string {
-    const validTypes = [
-      "lead",
-      "sale",
-      "inventory",
-      "task",
-      "appointment",
-      "financial",
-      "system",
-    ];
-    return validTypes.includes(type) ? type : "system";
-  }
+ private validateType(type: string): string {
+  const validTypes = ["lead", "sale", "inventory", "task", "appointment", "financial", "system"];
+  return validTypes.includes(type) ? type : "system";
+ }
 
-  private fallbackNotification(
-    request: SmartNotificationRequest,
-  ): SmartNotificationResponse {
-    return {
-      title: `${request.entityType} Update`,
-      message: `New ${request.entityType.toLowerCase()} requires attention`,
-      priority: request.urgency || "medium",
-      type: request.entityType.toLowerCase(),
-      scheduledFor: undefined,
-      actionUrl: undefined,
-      metadata: { fallback: true },
-    };
-  }
+ private fallbackNotification(request: SmartNotificationRequest): SmartNotificationResponse {
+  return {
+   title: `${request.entityType} Update`,
+   message: `New ${request.entityType.toLowerCase()} requires attention`,
+   priority: request.urgency || "medium",
+   type: request.entityType.toLowerCase(),
+   scheduledFor: undefined,
+   actionUrl: undefined,
+   metadata: { fallback: true },
+  };
+ }
 }
 
-export const openaiNotificationService =
-  OpenAINotificationService.getInstance();
+export const openaiNotificationService = OpenAINotificationService.getInstance();

@@ -17,10 +17,7 @@ const app = express();
 
 // CORS Configuration
 const corsOptions = {
- origin: function (
-  origin: string | undefined,
-  callback: (err: Error | null, allow?: boolean) => void
- ) {
+ origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
   // Allow requests with no origin (mobile apps, curl, etc.)
   if (!origin) return callback(null, true);
 
@@ -41,8 +38,7 @@ const corsOptions = {
   ];
 
   // Add custom domains from environment variables
-  const customOrigins =
-   process.env.ALLOWED_ORIGINS?.split(",").map((o) => o.trim()) || [];
+  const customOrigins = process.env.ALLOWED_ORIGINS?.split(",").map(o => o.trim()) || [];
   allowedOrigins.push(...customOrigins);
 
   // In development, be more permissive
@@ -54,7 +50,7 @@ const corsOptions = {
   }
 
   // Check if origin matches any allowed patterns
-  const isAllowed = allowedOrigins.some((allowedOrigin) => {
+  const isAllowed = allowedOrigins.some(allowedOrigin => {
    if (typeof allowedOrigin === "string") {
     return origin === allowedOrigin;
    } else if (allowedOrigin instanceof RegExp) {
@@ -84,12 +80,7 @@ const corsOptions = {
   "X-Forwarded-For",
   "X-Forwarded-Proto",
  ],
- exposedHeaders: [
-  "X-Total-Count",
-  "Link",
-  "X-RateLimit-Limit",
-  "X-RateLimit-Remaining",
- ],
+ exposedHeaders: ["X-Total-Count", "Link", "X-RateLimit-Limit", "X-RateLimit-Remaining"],
  maxAge: process.env.NODE_ENV === "production" ? 300 : 0, // 5 minutes in production, no cache in dev
  optionsSuccessStatus: 200, // For legacy browser support
 };
@@ -143,16 +134,11 @@ app.use(
   noSniff: true,
   xssFilter: true,
   referrerPolicy: { policy: "strict-origin-when-cross-origin" },
- })
+ }),
 );
 
 // Rate Limiting Configuration
-const createRateLimit = (
- windowMs: number,
- max: number,
- message: string,
- skipSuccessfulRequests = false
-) => {
+const createRateLimit = (windowMs: number, max: number, message: string, skipSuccessfulRequests = false) => {
  return rateLimit({
   windowMs,
   max,
@@ -160,7 +146,7 @@ const createRateLimit = (
   standardHeaders: true, // Return rate limit info in headers
   legacyHeaders: false,
   skipSuccessfulRequests,
-  skip: (req) => {
+  skip: req => {
    // Skip rate limiting for health checks, static assets, and development files
    return (
     req.path === "/health" ||
@@ -177,9 +163,7 @@ const createRateLimit = (
   },
   handler: (req, res) => {
    console.warn(
-    `Rate limit exceeded for IP: ${req.ip}, Path: ${
-     req.path
-    }, User-Agent: ${req.get("User-Agent")}`
+    `Rate limit exceeded for IP: ${req.ip}, Path: ${req.path}, User-Agent: ${req.get("User-Agent")}`,
    );
    res.status(429).json({
     error: message,
@@ -192,17 +176,15 @@ const createRateLimit = (
 // Global rate limiter - More permissive for development
 const globalLimiter = createRateLimit(
  15 * 60 * 1000, // 15 minutes
- process.env.NODE_ENV === "development"
-  ? 1000
-  : parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "100"),
- "Too many requests from this IP, please try again later."
+ process.env.NODE_ENV === "development" ? 1000 : parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "100"),
+ "Too many requests from this IP, please try again later.",
 );
 
 // Strict rate limiter for auth endpoints - 5 requests per 15 minutes
 const authLimiter = createRateLimit(
  15 * 60 * 1000, // 15 minutes
  5,
- "Too many authentication attempts, please try again later."
+ "Too many authentication attempts, please try again later.",
 );
 
 // API rate limiter - 1000 requests per hour for authenticated requests
@@ -210,7 +192,7 @@ const apiLimiter = createRateLimit(
  60 * 60 * 1000, // 1 hour
  1000,
  "API rate limit exceeded, please try again later.",
- true // Skip successful requests
+ true, // Skip successful requests
 );
 
 // Speed limiter - slow down after many requests
@@ -219,7 +201,7 @@ const speedLimiter = slowDown({
  delayAfter: process.env.NODE_ENV === "development" ? 200 : 50, // More permissive in dev
  delayMs: () => 500, // Add 500ms delay per request after delayAfter
  maxDelayMs: 20000, // Max delay of 20 seconds
- skip: (req) => {
+ skip: req => {
   return (
    req.path === "/health" ||
    req.path === "/api/health" ||
@@ -274,9 +256,7 @@ app.use((req, res, next) => {
   });
  }
  // For static assets (JS, CSS, images) - short cache with etag validation
- else if (
-  url.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/)
- ) {
+ else if (url.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/)) {
   res.set({
    "Cache-Control": "public, max-age=300, must-revalidate", // 5 minutes
    ETag: `"${Date.now()}"`, // Simple ETag based on deployment time

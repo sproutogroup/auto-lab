@@ -25,10 +25,10 @@ async function testVehicleUpdate() {
    },
   };
 
-  const loginReq = http.request(loginOptions, (loginRes) => {
+  const loginReq = http.request(loginOptions, loginRes => {
    let loginResponseData = "";
 
-   loginRes.on("data", (chunk) => {
+   loginRes.on("data", chunk => {
     loginResponseData += chunk;
    });
 
@@ -49,9 +49,7 @@ async function testVehicleUpdate() {
 
     // Now test vehicle update
     console.log("\n🚗 Step 2: Making vehicle update request...");
-    console.log(
-     '📡 This should trigger server logs starting with "Vehicle Update:"'
-    );
+    console.log('📡 This should trigger server logs starting with "Vehicle Update:"');
 
     const updateData = JSON.stringify({
      colour: "Test Color Debug " + Date.now(),
@@ -70,10 +68,10 @@ async function testVehicleUpdate() {
      },
     };
 
-    const updateReq = http.request(updateOptions, (updateRes) => {
+    const updateReq = http.request(updateOptions, updateRes => {
      let updateResponseData = "";
 
-     updateRes.on("data", (chunk) => {
+     updateRes.on("data", chunk => {
       updateResponseData += chunk;
      });
 
@@ -84,9 +82,7 @@ async function testVehicleUpdate() {
       if (updateRes.statusCode === 200) {
        console.log("✅ Vehicle update HTTP request successful");
        console.log('🔍 Check server logs for "Vehicle Update:" messages');
-       console.log(
-        '🔍 If no "Vehicle Update:" logs appear, the route is not executing'
-       );
+       console.log('🔍 If no "Vehicle Update:" logs appear, the route is not executing');
 
        try {
         const responseObj = JSON.parse(updateResponseData);
@@ -106,7 +102,7 @@ async function testVehicleUpdate() {
      });
     });
 
-    updateReq.on("error", (error) => {
+    updateReq.on("error", error => {
      console.log("❌ Vehicle update request error:", error.message);
      reject(error);
     });
@@ -116,7 +112,7 @@ async function testVehicleUpdate() {
    });
   });
 
-  loginReq.on("error", (error) => {
+  loginReq.on("error", error => {
    console.log("❌ Login request error:", error.message);
    reject(error);
   });
@@ -128,18 +124,14 @@ async function testVehicleUpdate() {
 
 // Run the test
 testVehicleUpdate()
- .then((result) => {
+ .then(result => {
   console.log("\n=== DIAGNOSTIC COMPLETE ===");
   console.log("✅", result);
   console.log("\n📋 NEXT STEPS:");
   console.log('1. Check server logs for "Vehicle Update:" messages');
-  console.log(
-   '2. If NO "Vehicle Update:" messages appear, the route is not executing'
-  );
-  console.log(
-   "3. If messages appear but no WebSocket events, check WebSocket service"
-  );
+  console.log('2. If NO "Vehicle Update:" messages appear, the route is not executing');
+  console.log("3. If messages appear but no WebSocket events, check WebSocket service");
  })
- .catch((error) => {
+ .catch(error => {
   console.log("\n❌ Test failed:", error.message);
  });

@@ -290,48 +290,44 @@ This document defines the comprehensive notification system for seven critical d
 
 ```typescript
 export class NotificationEventService {
-  private webPushService: WebPushService;
-  private storage: IStorage;
+ private webPushService: WebPushService;
+ private storage: IStorage;
 
-  constructor() {
-    this.webPushService = WebPushService.getInstance();
-    this.storage = storage;
+ constructor() {
+  this.webPushService = WebPushService.getInstance();
+  this.storage = storage;
+ }
+
+ async triggerEvent(eventType: string, payload: any, triggeredBy: number): Promise<void> {
+  const event = NOTIFICATION_REGISTRY[eventType];
+  if (!event) return;
+
+  const recipients = await this.getRecipients(event.recipient_criteria);
+
+  for (const recipient of recipients) {
+   const shouldNotify = await this.shouldNotifyUser(recipient.id, eventType);
+   if (!shouldNotify) continue;
+
+   // Create notification record
+   const notification = await this.storage.createNotification({
+    recipient_user_id: recipient.id,
+    notification_type: event.category,
+    priority_level: event.priority,
+    title: this.populateTemplate(event.title_template, payload),
+    body: this.populateTemplate(event.body_template, payload),
+    action_url: event.action_url,
+    related_entity_type: event.entity_type,
+    related_entity_id: payload.entity_id,
+    action_data: payload.data,
+   });
+
+   // Send push notification
+   await this.sendPushNotification(recipient.id, notification);
+
+   // Send WebSocket notification (fallback)
+   await this.sendWebSocketNotification(recipient.id, notification);
   }
-
-  async triggerEvent(
-    eventType: string,
-    payload: any,
-    triggeredBy: number,
-  ): Promise<void> {
-    const event = NOTIFICATION_REGISTRY[eventType];
-    if (!event) return;
-
-    const recipients = await this.getRecipients(event.recipient_criteria);
-
-    for (const recipient of recipients) {
-      const shouldNotify = await this.shouldNotifyUser(recipient.id, eventType);
-      if (!shouldNotify) continue;
-
-      // Create notification record
-      const notification = await this.storage.createNotification({
-        recipient_user_id: recipient.id,
-        notification_type: event.category,
-        priority_level: event.priority,
-        title: this.populateTemplate(event.title_template, payload),
-        body: this.populateTemplate(event.body_template, payload),
-        action_url: event.action_url,
-        related_entity_type: event.entity_type,
-        related_entity_id: payload.entity_id,
-        action_data: payload.data,
-      });
-
-      // Send push notification
-      await this.sendPushNotification(recipient.id, notification);
-
-      // Send WebSocket notification (fallback)
-      await this.sendWebSocketNotification(recipient.id, notification);
-    }
-  }
+ }
 }
 ```
 
@@ -342,24 +338,24 @@ export class NotificationEventService {
 ```typescript
 // POST /api/vehicles (create)
 app.post("/api/vehicles", requireAuth, async (req, res) => {
-  const vehicle = await storage.createVehicle(validatedData);
+ const vehicle = await storage.createVehicle(validatedData);
 
-  // Trigger notification
-  await notificationEventService.triggerEvent(
-    "vehicle.added",
-    {
-      vehicle_id: vehicle.id,
-      vehicle_registration: vehicle.registration,
-      make: vehicle.make,
-      model: vehicle.model,
-      year: vehicle.year,
-      entity_id: vehicle.id,
-      data: { url: "/vehicle-master" },
-    },
-    req.user.id,
-  );
+ // Trigger notification
+ await notificationEventService.triggerEvent(
+  "vehicle.added",
+  {
+   vehicle_id: vehicle.id,
+   vehicle_registration: vehicle.registration,
+   make: vehicle.make,
+   model: vehicle.model,
+   year: vehicle.year,
+   entity_id: vehicle.id,
+   data: { url: "/vehicle-master" },
+  },
+  req.user.id,
+ );
 
-  res.json(vehicle);
+ res.json(vehicle);
 });
 ```
 
@@ -368,24 +364,24 @@ app.post("/api/vehicles", requireAuth, async (req, res) => {
 ```typescript
 // POST /api/leads (create)
 app.post("/api/leads", requireAuth, async (req, res) => {
-  const lead = await storage.createLead(validatedData);
+ const lead = await storage.createLead(validatedData);
 
-  // Trigger notification
-  await notificationEventService.triggerEvent(
-    "lead.created",
-    {
-      lead_id: lead.id,
-      lead_name: `${lead.first_name} ${lead.last_name}`,
-      lead_email: lead.email,
-      lead_phone: lead.phone,
-      pipeline_stage: lead.pipeline_stage,
-      entity_id: lead.id,
-      data: { url: "/leads" },
-    },
-    req.user.id,
-  );
+ // Trigger notification
+ await notificationEventService.triggerEvent(
+  "lead.created",
+  {
+   lead_id: lead.id,
+   lead_name: `${lead.first_name} ${lead.last_name}`,
+   lead_email: lead.email,
+   lead_phone: lead.phone,
+   pipeline_stage: lead.pipeline_stage,
+   entity_id: lead.id,
+   data: { url: "/leads" },
+  },
+  req.user.id,
+ );
 
-  res.json(lead);
+ res.json(lead);
 });
 ```
 
@@ -394,24 +390,21 @@ app.post("/api/leads", requireAuth, async (req, res) => {
 **WebSocket Integration:** `server/websocket.ts`
 
 ```typescript
-export async function sendWebSocketNotification(
-  userId: number,
-  notification: Notification,
-): Promise<void> {
-  const userSockets = io.sockets.sockets;
+export async function sendWebSocketNotification(userId: number, notification: Notification): Promise<void> {
+ const userSockets = io.sockets.sockets;
 
-  for (const [socketId, socket] of userSockets) {
-    if (socket.data.userId === userId) {
-      socket.emit("notification", {
-        id: notification.id,
-        type: notification.notification_type,
-        title: notification.title,
-        body: notification.body,
-        timestamp: notification.created_at,
-        action_url: notification.action_url,
-      });
-    }
+ for (const [socketId, socket] of userSockets) {
+  if (socket.data.userId === userId) {
+   socket.emit("notification", {
+    id: notification.id,
+    type: notification.notification_type,
+    title: notification.title,
+    body: notification.body,
+    timestamp: notification.created_at,
+    action_url: notification.action_url,
+   });
   }
+ }
 }
 ```
 
@@ -425,122 +418,119 @@ export async function sendWebSocketNotification(
 
 ```typescript
 export interface NotificationEventConfig {
-  event_type: string;
-  category: string;
-  priority: "low" | "medium" | "high" | "urgent";
-  title_template: string;
-  body_template: string;
-  action_url: string;
-  entity_type: string;
-  recipient_criteria: {
-    roles: string[];
-    permissions: string[];
-    preference_key: string;
-  };
+ event_type: string;
+ category: string;
+ priority: "low" | "medium" | "high" | "urgent";
+ title_template: string;
+ body_template: string;
+ action_url: string;
+ entity_type: string;
+ recipient_criteria: {
+  roles: string[];
+  permissions: string[];
+  preference_key: string;
+ };
 }
 
 export const NOTIFICATION_REGISTRY: Record<string, NotificationEventConfig> = {
-  "vehicle.updated": {
-    event_type: "vehicle.updated",
-    category: "inventory",
-    priority: "medium",
-    title_template: "Vehicle Updated",
-    body_template:
-      "User {username} updated '{registration}' - {field_name} changed",
-    action_url: "/vehicle-master",
-    entity_type: "vehicle",
-    recipient_criteria: {
-      roles: ["admin"],
-      permissions: ["can_edit"],
-      preference_key: "inventory_notifications",
-    },
+ "vehicle.updated": {
+  event_type: "vehicle.updated",
+  category: "inventory",
+  priority: "medium",
+  title_template: "Vehicle Updated",
+  body_template: "User {username} updated '{registration}' - {field_name} changed",
+  action_url: "/vehicle-master",
+  entity_type: "vehicle",
+  recipient_criteria: {
+   roles: ["admin"],
+   permissions: ["can_edit"],
+   preference_key: "inventory_notifications",
   },
-  "vehicle.added": {
-    event_type: "vehicle.added",
-    category: "inventory",
-    priority: "medium",
-    title_template: "New Vehicle Added",
-    body_template: "User {username} added '{registration}' to Vehicle Master",
-    action_url: "/vehicle-master",
-    entity_type: "vehicle",
-    recipient_criteria: {
-      roles: ["admin", "manager"],
-      permissions: ["can_view"],
-      preference_key: "inventory_notifications",
-    },
+ },
+ "vehicle.added": {
+  event_type: "vehicle.added",
+  category: "inventory",
+  priority: "medium",
+  title_template: "New Vehicle Added",
+  body_template: "User {username} added '{registration}' to Vehicle Master",
+  action_url: "/vehicle-master",
+  entity_type: "vehicle",
+  recipient_criteria: {
+   roles: ["admin", "manager"],
+   permissions: ["can_view"],
+   preference_key: "inventory_notifications",
   },
-  "vehicle.sold": {
-    event_type: "vehicle.sold",
-    category: "sales",
-    priority: "high",
-    title_template: "Vehicle Sold",
-    body_template:
-      "User {username} marked '{registration}' as sold - £{sale_price}",
-    action_url: "/vehicle-master",
-    entity_type: "vehicle",
-    recipient_criteria: {
-      roles: ["admin", "manager", "salesperson"],
-      permissions: ["can_view"],
-      preference_key: "sales_notifications",
-    },
+ },
+ "vehicle.sold": {
+  event_type: "vehicle.sold",
+  category: "sales",
+  priority: "high",
+  title_template: "Vehicle Sold",
+  body_template: "User {username} marked '{registration}' as sold - £{sale_price}",
+  action_url: "/vehicle-master",
+  entity_type: "vehicle",
+  recipient_criteria: {
+   roles: ["admin", "manager", "salesperson"],
+   permissions: ["can_view"],
+   preference_key: "sales_notifications",
   },
-  "vehicle.bought": {
-    event_type: "vehicle.bought",
-    category: "inventory",
-    priority: "medium",
-    title_template: "Vehicle Bought",
-    body_template: "User {username} added a vehicle to Bought Vehicles",
-    action_url: "/bought-vehicles",
-    entity_type: "bought_vehicle",
-    recipient_criteria: {
-      roles: ["admin", "manager"],
-      permissions: ["can_view"],
-      preference_key: "inventory_notifications",
-    },
+ },
+ "vehicle.bought": {
+  event_type: "vehicle.bought",
+  category: "inventory",
+  priority: "medium",
+  title_template: "Vehicle Bought",
+  body_template: "User {username} added a vehicle to Bought Vehicles",
+  action_url: "/bought-vehicles",
+  entity_type: "bought_vehicle",
+  recipient_criteria: {
+   roles: ["admin", "manager"],
+   permissions: ["can_view"],
+   preference_key: "inventory_notifications",
   },
-  "lead.created": {
-    event_type: "lead.created",
-    category: "customer",
-    priority: "high",
-    title_template: "New Lead Created",
-    body_template: "User {username} added a new lead: {lead_name}",
-    action_url: "/leads",
-    entity_type: "lead",
-    recipient_criteria: {
-      roles: ["admin", "manager", "salesperson"],
-      permissions: ["can_view"],
-      preference_key: "customer_notifications",
-    },
+ },
+ "lead.created": {
+  event_type: "lead.created",
+  category: "customer",
+  priority: "high",
+  title_template: "New Lead Created",
+  body_template: "User {username} added a new lead: {lead_name}",
+  action_url: "/leads",
+  entity_type: "lead",
+  recipient_criteria: {
+   roles: ["admin", "manager", "salesperson"],
+   permissions: ["can_view"],
+   preference_key: "customer_notifications",
   },
-  "appointment.booked": {
-    event_type: "appointment.booked",
-    category: "customer",
-    priority: "medium",
-    title_template: "Appointment Booked",
-    body_template:
-      "User {username} booked an appointment on {appointment_date}",
-    action_url: "/appointments",
-    entity_type: "appointment",
-    recipient_criteria: {
-      roles: ["admin", "manager", "salesperson"],
-      permissions: ["can_view"],
-      preference_key: "customer_notifications",
-    },
+ },
+ "appointment.booked": {
+  event_type: "appointment.booked",
+  category: "customer",
+  priority: "medium",
+  title_template: "Appointment Booked",
+  body_template: "User {username} booked an appointment on {appointment_date}",
+  action_url: "/appointments",
+  entity_type: "appointment",
+  recipient_criteria: {
+   roles: ["admin", "manager", "salesperson"],
+   permissions: ["can_view"],
+   preference_key: "customer_notifications",
   },
-  "job.booked": {
-    event_type: "job.booked",
-    category: "staff",
-    priority: "medium",
-    title_template: "Job Booked",
-    body_template: "User {username} booked a new job: {job_type}",
-    action_url: "/calendar",
-    entity_type: "job",
-    recipient_criteria: {
-      roles: ["admin", "manager"],
-      permissions: ["can_view"],
-      preference_key: "staff_notifications",
-    },
+ },
+ "job.booked": {
+  event_type: "job.booked",
+  category: "staff",
+  priority: "medium",
+  title_template: "Job Booked",
+  body_template: "User {username} booked a new job: {job_type}",
+  action_url: "/calendar",
+  entity_type: "job",
+  recipient_criteria: {
+   roles: ["admin", "manager"],
+   permissions: ["can_view"],
+   preference_key: "staff_notifications",
   },
+ },
 };
 ```
 
@@ -551,20 +541,18 @@ export const NOTIFICATION_REGISTRY: Record<string, NotificationEventConfig> = {
 ```typescript
 // Update shared/schema.ts - notification_preferences table
 export const notification_preferences = pgTable("notification_preferences", {
-  // ... existing fields ...
+ // ... existing fields ...
 
-  // Event-specific preferences
-  vehicle_updated_enabled: boolean("vehicle_updated_enabled").default(true),
-  vehicle_added_enabled: boolean("vehicle_added_enabled").default(true),
-  vehicle_sold_enabled: boolean("vehicle_sold_enabled").default(true),
-  vehicle_bought_enabled: boolean("vehicle_bought_enabled").default(true),
-  lead_created_enabled: boolean("lead_created_enabled").default(true),
-  appointment_booked_enabled: boolean("appointment_booked_enabled").default(
-    true,
-  ),
-  job_booked_enabled: boolean("job_booked_enabled").default(true),
+ // Event-specific preferences
+ vehicle_updated_enabled: boolean("vehicle_updated_enabled").default(true),
+ vehicle_added_enabled: boolean("vehicle_added_enabled").default(true),
+ vehicle_sold_enabled: boolean("vehicle_sold_enabled").default(true),
+ vehicle_bought_enabled: boolean("vehicle_bought_enabled").default(true),
+ lead_created_enabled: boolean("lead_created_enabled").default(true),
+ appointment_booked_enabled: boolean("appointment_booked_enabled").default(true),
+ job_booked_enabled: boolean("job_booked_enabled").default(true),
 
-  // ... rest of existing fields
+ // ... rest of existing fields
 });
 ```
 
@@ -576,70 +564,65 @@ export const notification_preferences = pgTable("notification_preferences", {
 
 ```typescript
 export const DEFAULT_NOTIFICATION_PREFERENCES = {
-  admin: {
-    vehicle_updated_enabled: true,
-    vehicle_added_enabled: true,
-    vehicle_sold_enabled: true,
-    vehicle_bought_enabled: true,
-    lead_created_enabled: true,
-    appointment_booked_enabled: true,
-    job_booked_enabled: true,
-  },
-  manager: {
-    vehicle_updated_enabled: false,
-    vehicle_added_enabled: true,
-    vehicle_sold_enabled: true,
-    vehicle_bought_enabled: true,
-    lead_created_enabled: true,
-    appointment_booked_enabled: true,
-    job_booked_enabled: true,
-  },
-  salesperson: {
-    vehicle_updated_enabled: false,
-    vehicle_added_enabled: false,
-    vehicle_sold_enabled: true,
-    vehicle_bought_enabled: false,
-    lead_created_enabled: true,
-    appointment_booked_enabled: true,
-    job_booked_enabled: false,
-  },
+ admin: {
+  vehicle_updated_enabled: true,
+  vehicle_added_enabled: true,
+  vehicle_sold_enabled: true,
+  vehicle_bought_enabled: true,
+  lead_created_enabled: true,
+  appointment_booked_enabled: true,
+  job_booked_enabled: true,
+ },
+ manager: {
+  vehicle_updated_enabled: false,
+  vehicle_added_enabled: true,
+  vehicle_sold_enabled: true,
+  vehicle_bought_enabled: true,
+  lead_created_enabled: true,
+  appointment_booked_enabled: true,
+  job_booked_enabled: true,
+ },
+ salesperson: {
+  vehicle_updated_enabled: false,
+  vehicle_added_enabled: false,
+  vehicle_sold_enabled: true,
+  vehicle_bought_enabled: false,
+  lead_created_enabled: true,
+  appointment_booked_enabled: true,
+  job_booked_enabled: false,
+ },
 };
 ```
 
 ### 4.2 Permission Validation
 
 ```typescript
-export async function validateNotificationPermissions(
-  userId: number,
-  eventType: string,
-): Promise<boolean> {
-  const user = await storage.getUserById(userId);
-  if (!user) return false;
+export async function validateNotificationPermissions(userId: number, eventType: string): Promise<boolean> {
+ const user = await storage.getUserById(userId);
+ if (!user) return false;
 
-  const event = NOTIFICATION_REGISTRY[eventType];
-  if (!event) return false;
+ const event = NOTIFICATION_REGISTRY[eventType];
+ if (!event) return false;
 
-  // Check role permissions
-  if (!event.recipient_criteria.roles.includes(user.role)) {
-    return false;
-  }
+ // Check role permissions
+ if (!event.recipient_criteria.roles.includes(user.role)) {
+  return false;
+ }
 
-  // Check page-specific permissions
-  const userPermissions = await storage.getUserPermissions(userId);
-  const pagePermission = userPermissions.find(
-    (p) => p.page_key === event.action_url.replace("/", ""),
-  );
+ // Check page-specific permissions
+ const userPermissions = await storage.getUserPermissions(userId);
+ const pagePermission = userPermissions.find(p => p.page_key === event.action_url.replace("/", ""));
 
-  if (!pagePermission || pagePermission.permission_level === "hidden") {
-    return false;
-  }
+ if (!pagePermission || pagePermission.permission_level === "hidden") {
+  return false;
+ }
 
-  // Check notification preferences
-  const preferences = await storage.getNotificationPreferencesByUser(userId);
-  if (!preferences) return true; // Default to enabled
+ // Check notification preferences
+ const preferences = await storage.getNotificationPreferencesByUser(userId);
+ if (!preferences) return true; // Default to enabled
 
-  const preferenceKey = `${eventType.replace(".", "_")}_enabled`;
-  return preferences[preferenceKey] !== false;
+ const preferenceKey = `${eventType.replace(".", "_")}_enabled`;
+ return preferences[preferenceKey] !== false;
 }
 ```
 
