@@ -995,11 +995,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (assignedUser) {
      await notificationService.createSmartNotification({
       user_id: assignedUser,
-      context: `New lead created: ${lead.first_name} ${
-       lead.last_name
-      } is interested in ${lead.vehicle_interests || "vehicles"} with budget ${
-       lead.budget_min ? `£${lead.budget_min.toLocaleString()}` : "TBD"
-      } - ${lead.budget_max ? `£${lead.budget_max.toLocaleString()}` : "TBD"}`,
+      context: `New lead created: ${lead.first_name} ${lead.last_name} is interested in ${
+       lead.vehicle_interests || "vehicles"
+      } with budget ${lead.budget_min ? `£${lead.budget_min.toLocaleString()}` : "TBD"} - ${
+       lead.budget_max ? `£${lead.budget_max.toLocaleString()}` : "TBD"
+      }`,
       entityType: "lead",
       entityData: {
        id: lead.id,
@@ -3465,9 +3465,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       leadStats.totalLeads
      } active leads in our pipeline with a ${leadStats.conversionRate.toFixed(
       1,
-     )}% conversion rate. We've served ${
-      customerStats.total_leads_mtd
-     } customers total, with ${customerStats.active_leads} active this year.`,
+     )}% conversion rate. We've served ${customerStats.total_leads_mtd} customers total, with ${
+      customerStats.active_leads
+     } active this year.`,
      context_used: ["customer_data", "lead_data"],
      suggestions: [
       "Show me high-value customers",
