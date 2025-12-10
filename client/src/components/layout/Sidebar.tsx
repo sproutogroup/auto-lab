@@ -86,12 +86,12 @@ const navigationItems = [
  {
   section: "DOCUMENTS",
   items: [
-    {
-    id: "incoices",
-    label: "Invoices",
-    icon: FileText,
-    path: "/invoices",
-   },
+  //   {
+  //   id: "incoices",
+  //   label: "Invoices",
+  //   icon: FileText,
+  //   path: "/invoices",
+  //  },
    {
     id: "purchase-invoices",
     label: "Purchase Invoices",
