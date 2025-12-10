@@ -28,5 +28,20 @@ export default defineConfig({
    strict: true,
    deny: ["**/.*"],
   },
+  proxy: {
+   "/api": {
+    target: "http://localhost:5000", 
+    changeOrigin: true,
+    secure: false,
+    ws: true,
+    rewrite: path => path.replace(/^\/api/, "/api"), 
+   },
+   "/socket.io": {
+    target: "http://localhost:5000",
+    changeOrigin: true,
+    secure: false,
+    ws: true,
+   }
+  },
  },
 });

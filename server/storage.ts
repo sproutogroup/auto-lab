@@ -26,6 +26,9 @@ import {
  notification_preferences,
  device_registrations,
  pinned_messages,
+   invoices,
+  invoice_items,
+  vehicle_conditions,
  type User,
  type InsertUser,
  type Vehicle,
@@ -80,12 +83,40 @@ import {
  type InsertDeviceRegistration,
  type PinnedMessage,
  type InsertPinnedMessage,
+ type InvoiceT,
+ type InvoiceInsert,
+ type InvoiceItem,
+ type InvoiceItemInsert,
+ type VehicleCondition,
+ type VehicleConditionInsert
+ 
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, and, gte, lte, isNotNull, gt, isNull, or, ilike, lt } from "drizzle-orm";
 import { NotificationEventService } from "./services/notificationEventService";
 
 export interface IStorage {
+
+// Invoice operations
+getInvoices(): Promise<InvoiceT[]>;
+getInvoice(id: number): Promise<InvoiceT | undefined>;
+createInvoice(invoice: InvoiceInsert): Promise<InvoiceT>;
+deleteInvoice(id: number): Promise<void>;
+
+getInvoiceItems(invoiceId: number): Promise<InvoiceItem[]>;
+addInvoiceItem(item: InvoiceItemInsert): Promise<InvoiceItem>;
+deleteInvoiceItem(id: number): Promise<void>;
+
+getVehicleCondition(invoiceId: number): Promise<VehicleCondition | null>;
+  createVehicleCondition(
+    condition: VehicleConditionInsert
+  ): Promise<VehicleCondition>;
+  updateVehicleCondition(
+    id: number,
+    condition: Partial<VehicleConditionInsert>
+  ): Promise<VehicleCondition>;
+
+  
  // User operations
  getUsers(): Promise<User[]>;
  getUser(id: number): Promise<User | undefined>;
@@ -987,6 +1018,99 @@ export class DatabaseStorage implements IStorage {
  get db() {
   return db;
  }
+
+ // -------------------------
+// Invoice operations
+// -------------------------
+
+async getInvoices(): Promise<InvoiceT[]> {
+  return await db
+    .select()
+    .from(invoices)
+    .orderBy(desc(invoices.created_at));
+}
+
+async getInvoice(id: number): Promise<InvoiceT | undefined> {
+  const [invoice] = await db
+    .select()
+    .from(invoices)
+    .where(eq(invoices.id, id));
+  return invoice || undefined;
+}
+
+async createInvoice(insertInvoice: InvoiceInsert): Promise<InvoiceT> {
+  const [created] = await db
+    .insert(invoices)
+    .values(insertInvoice)
+    .returning();
+  return created;
+}
+
+async deleteInvoice(id: number): Promise<void> {
+  await db.delete(invoices).where(eq(invoices.id, id));
+}
+
+
+// -------------------------
+// Invoice Item operations
+// -------------------------
+
+async getInvoiceItems(invoiceId: number): Promise<InvoiceItem[]> {
+  return await db
+    .select()
+    .from(invoice_items)
+    .where(eq(invoice_items.invoice_id, invoiceId));
+}
+
+async addInvoiceItem(item: InvoiceItemInsert): Promise<InvoiceItem> {
+  const [created] = await db
+    .insert(invoice_items)
+    .values(item)
+    .returning();
+  return created;
+}
+
+async deleteInvoiceItem(id: number): Promise<void> {
+  await db
+    .delete(invoice_items)
+    .where(eq(invoice_items.id, id));
+}
+
+
+// -------------------------
+// Vehicle Condition operations
+// -------------------------
+
+async getVehicleCondition(invoiceId: number): Promise<VehicleCondition | null> {
+  const [vc] = await db
+    .select()
+    .from(vehicle_conditions)
+    .where(eq(vehicle_conditions.invoice_id, invoiceId));
+  return vc ?? null;
+}
+
+async createVehicleCondition(
+  condition: VehicleConditionInsert
+): Promise<VehicleCondition> {
+  const [created] = await db
+    .insert(vehicle_conditions)
+    .values(condition)
+    .returning();
+  return created;
+}
+
+async updateVehicleCondition(
+  id: number,
+  condition: Partial<VehicleConditionInsert>
+): Promise<VehicleCondition> {
+  const [updated] = await db
+    .update(vehicle_conditions)
+    .set(condition)
+    .where(eq(vehicle_conditions.id, id))
+    .returning();
+  return updated;
+}
+
 
  // User operations
  async getUsers(): Promise<User[]> {

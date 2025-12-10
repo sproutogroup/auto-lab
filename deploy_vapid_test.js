@@ -40,6 +40,7 @@ const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
 const vapidSubject = process.env.VAPID_SUBJECT;
 const databaseUrl = process.env.DATABASE_URL;
 
+
 if (vapidPublic && vapidPrivate && vapidSubject) {
  testPassed("All VAPID environment variables are set");
 

@@ -12,8 +12,14 @@ import { setupVite, serveStatic, log } from "./vite";
 import { requestId, requestLogger } from "./logger";
 import { performanceMonitor, securityMonitor } from "./middleware/monitoring";
 import { checkBlocked, detectSuspicious } from "./middleware/security";
+import path from "path";
+import { fileURLToPath } from "url";
+
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // CORS Configuration
 const corsOptions = {
@@ -23,6 +29,8 @@ const corsOptions = {
 
   // Default allowed origins
   const allowedOrigins = [
+    "http://localhost:5173",
+   "http://127.0.0.1:5173",      
    "http://localhost:3000",
    "http://localhost:5000",
    "http://127.0.0.1:3000",
@@ -86,7 +94,13 @@ const corsOptions = {
  optionsSuccessStatus: 200, // For legacy browser support
 };
 
+// CORS **before** uploads
 app.use(cors(corsOptions));
+
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "..", "uploads"))
+);
 
 // Security Headers with Helmet
 app.use(

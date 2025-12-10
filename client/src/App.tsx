@@ -31,6 +31,7 @@ function PermissionGuard({
  const { user } = useAuth();
  const { hasPermission } = usePermissions();
 
+
  // Admin bypass with proper audit logging
  if (user?.role === "admin") {
   // Log admin access for security audit (server-side logging would be better)
@@ -116,6 +117,7 @@ import ServiceWorkerTestPage from "@/pages/ServiceWorkerTest";
 import DebugPage from "@/pages/Debug";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
+import Invoices from "@/pages/invoices";
 
 function ProtectedRouter() {
  return (
@@ -174,6 +176,11 @@ function ProtectedRouter() {
     <Route path="/tasks">
      <PermissionGuard pageKey="tasks">
       <Tasks />
+     </PermissionGuard>
+    </Route>
+    <Route path="/invoices">
+     <PermissionGuard pageKey="invoices">
+      <Invoices />
      </PermissionGuard>
     </Route>
     <Route path="/purchase-invoices">

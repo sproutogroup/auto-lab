@@ -73,12 +73,12 @@ export default function PurchaseInvoice() {
  });
 
  // Fetch purchase invoices
- const { data: invoices = [], isLoading } = useQuery({
+ const { data: invoices = [], isLoading } = useQuery<any>({
   queryKey: ["/api/purchase-invoices"],
  });
 
  // Fetch statistics
- const { data: stats } = useQuery({
+ const { data: stats } = useQuery<any>({
   queryKey: ["/api/purchase-invoices-stats"],
  });
 

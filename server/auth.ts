@@ -119,6 +119,8 @@ export function setupAuth(app: Express) {
    const hashedPassword = await hashPassword(password);
 
    // Create new user
+
+   
    const newUser = await db
     .insert(users)
     .values({
@@ -163,7 +165,7 @@ export function setupAuth(app: Express) {
 
    const foundUser = user[0];
 
-   // Check if user is active
+   // Check if user is active`
    if (!foundUser.is_active) {
     return res.status(401).json({ message: "Account is disabled" });
    }

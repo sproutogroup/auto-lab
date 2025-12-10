@@ -221,6 +221,146 @@ export const vehicles = pgTable(
  ],
 );
 
+
+// Invoice Table
+/**
+ * Invoices header / payment / vehicle summary
+ */
+  export const invoices = pgTable(
+    "invoices",
+    {
+      id: serial("id").primaryKey(),
+      invoice_no: text("invoice_no").unique().notNull(),
+      tax_point: text("tax_point"),
+      check_no: text("check_no"),
+      invoice_name_address: text("invoice_name_address"),
+      collection_address: text("collection_address"),
+      issued_by: text("issued_by"),
+      invoiced_by: text("invoiced_by"),
+
+      inspection_image_url: text("inspection_image_url"),
+
+      // basic vehicle summary (also stored fully in vehicle_conditions if needed)
+      make: text("make"),
+      model: text("model"),
+      chassis_no: text("chassis_no"),
+      registration: text("registration"),
+      purchased_by: text("purchased_by"),
+      mot_end: timestamp("mot_end"),
+      mileage: integer("mileage"),
+      dor: text("dor"),
+      colour: text("colour"),
+      interior_colour: text("interior_colour"),
+      purchase_date: timestamp("purchase_date"),
+      collection_date: timestamp("collection_date"),
+
+      // payment/bank
+      bank_name: text("bank_name"),
+      account_number: text("account_number"),
+      sort_code: text("sort_code"),
+      ref: text("ref"),
+      acc_name: text("acc_name"),
+
+      // totals (monetary fields)
+      sub_total: decimal("sub_total", { precision: 14, scale: 2 }),
+      vat_at_20: decimal("vat_at_20", { precision: 14, scale: 2 }),
+      total: decimal("total", { precision: 14, scale: 2 }),
+      deposit_paid: decimal("deposit_paid", { precision: 14, scale: 2 }),
+      balance_due: decimal("balance_due", { precision: 14, scale: 2 }),
+
+      // freeform / notes
+      description_of_goods: text("description_of_goods"),
+      notes: text("notes"),
+
+      // administrative
+      upload_date: timestamp("upload_date").defaultNow(),
+      created_at: timestamp("created_at").defaultNow(),
+      updated_at: timestamp("updated_at").defaultNow(),
+    },
+    (table) => [
+      // indexes to support common queries
+      index("idx_invoices_invoice_no").on(table.invoice_no),
+      index("idx_invoices_upload_date").on(table.upload_date),
+      index("idx_invoices_make_model").on(table.make, table.model),
+      index("idx_invoices_registration").on(table.registration),
+      index("idx_invoices_created_at").on(table.created_at),
+    ]
+  );
+
+/**
+ * Invoice line items — supports multiple rows per invoice.
+ * (Your form presently collects a single description/qty/unitPrice/actualPrice,
+ * but using a separate table gives flexible modeling.)
+ */
+export const invoice_items = pgTable(
+  "invoice_items",
+  {
+    id: serial("id").primaryKey(),
+    invoice_id: integer("invoice_id").references(() => invoices.id).notNull(),
+    description: text("description").notNull(),
+    qty: integer("qty"),
+    unit_price: decimal("unit_price", { precision: 14, scale: 2 }),
+    actual_price: decimal("actual_price", { precision: 14, scale: 2 }),
+    created_at: timestamp("created_at").defaultNow(),
+    updated_at: timestamp("updated_at").defaultNow(),
+  },
+  (table) => [
+    index("idx_invoice_items_invoice_id").on(table.invoice_id),
+  ]
+);
+
+/**
+ * Vehicle condition / inspection sheet — one row per invoice (nullable until inspection done)
+ */
+export const vehicle_conditions = pgTable(
+  "vehicle_conditions",
+  {
+    id: serial("id").primaryKey(),
+    invoice_id: integer("invoice_id").references(() => invoices.id).unique().notNull(),
+
+    // star ratings (1-5). Using integers for each area so they map cleanly to your UI.
+    front_paint: integer("front_paint").default(0),
+    front_rust_dust: integer("front_rust_dust").default(0),
+    front_dent: integer("front_dent").default(0),
+
+    rear_paint: integer("rear_paint").default(0),
+    rear_rust_dust: integer("rear_rust_dust").default(0),
+    rear_dent: integer("rear_dent").default(0),
+
+    left_paint: integer("left_paint").default(0),
+    left_rust_dust: integer("left_rust_dust").default(0),
+    left_dent: integer("left_dent").default(0),
+
+    right_paint: integer("right_paint").default(0),
+    right_rust_dust: integer("right_rust_dust").default(0),
+    right_dent: integer("right_dent").default(0),
+
+    top_paint: integer("top_paint").default(0),
+    top_rust_dust: integer("top_rust_dust").default(0),
+    top_dent: integer("top_dent").default(0),
+
+    wheels_front_left: integer("wheels_front_left").default(0),
+    wheels_front_right: integer("wheels_front_right").default(0),
+    wheels_rear_left: integer("wheels_rear_left").default(0),
+    wheels_rear_right: integer("wheels_rear_right").default(0),
+
+    windscreen_chipped: boolean("windscreen_chipped").default(false),
+
+    additional_comments: text("additional_comments"),
+
+    // Optionally keep a JSON snapshot of the whole inspection (useful for audit / future UI fields)
+    inspection_snapshot: jsonb("inspection_snapshot"),
+
+    created_at: timestamp("created_at").defaultNow(),
+    updated_at: timestamp("updated_at").defaultNow(),
+  },
+  (table) => [
+    index("idx_vehicle_conditions_invoice_id").on(table.invoice_id),
+    index("idx_vehicle_conditions_created_at").on(table.created_at),
+  ]
+);
+
+
 // Customers table - Simplified structure focused on essential information
 export const customers = pgTable(
  "customers",
@@ -1367,6 +1507,15 @@ export type InsertSalesInvoice = z.infer<typeof insertSalesInvoiceSchema>;
 export type CustomerPurchase = typeof customer_purchases.$inferSelect;
 export type InsertCustomerPurchase = z.infer<typeof insertCustomerPurchaseSchema>;
 
+export type InvoiceT = typeof invoices.$inferSelect;
+export type InvoiceInsert = typeof invoices.$inferInsert;
+
+export type InvoiceItem = typeof invoice_items.$inferSelect;
+export type InvoiceItemInsert = typeof invoice_items.$inferInsert;
+
+export type VehicleCondition = typeof vehicle_conditions.$inferSelect;
+export type VehicleConditionInsert = typeof vehicle_conditions.$inferInsert;
+
 // Simplified Push Subscriptions table - Web push notification subscriptions
 export const push_subscriptions = pgTable(
  "push_subscriptions",
@@ -1647,6 +1796,49 @@ export type InsertNotificationPreference = typeof notification_preferences.$infe
 export type PinnedMessage = typeof pinned_messages.$inferSelect;
 export type InsertPinnedMessage = typeof pinned_messages.$inferInsert;
 
+export interface InvoiceApiData {
+  id: number;
+  invoice_no: string;
+  tax_point: string | null;
+  check_no: string | null;
+  invoice_name_address: string | null;
+  collection_address: string | null;
+  issued_by: string | null;
+  invoiced_by: string | null;
+  inspection_image_url: string | null;
+  make: string | null;
+  model: string | null;
+  chassis_no: string | null;
+  registration: string | null;
+  purchased_by: string | null;
+
+  mot_end: string | Date | null;
+  mileage: number | null;
+  dor: string | null;
+  colour: string | null;
+  interior_colour: string | null;
+  purchase_date: string | Date | null;
+  collection_date: string | Date | null;
+
+  bank_name: string | null;
+  account_number: string | null;
+  sort_code: string | null;
+  ref: string | null;
+  acc_name: string | null;
+  sub_total: string | null;
+  vat_at_20: string | null;
+  total: string | null;
+  deposit_paid: string | null;
+  balance_due: string | null;
+  description_of_goods: string | null;
+  notes: string | null;
+
+  upload_date: string | Date | null;
+  created_at: string | Date | null;
+  updated_at: string | Date | null;
+}
+
+
 // Simplified insert schemas for notification system
 export const insertPushSubscriptionSchema = createInsertSchema(push_subscriptions).omit({
  id: true,
@@ -1677,4 +1869,23 @@ export const insertPinnedMessageSchema = createInsertSchema(pinned_messages).omi
  id: true,
  created_at: true,
  updated_at: true,
+});
+
+export const insertInvoiceSchema = createInsertSchema(invoices).omit({
+  id: true,
+  upload_date: true,
+  created_at: true,
+  updated_at: true
+});
+
+export const insertInvoiceItemSchema = createInsertSchema(invoice_items).omit({
+  id: true,
+  created_at: true,
+  updated_at: true
+});
+
+export const insertVehicleConditionSchema = createInsertSchema(vehicle_conditions).omit({
+  id: true,
+  created_at: true,
+  updated_at: true
 });
