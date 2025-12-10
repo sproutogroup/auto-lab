@@ -141,7 +141,7 @@ export async function generateInvoicePdf(data: InvoiceApiData) {
   // 4) IMAGE: replace template image with dynamic inspection image
   //
 if (data.inspection_image_url) {
-  const imageUrl = `https://www.autolabdms.com/${data.inspection_image_url}`;
+  const imageUrl = `https://www.autolabdms.com${data.inspection_image_url}`;
 
   const res = await fetch(imageUrl);
 
