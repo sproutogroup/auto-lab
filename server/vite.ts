@@ -60,25 +60,15 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
- // FIXED: Point to client/dist instead of server/public
- const distPath = path.resolve(import.meta.dirname, "..", "client", "dist");
+ const distPath = path.resolve(import.meta.dirname, "public");
 
  if (!fs.existsSync(distPath)) {
-  log(`❌ Build directory not found: ${distPath}`, "vite");
-  log(`📁 Current directory: ${import.meta.dirname}`, "vite");
-  log(`📁 Looking for: client/dist`, "vite");
-  throw new Error(
-   `Could not find the build directory: ${distPath}\n` +
-   `Make sure to build the client first with: npm run build`
-  );
+  throw new Error(`Could not find the build directory: ${distPath}, make sure to build the client first`);
  }
 
- log(`✅ Serving static files from: ${distPath}`, "vite");
-
- // Serve static files
  app.use(express.static(distPath));
 
- // fall through to index.html if the file doesn't exist (SPA routing)
+ // fall through to index.html if the file doesn't exist
  app.use("*", (_req, res) => {
   res.sendFile(path.resolve(distPath, "index.html"));
  });
