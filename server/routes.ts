@@ -3630,11 +3630,12 @@ app.post(
       };
 
       // 1) Load template
-      const templatePath = path.join(
-        __dirname,
-        "templates",
-        "invoice-template-excel.xlsx"
-      );
+     const templatePath = path.join(
+      process.cwd(),
+      "server",
+      "templates",
+      "invoice-template-excel.xlsx"
+    );
 
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(templatePath);
