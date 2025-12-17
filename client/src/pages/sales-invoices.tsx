@@ -7,11 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import ImageMarker, { ImageMarkerHandle } from "@/components/car-inspection/car-inspection-canvas";
 import type { InvoiceT } from "@shared/schema";
 import { Download } from "lucide-react";
-
-
 
 
 
@@ -102,18 +99,16 @@ interface Invoice extends InvoiceFormData {
  vehicleCondition?: VehicleCondition;
 }
 
-export default function Invoices() {
+export default function SalesInvoices() {
  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [viewingInvoice, setViewingInvoice] = useState<InvoiceT | null>(null);
  
- const markerRef = useRef<ImageMarkerHandle | null>(null);
-
 
 
  const queryClient = useQueryClient();
 
  const { data: invoicesData = [], isLoading } = useQuery<any>({
-  queryKey: ["/api/invoices"],
+  queryKey: ["/api/sales-invoices"],
  });
 
  
@@ -187,7 +182,7 @@ export default function Invoices() {
  // Upload mutation
  const uploadMutation = useMutation({
   mutationFn: async (fd: FormData) => {
-    const res = await fetch("/api/invoices", {
+    const res = await fetch("/api/sales-invoices", {
       method: "POST",
       body: fd,
     });
@@ -212,7 +207,7 @@ export default function Invoices() {
       title: "Success",
       description: "Invoice uploaded!",
     });
-    queryClient.invalidateQueries({ queryKey: ["/api/invoices"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/sales-invoices"] });
   },
 
   onError: (err: any) => {
@@ -227,7 +222,7 @@ export default function Invoices() {
  // Delete mutation
 const deleteMutation = useMutation({
   mutationFn: async (id: number) => {
-    const response = await fetch(`/api/invoices/${id}`, {
+    const response = await fetch(`/api/sales-invoices/${id}`, {
       method: "DELETE",
     });
 
@@ -244,7 +239,7 @@ const deleteMutation = useMutation({
     return response.json();
   },
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["/api/invoices"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/sales-invoices"] });
     toast({
       title: "Success",
       description: "Invoice deleted successfully",
@@ -272,20 +267,6 @@ const deleteMutation = useMutation({
       uploadFormData.append(key, value.toString());
     }
   });
-
-  // try to get annotated image blob from child and append it
-  try {
-    if (markerRef.current) {
-      const blob = await markerRef.current.getImageBlob("image/png");
-      if (blob) {
-        // field name "inspectionImage" — change only if your server expects a different field
-        uploadFormData.append("inspectionImage", blob, "inspection.png");
-      }
-    }
-  } catch (err) {
-    // non-fatal: log and continue submitting other fields
-    console.error("Failed to get image blob from child:", err);
-  }
 
   // call your mutation with the prepared FormData
   uploadMutation.mutate(uploadFormData);
@@ -712,7 +693,6 @@ const deleteMutation = useMutation({
          />
         </div>
        </Card>
-       <ImageMarker ref={markerRef} />
 
        <div className="flex justify-end gap-3 pt-4 border-t">
         <Button type="button" variant="outline" onClick={() => setIsUploadModalOpen(false)}>
@@ -781,7 +761,6 @@ const deleteMutation = useMutation({
           <th className="text-center p-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
            Total Amount
           </th>
-          <th className="text-center p-3 text-xs font-medium text-gray-500 uppercase tracking-wider">PDF</th>
           <th className="text-center p-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
            Excel
           </th>
@@ -878,45 +857,7 @@ const deleteMutation = useMutation({
             </button>
            </td>
 
-           <td className="text-center">
-            <button
-             onClick={async () => {
-              try {
-               const res = await fetch("/api/invoices/generate-excel", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ invoice }),
-               });
-
-               if (!res.ok) {
-                console.error("Excel generation failed");
-                return;
-               }
-
-               // 1. Get the file
-               const blob = await res.blob();
-
-               // 2. Create object URL
-               const url = window.URL.createObjectURL(blob);
-
-               // 3. Trigger download
-               const a = document.createElement("a");
-               a.href = url;
-               a.download = `invoice-${invoice.invoice_no}.xlsx`;
-               document.body.appendChild(a);
-               a.click();
-
-               // 4. Cleanup
-               a.remove();
-               window.URL.revokeObjectURL(url);
-              } catch (err) {
-               console.error("Download Excel error:", err);
-              }
-             }}
-            >
-             <Download size={20} />
-            </button>
-           </td>
+           
 
            {/* Upload Date */}
            <td className="p-3 text-center">

@@ -117,7 +117,8 @@ import ServiceWorkerTestPage from "@/pages/ServiceWorkerTest";
 import DebugPage from "@/pages/Debug";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
-import Invoices from "@/pages/invoices";
+import PurchasesInvoices from "@/pages/purchase-invoices";
+import SalesInvoices from "./pages/sales-invoices";
 
 function ProtectedRouter() {
  return (
@@ -178,21 +179,21 @@ function ProtectedRouter() {
       <Tasks />
      </PermissionGuard>
     </Route>
-    <Route path="/invoices">
-     <PermissionGuard pageKey="invoices">
-      <Invoices />
-     </PermissionGuard>
-    </Route>
     <Route path="/purchase-invoices">
      <PermissionGuard pageKey="purchase-invoices">
-      <PurchaseInvoice />
+      <PurchasesInvoices />
      </PermissionGuard>
     </Route>
     <Route path="/sales-invoices">
      <PermissionGuard pageKey="sales-invoices">
-      <SalesInvoice />
+      <SalesInvoices />
      </PermissionGuard>
     </Route>
+    {/* <Route path="/sales-invoices">
+     <PermissionGuard pageKey="sales-invoices">
+      <SalesInvoice />
+     </PermissionGuard>
+    </Route> */}
     <Route path="/collection-forms">
      <PermissionGuard pageKey="collection-forms">
       <CollectionForms />

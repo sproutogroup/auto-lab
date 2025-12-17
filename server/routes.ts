@@ -1718,262 +1718,262 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Purchase Invoice API routes
-  app.get("/api/purchase-invoices", async (req, res) => {
-    try {
-      const invoices = await storage.getPurchaseInvoices();
-      res.json(invoices);
-    } catch (error) {
-      console.error("Error fetching purchase invoices:", error);
-      res.status(500).json({ message: "Failed to fetch purchase invoices" });
-    }
-  });
+  // app.get("/api/purchase-invoices", async (req, res) => {
+  //   try {
+  //     const invoices = await storage.getPurchaseInvoices();
+  //     res.json(invoices);
+  //   } catch (error) {
+  //     console.error("Error fetching purchase invoices:", error);
+  //     res.status(500).json({ message: "Failed to fetch purchase invoices" });
+  //   }
+  // });
 
-  app.get("/api/purchase-invoices/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid purchase invoice ID" });
-      }
-      const invoice = await storage.getPurchaseInvoiceById(id);
-      if (!invoice) {
-        return res.status(404).json({ message: "Purchase invoice not found" });
-      }
-      res.json(invoice);
-    } catch (error) {
-      console.error("Error fetching purchase invoice:", error);
-      res.status(500).json({ message: "Failed to fetch purchase invoice" });
-    }
-  });
+  // app.get("/api/purchase-invoices/:id", async (req, res) => {
+  //   try {
+  //     const id = parseInt(req.params.id);
+  //     if (isNaN(id)) {
+  //       return res.status(400).json({ message: "Invalid purchase invoice ID" });
+  //     }
+  //     const invoice = await storage.getPurchaseInvoiceById(id);
+  //     if (!invoice) {
+  //       return res.status(404).json({ message: "Purchase invoice not found" });
+  //     }
+  //     res.json(invoice);
+  //   } catch (error) {
+  //     console.error("Error fetching purchase invoice:", error);
+  //     res.status(500).json({ message: "Failed to fetch purchase invoice" });
+  //   }
+  // });
 
-  app.post("/api/purchase-invoices", purchaseUpload.single("document"), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
+  // app.post("/api/purchase-invoices", purchaseUpload.single("document"), async (req, res) => {
+  //   try {
+  //     if (!req.file) {
+  //       return res.status(400).json({ message: "No file uploaded" });
+  //     }
 
-      const invoiceData = {
-        ...req.body,
-        document_filename: req.file.originalname,
-        document_path: req.file.path,
-        document_size: req.file.size,
-        document_type: path.extname(req.file.originalname).toLowerCase().substring(1),
-        // Convert date strings to proper format
-        purchase_date: req.body.purchase_date ? new Date(req.body.purchase_date) : null,
-        estimated_collection_date: req.body.estimated_collection_date
-          ? new Date(req.body.estimated_collection_date)
-          : null,
-        outstanding_finance: req.body.outstanding_finance === "true",
-        part_exchange: req.body.part_exchange === "true",
-        tags: req.body.tags ? req.body.tags.split(",").map((tag: string) => tag.trim()) : [],
-      };
+  //     const invoiceData = {
+  //       ...req.body,
+  //       document_filename: req.file.originalname,
+  //       document_path: req.file.path,
+  //       document_size: req.file.size,
+  //       document_type: path.extname(req.file.originalname).toLowerCase().substring(1),
+  //       // Convert date strings to proper format
+  //       purchase_date: req.body.purchase_date ? new Date(req.body.purchase_date) : null,
+  //       estimated_collection_date: req.body.estimated_collection_date
+  //         ? new Date(req.body.estimated_collection_date)
+  //         : null,
+  //       outstanding_finance: req.body.outstanding_finance === "true",
+  //       part_exchange: req.body.part_exchange === "true",
+  //       tags: req.body.tags ? req.body.tags.split(",").map((tag: string) => tag.trim()) : [],
+  //     };
 
-      const validatedData = insertPurchaseInvoiceSchema.parse(invoiceData);
-      const newInvoice = await storage.createPurchaseInvoice(validatedData);
-      res.status(201).json(newInvoice);
-    } catch (error) {
-      console.error("Error creating purchase invoice:", error);
-      // Clean up uploaded file if database save fails
-      if (req.file && fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
-      res.status(500).json({ message: "Failed to create purchase invoice" });
-    }
-  });
+  //     const validatedData = insertPurchaseInvoiceSchema.parse(invoiceData);
+  //     const newInvoice = await storage.createPurchaseInvoice(validatedData);
+  //     res.status(201).json(newInvoice);
+  //   } catch (error) {
+  //     console.error("Error creating purchase invoice:", error);
+  //     // Clean up uploaded file if database save fails
+  //     if (req.file && fs.existsSync(req.file.path)) {
+  //       fs.unlinkSync(req.file.path);
+  //     }
+  //     res.status(500).json({ message: "Failed to create purchase invoice" });
+  //   }
+  // });
 
-  app.put("/api/purchase-invoices/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid purchase invoice ID" });
-      }
-      const validatedData = insertPurchaseInvoiceSchema.partial().parse(req.body);
-      const updatedInvoice = await storage.updatePurchaseInvoice(id, validatedData);
-      res.json(updatedInvoice);
-    } catch (error) {
-      console.error("Error updating purchase invoice:", error);
-      res.status(500).json({ message: "Failed to update purchase invoice" });
-    }
-  });
+  // app.put("/api/purchase-invoices/:id", async (req, res) => {
+  //   try {
+  //     const id = parseInt(req.params.id);
+  //     if (isNaN(id)) {
+  //       return res.status(400).json({ message: "Invalid purchase invoice ID" });
+  //     }
+  //     const validatedData = insertPurchaseInvoiceSchema.partial().parse(req.body);
+  //     const updatedInvoice = await storage.updatePurchaseInvoice(id, validatedData);
+  //     res.json(updatedInvoice);
+  //   } catch (error) {
+  //     console.error("Error updating purchase invoice:", error);
+  //     res.status(500).json({ message: "Failed to update purchase invoice" });
+  //   }
+  // });
 
-  app.delete("/api/purchase-invoices/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid purchase invoice ID" });
-      }
-      const deleted = await storage.deletePurchaseInvoice(id);
-      if (!deleted) {
-        return res.status(404).json({ message: "Purchase invoice not found" });
-      }
-      res.json({ message: "Purchase invoice deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting purchase invoice:", error);
-      res.status(500).json({ message: "Failed to delete purchase invoice" });
-    }
-  });
+  // app.delete("/api/purchase-invoices/:id", async (req, res) => {
+  //   try {
+  //     const id = parseInt(req.params.id);
+  //     if (isNaN(id)) {
+  //       return res.status(400).json({ message: "Invalid purchase invoice ID" });
+  //     }
+  //     const deleted = await storage.deletePurchaseInvoice(id);
+  //     if (!deleted) {
+  //       return res.status(404).json({ message: "Purchase invoice not found" });
+  //     }
+  //     res.json({ message: "Purchase invoice deleted successfully" });
+  //   } catch (error) {
+  //     console.error("Error deleting purchase invoice:", error);
+  //     res.status(500).json({ message: "Failed to delete purchase invoice" });
+  //   }
+  // });
 
-  app.get("/api/purchase-invoices-stats", async (req, res) => {
-    try {
-      const stats = await storage.getPurchaseInvoiceStats();
-      res.json(stats);
-    } catch (error) {
-      console.error("Error fetching purchase invoice stats:", error);
-      res.status(500).json({ message: "Failed to fetch purchase invoice stats" });
-    }
-  });
+  // app.get("/api/purchase-invoices-stats", async (req, res) => {
+  //   try {
+  //     const stats = await storage.getPurchaseInvoiceStats();
+  //     res.json(stats);
+  //   } catch (error) {
+  //     console.error("Error fetching purchase invoice stats:", error);
+  //     res.status(500).json({ message: "Failed to fetch purchase invoice stats" });
+  //   }
+  // });
 
-  // Serve uploaded files
-  app.get("/api/uploads/purchase-invoices/:filename", (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path.join(purchaseUploadDir, filename);
+  // // Serve uploaded files
+  // app.get("/api/uploads/purchase-invoices/:filename", (req, res) => {
+  //   const filename = req.params.filename;
+  //   const filePath = path.join(purchaseUploadDir, filename);
 
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: "File not found" });
-    }
+  //   if (!fs.existsSync(filePath)) {
+  //     return res.status(404).json({ message: "File not found" });
+  //   }
 
-    res.sendFile(filePath);
-  });
+  //   res.sendFile(filePath);
+  // });
 
   // Sales Invoice API
-  app.get("/api/sales-invoices", async (req, res) => {
-    try {
-      const invoices = await storage.getSalesInvoices();
-      res.json(invoices);
-    } catch (error) {
-      console.error("Error fetching sales invoices:", error);
-      res.status(500).json({ message: "Failed to fetch sales invoices" });
-    }
-  });
+  // app.get("/api/sales-invoices", async (req, res) => {
+  //   try {
+  //     const invoices = await storage.getSalesInvoices();
+  //     res.json(invoices);
+  //   } catch (error) {
+  //     console.error("Error fetching sales invoices:", error);
+  //     res.status(500).json({ message: "Failed to fetch sales invoices" });
+  //   }
+  // });
 
-  app.get("/api/sales-invoices/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid ID" });
-      }
+  // app.get("/api/sales-invoices/:id", async (req, res) => {
+  //   try {
+  //     const id = parseInt(req.params.id);
+  //     if (isNaN(id)) {
+  //       return res.status(400).json({ message: "Invalid ID" });
+  //     }
 
-      const invoice = await storage.getSalesInvoiceById(id);
-      if (!invoice) {
-        return res.status(404).json({ message: "Sales invoice not found" });
-      }
+  //     const invoice = await storage.getSalesInvoiceById(id);
+  //     if (!invoice) {
+  //       return res.status(404).json({ message: "Sales invoice not found" });
+  //     }
 
-      res.json(invoice);
-    } catch (error) {
-      console.error("Error fetching sales invoice:", error);
-      res.status(500).json({ message: "Failed to fetch sales invoice" });
-    }
-  });
+  //     res.json(invoice);
+  //   } catch (error) {
+  //     console.error("Error fetching sales invoice:", error);
+  //     res.status(500).json({ message: "Failed to fetch sales invoice" });
+  //   }
+  // });
 
-  app.post("/api/sales-invoices", salesUpload.single("document"), async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
+  // app.post("/api/sales-invoices", salesUpload.single("document"), async (req, res) => {
+  //   try {
+  //     if (!req.file) {
+  //       return res.status(400).json({ message: "No file uploaded" });
+  //     }
 
-      const formData = req.body;
+  //     const formData = req.body;
 
-      // Convert string boolean values to actual booleans and handle empty strings
-      const processedData = {
-        seller_name: formData.seller_name || "",
-        registration:
-          formData.registration && formData.registration.trim() !== "" ? formData.registration : undefined,
-        date_of_sale:
-          formData.date_of_sale && formData.date_of_sale.trim() !== "" ? formData.date_of_sale : undefined,
-        delivery_collection:
-          formData.delivery_collection && formData.delivery_collection.trim() !== ""
-            ? formData.delivery_collection
-            : undefined,
-        make: formData.make && formData.make.trim() !== "" ? formData.make : undefined,
-        model: formData.model && formData.model.trim() !== "" ? formData.model : undefined,
-        customer_name: formData.customer_name || "",
-        notes: formData.notes && formData.notes.trim() !== "" ? formData.notes : undefined,
-        paid_in_full: formData.paid_in_full === "true",
-        finance: formData.finance === "true",
-        part_exchange: formData.part_exchange === "true",
-        documents_to_sign: formData.documents_to_sign === "true",
-        document_filename: req.file.originalname,
-        document_path: req.file.path,
-        document_size: req.file.size,
-        document_type: path.extname(req.file.originalname).toLowerCase().substring(1),
-        tags: formData.tags ? JSON.parse(formData.tags) : [],
-      };
+  //     // Convert string boolean values to actual booleans and handle empty strings
+  //     const processedData = {
+  //       seller_name: formData.seller_name || "",
+  //       registration:
+  //         formData.registration && formData.registration.trim() !== "" ? formData.registration : undefined,
+  //       date_of_sale:
+  //         formData.date_of_sale && formData.date_of_sale.trim() !== "" ? formData.date_of_sale : undefined,
+  //       delivery_collection:
+  //         formData.delivery_collection && formData.delivery_collection.trim() !== ""
+  //           ? formData.delivery_collection
+  //           : undefined,
+  //       make: formData.make && formData.make.trim() !== "" ? formData.make : undefined,
+  //       model: formData.model && formData.model.trim() !== "" ? formData.model : undefined,
+  //       customer_name: formData.customer_name || "",
+  //       notes: formData.notes && formData.notes.trim() !== "" ? formData.notes : undefined,
+  //       paid_in_full: formData.paid_in_full === "true",
+  //       finance: formData.finance === "true",
+  //       part_exchange: formData.part_exchange === "true",
+  //       documents_to_sign: formData.documents_to_sign === "true",
+  //       document_filename: req.file.originalname,
+  //       document_path: req.file.path,
+  //       document_size: req.file.size,
+  //       document_type: path.extname(req.file.originalname).toLowerCase().substring(1),
+  //       tags: formData.tags ? JSON.parse(formData.tags) : [],
+  //     };
 
-      const validationResult = insertSalesInvoiceSchema.safeParse(processedData);
+  //     const validationResult = insertSalesInvoiceSchema.safeParse(processedData);
 
-      if (!validationResult.success) {
-        console.error("Sales Invoice Validation failed:");
-        console.error("Raw form data:", formData);
-        console.error("Processed data:", processedData);
-        console.error("Validation errors:", JSON.stringify(validationResult.error.errors, null, 2));
-        return res.status(400).json({
-          message: "Invalid data",
-          errors: validationResult.error.errors,
-        });
-      }
+  //     if (!validationResult.success) {
+  //       console.error("Sales Invoice Validation failed:");
+  //       console.error("Raw form data:", formData);
+  //       console.error("Processed data:", processedData);
+  //       console.error("Validation errors:", JSON.stringify(validationResult.error.errors, null, 2));
+  //       return res.status(400).json({
+  //         message: "Invalid data",
+  //         errors: validationResult.error.errors,
+  //       });
+  //     }
 
-      const invoice = await storage.createSalesInvoice(validationResult.data);
-      res.status(201).json(invoice);
-    } catch (error) {
-      console.error("Error creating sales invoice:", error);
-      res.status(500).json({ message: "Failed to create sales invoice" });
-    }
-  });
+  //     const invoice = await storage.createSalesInvoice(validationResult.data);
+  //     res.status(201).json(invoice);
+  //   } catch (error) {
+  //     console.error("Error creating sales invoice:", error);
+  //     res.status(500).json({ message: "Failed to create sales invoice" });
+  //   }
+  // });
 
-  app.put("/api/sales-invoices/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid ID" });
-      }
+  // app.put("/api/sales-invoices/:id", async (req, res) => {
+  //   try {
+  //     const id = parseInt(req.params.id);
+  //     if (isNaN(id)) {
+  //       return res.status(400).json({ message: "Invalid ID" });
+  //     }
 
-      const invoice = await storage.updateSalesInvoice(id, req.body);
-      res.json(invoice);
-    } catch (error) {
-      console.error("Error updating sales invoice:", error);
-      res.status(500).json({ message: "Failed to update sales invoice" });
-    }
-  });
+  //     const invoice = await storage.updateSalesInvoice(id, req.body);
+  //     res.json(invoice);
+  //   } catch (error) {
+  //     console.error("Error updating sales invoice:", error);
+  //     res.status(500).json({ message: "Failed to update sales invoice" });
+  //   }
+  // });
 
-  app.delete("/api/sales-invoices/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid ID" });
-      }
+  // app.delete("/api/sales-invoices/:id", async (req, res) => {
+  //   try {
+  //     const id = parseInt(req.params.id);
+  //     if (isNaN(id)) {
+  //       return res.status(400).json({ message: "Invalid ID" });
+  //     }
 
-      const success = await storage.deleteSalesInvoice(id);
-      if (!success) {
-        return res.status(404).json({ message: "Sales invoice not found" });
-      }
+  //     const success = await storage.deleteSalesInvoice(id);
+  //     if (!success) {
+  //       return res.status(404).json({ message: "Sales invoice not found" });
+  //     }
 
-      res.json({ message: "Sales invoice deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting sales invoice:", error);
-      res.status(500).json({ message: "Failed to delete sales invoice" });
-    }
-  });
+  //     res.json({ message: "Sales invoice deleted successfully" });
+  //   } catch (error) {
+  //     console.error("Error deleting sales invoice:", error);
+  //     res.status(500).json({ message: "Failed to delete sales invoice" });
+  //   }
+  // });
 
-  app.get("/api/sales-invoices-stats", async (req, res) => {
-    try {
-      const stats = await storage.getSalesInvoiceStats();
-      res.json(stats);
-    } catch (error) {
-      console.error("Error fetching sales invoice stats:", error);
-      res.status(500).json({ message: "Failed to fetch sales invoice stats" });
-    }
-  });
+  // app.get("/api/sales-invoices-stats", async (req, res) => {
+  //   try {
+  //     const stats = await storage.getSalesInvoiceStats();
+  //     res.json(stats);
+  //   } catch (error) {
+  //     console.error("Error fetching sales invoice stats:", error);
+  //     res.status(500).json({ message: "Failed to fetch sales invoice stats" });
+  //   }
+  // });
 
-  // Serve sales invoice uploaded files
-  app.get("/api/uploads/sales-invoices/:filename", (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path.join(salesUploadDir, filename);
+  // // Serve sales invoice uploaded files
+  // app.get("/api/uploads/sales-invoices/:filename", (req, res) => {
+  //   const filename = req.params.filename;
+  //   const filePath = path.join(salesUploadDir, filename);
 
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: "File not found" });
-    }
+  //   if (!fs.existsSync(filePath)) {
+  //     return res.status(404).json({ message: "File not found" });
+  //   }
 
-    res.sendFile(filePath);
-  });
+  //   res.sendFile(filePath);
+  // });
 
   // Business Intelligence API endpoints
   app.get("/api/business-intelligence/overview", async (req, res) => {
@@ -3589,7 +3589,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 app.post(
-  "/api/invoices/generate-excel",
+  "/api/sales-invoices/generate-excel",
   requireAuth,
   async (req, res) => {
     try {
@@ -3750,7 +3750,7 @@ app.post(
 
 
 app.post(
-  "/api/invoices",
+  "/api/purchase-invoices",
   requireAuth,
   vehicleInspectionUpload.single("inspectionImage"),
   async (req: AuthenticatedRequest, res) => {
@@ -3922,7 +3922,7 @@ app.post(
 // route: /api/invoices
 
 // List invoices
-app.get("/api/invoices", requireAuth, async (req: AuthenticatedRequest, res) => {
+app.get("/api/purchase-invoices", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const invoices = await storage.getInvoices();
     res.json(invoices);
@@ -3933,7 +3933,7 @@ app.get("/api/invoices", requireAuth, async (req: AuthenticatedRequest, res) => 
 });
 
 // Get single invoice (optionally include items and vehicle condition)
-app.get("/api/invoices/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
+app.get("/api/purchase-invoices/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const id = Number(req.params.id);
     if (Number.isNaN(id)) return res.status(400).json({ message: "Invalid invoice id" });
@@ -3952,7 +3952,7 @@ app.get("/api/invoices/:id", requireAuth, async (req: AuthenticatedRequest, res)
 });
 
 // Delete invoice
-app.delete("/api/invoices/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
+app.delete("/api/purchase-invoices/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const id = Number(req.params.id);
     if (Number.isNaN(id)) return res.status(400).json({ message: "Invalid invoice id" });
@@ -3970,7 +3970,7 @@ app.delete("/api/invoices/:id", requireAuth, async (req: AuthenticatedRequest, r
    ------------------------- */
 
 // Add invoice item (single)
-app.post("/api/invoices/:id/items", requireAuth, async (req: AuthenticatedRequest, res) => {
+app.post("/api/purchase-invoices/:id/items", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const invoiceId = Number(req.params.id);
     if (Number.isNaN(invoiceId)) return res.status(400).json({ message: "Invalid invoice id" });
@@ -3988,7 +3988,7 @@ app.post("/api/invoices/:id/items", requireAuth, async (req: AuthenticatedReques
 });
 
 // Delete invoice item
-app.delete("/api/invoices/items/:itemId", requireAuth, async (req: AuthenticatedRequest, res) => {
+app.delete("/api/purchase-invoices/items/:itemId", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const itemId = Number(req.params.itemId);
     if (Number.isNaN(itemId)) return res.status(400).json({ message: "Invalid item id" });
@@ -4006,7 +4006,7 @@ app.delete("/api/invoices/items/:itemId", requireAuth, async (req: Authenticated
    ------------------------- */
 
 // Create or update vehicle condition for an invoice
-app.post("/api/invoices/:id/vehicle-condition", requireAuth, async (req: AuthenticatedRequest, res) => {
+app.post("/api/purchase-invoices/:id/vehicle-condition", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const invoiceId = Number(req.params.id);
     if (Number.isNaN(invoiceId)) return res.status(400).json({ message: "Invalid invoice id" });
@@ -4032,7 +4032,7 @@ app.post("/api/invoices/:id/vehicle-condition", requireAuth, async (req: Authent
 });
 
 // Get vehicle condition for invoice
-app.get("/api/invoices/:id/vehicle-condition", requireAuth, async (req: AuthenticatedRequest, res) => {
+app.get("/api/purchase-invoices/:id/vehicle-condition", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const invoiceId = Number(req.params.id);
     if (Number.isNaN(invoiceId)) return res.status(400).json({ message: "Invalid invoice id" });
@@ -4046,6 +4046,214 @@ app.get("/api/invoices/:id/vehicle-condition", requireAuth, async (req: Authenti
     res.status(500).json({ message: "Failed to fetch vehicle condition" });
   }
 });
+
+
+
+
+
+
+
+
+
+// Sales Invoices
+
+
+app.post(
+  "/api/sales-invoices",
+  requireAuth,
+  vehicleInspectionUpload.single("inspectionImage"),
+  async (req: AuthenticatedRequest, res) => {
+    const parseJsonFields = (body: any) => {
+      if (typeof body.items === "string") {
+        try { body.items = JSON.parse(body.items); } catch {}
+      }
+      if (typeof body.vehicle_condition === "string") {
+        try { body.vehicle_condition = JSON.parse(body.vehicle_condition); } catch {}
+      }
+      return body;
+    };
+
+    const normalizeNumberString = (v: any): number | undefined => {
+      if (v === undefined || v === null) return undefined;
+      if (typeof v === "number") return v;
+      if (typeof v !== "string") return undefined;
+      const s = v.trim();
+      if (s === "") return undefined;
+      const cleaned = s.replace(/[^0-9+\-.,eE]/g, "").replace(/,/g, "");
+      const n = Number(cleaned);
+      return Number.isFinite(n) ? n : NaN;
+    };
+
+    const normalizeDateString = (v: any): Date | undefined => {
+      if (v === undefined || v === null) return undefined;
+      if (v instanceof Date) return v;
+      if (typeof v !== "string") return undefined;
+      const s = v.trim();
+      if (s === "") return undefined;
+      const d = new Date(s);
+      return Number.isNaN(d.getTime()) ? undefined : d;
+    };
+
+    try {
+      req.body = parseJsonFields(req.body);
+
+      const numericFields = [
+        "mileage",
+        "sub_total",
+        "vat_at_20",
+        "total",
+        "deposit_paid",
+        "balance_due",
+      ];
+
+      const dateFields = ["mot_end", "purchase_date", "collection_date"];
+
+      const fieldErrors: Record<string, string[]> = {};
+
+      for (const key of numericFields) {
+        if (key in req.body) {
+          const val = req.body[key];
+          const n = normalizeNumberString(val);
+          if (n === undefined) {
+            delete req.body[key];
+          } else if (Number.isNaN(n)) {
+            fieldErrors[key] = [`Expected number, received invalid value (${String(val)})`];
+          } else {
+            req.body[key] = n;
+          }
+        }
+      }
+
+      for (const key of dateFields) {
+        if (key in req.body) {
+          const val = req.body[key];
+          const d = normalizeDateString(val);
+          if (d === undefined) {
+            delete req.body[key];
+          } else if (d === null) {
+            fieldErrors[key] = [`Expected date, received invalid value (${String(val)})`];
+          } else {
+            req.body[key] = d;
+          }
+        }
+      }
+
+      if (Object.keys(fieldErrors).length > 0) {
+        return res.status(400).json({
+          message: "Validation failed",
+          errors: {
+            formErrors: [],
+            fieldErrors,
+          },
+        });
+      }
+
+      const baseShape = ((insertInvoiceSchema as any).shape ?? {}) as Record<string, any>;
+
+      const invoiceRequestSchema = z.object({
+        ...baseShape,
+        mileage: z.number().optional(),
+        sub_total: z.number().optional(),
+        vat_at_20: z.number().optional(),
+        total: z.number().optional(),
+        deposit_paid: z.number().optional(),
+        balance_due: z.number().optional(),
+        mot_end: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+        purchase_date: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+        collection_date: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+      });
+
+      const parsed = invoiceRequestSchema.parse(req.body);
+
+      const invoicePayload: any = { ...parsed };
+
+      // ===========================================================
+      //                🚗 ADD INSPECTION IMAGE HANDLING
+      // ===========================================================
+      if (req.file) {
+        const f = req.file as Express.Multer.File;
+
+        // store file metadata
+        invoicePayload.inspectionImage = {
+          originalName: f.originalname,
+          mimeType: f.mimetype,
+          size: f.size,
+          path: f.path ?? null,
+          filename: (f as any).filename ?? null,
+        };
+
+        // Compute URL (prefer filename produced by multer diskStorage)
+        const url = (f as any).filename
+          ? `/uploads/vehicle-inspection-images/${encodeURIComponent((f as any).filename)}`
+          : f.path ?? null;
+
+        // set both keys so either code style works:
+        invoicePayload.inspectionImageUrl = url;           // camelCase (existing)
+        invoicePayload.inspection_image_url = url;         // snake_case (DB / schema)
+      }
+
+      // ===========================================================
+      //                   EXISTING ATTACHMENTS
+      // ===========================================================
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        invoicePayload.attachments = (req.files as Express.Multer.File[]).map((f) => ({
+          originalName: f.originalname,
+          mimeType: f.mimetype,
+          size: f.size,
+          path: f.path ?? null,
+          filename: (f as any).filename ?? null,
+        }));
+      }
+
+      // DEBUG: log payload so you can confirm inspection_image_url is present
+      console.log("About to create invoicePayload:", invoicePayload);
+
+      // ===========================================================
+      //                       CREATE IN DB
+      // ===========================================================
+      const created = await storage.createSalesInvoiceV2(invoicePayload);
+
+      console.log("API - created invoice:", created?.id ?? created);
+
+      return res.status(201).json({ success: true, invoice: created });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation failed", errors: err.flatten() });
+      }
+      console.error(err);
+      return res.status(500).json({ message: "Failed to create invoice" });
+    }
+  }
+);
+
+
+// List invoices
+app.get("/api/sales-invoices", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+    const invoices = await storage.getSalesInvoicesV2();
+    res.json(invoices);
+  } catch (err) {
+    console.error("Error fetching invoices:", err);
+    res.status(500).json({ message: "Failed to fetch invoices" });
+  }
+});
+
+
+// Delete invoice
+app.delete("/api/sales-invoices/:id", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) return res.status(400).json({ message: "Invalid invoice id" });
+
+    await storage.deleteSalesInvoiceV2(id);
+    res.status(204).send();
+  } catch (err) {
+    console.error("Error deleting invoice:", err);
+    res.status(500).json({ message: "Failed to delete invoice" });
+  }
+});
+
+
 
   // Import and register DealerGPT routes (WebSocket service is now available)
   const { default: simpleDealerGPTRoutes } = await import("./routes/simpleDealerGPTRoutes");

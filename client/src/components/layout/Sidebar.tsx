@@ -86,13 +86,7 @@ const navigationItems = [
  {
   section: "DOCUMENTS",
   items: [
-  //   {
-  //   id: "incoices",
-  //   label: "Invoices",
-  //   icon: FileText,
-  //   path: "/invoices",
-  //  },
-   {
+    {
     id: "purchase-invoices",
     label: "Purchase Invoices",
     icon: FileText,
@@ -101,7 +95,7 @@ const navigationItems = [
    {
     id: "sales-invoices",
     label: "Sales Invoices",
-    icon: Receipt,
+    icon: FileText,
     path: "/sales-invoices",
    },
    {

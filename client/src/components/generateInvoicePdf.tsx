@@ -142,6 +142,8 @@ export async function generateInvoicePdf(data: InvoiceApiData) {
   //
 if (data.inspection_image_url) {
   const imageUrl = `https://www.autolabdms.com${data.inspection_image_url}`;
+    // const imageUrl = `http://localhost:5000${data.inspection_image_url}`;
+
 
   const res = await fetch(imageUrl);
 

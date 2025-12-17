@@ -360,6 +360,68 @@ export const vehicle_conditions = pgTable(
   ]
 );
 
+// Sales Invoices v2
+ export const sales_invoices_v2 = pgTable(
+  "sales_invoices_v2",
+  {
+   id: serial("id").primaryKey(),
+   invoice_no: text("invoice_no").unique().notNull(),
+   tax_point: text("tax_point"),
+   check_no: text("check_no"),
+   invoice_name_address: text("invoice_name_address"),
+   collection_address: text("collection_address"),
+   issued_by: text("issued_by"),
+   invoiced_by: text("invoiced_by"),
+
+   inspection_image_url: text("inspection_image_url"),
+
+   // basic vehicle summary (also stored fully in vehicle_conditions if needed)
+   make: text("make"),
+   model: text("model"),
+   chassis_no: text("chassis_no"),
+   registration: text("registration"),
+   purchased_by: text("purchased_by"),
+   mot_end: timestamp("mot_end"),
+   mileage: integer("mileage"),
+   dor: text("dor"),
+   colour: text("colour"),
+   interior_colour: text("interior_colour"),
+   purchase_date: timestamp("purchase_date"),
+   collection_date: timestamp("collection_date"),
+
+   // payment/bank
+   bank_name: text("bank_name"),
+   account_number: text("account_number"),
+   sort_code: text("sort_code"),
+   ref: text("ref"),
+   acc_name: text("acc_name"),
+
+   // totals (monetary fields)
+   sub_total: decimal("sub_total", { precision: 14, scale: 2 }),
+   vat_at_20: decimal("vat_at_20", { precision: 14, scale: 2 }),
+   total: decimal("total", { precision: 14, scale: 2 }),
+   deposit_paid: decimal("deposit_paid", { precision: 14, scale: 2 }),
+   balance_due: decimal("balance_due", { precision: 14, scale: 2 }),
+
+   // freeform / notes
+   description_of_goods: text("description_of_goods"),
+   notes: text("notes"),
+
+   // administrative
+   upload_date: timestamp("upload_date").defaultNow(),
+   created_at: timestamp("created_at").defaultNow(),
+   updated_at: timestamp("updated_at").defaultNow(),
+  },
+  table => [
+   index("idx_sales_invoices_v2_invoice_no").on(table.invoice_no),
+   index("idx_sales_invoices_v2_upload_date").on(table.upload_date),
+   index("idx_sales_invoices_v2_make_model").on(table.make, table.model),
+   index("idx_sales_invoices_v2_registration").on(table.registration),
+   index("idx_sales_invoices_v2_created_at").on(table.created_at),
+  ],
+ );
+
+
 
 // Customers table - Simplified structure focused on essential information
 export const customers = pgTable(
@@ -1872,6 +1934,13 @@ export const insertPinnedMessageSchema = createInsertSchema(pinned_messages).omi
 });
 
 export const insertInvoiceSchema = createInsertSchema(invoices).omit({
+  id: true,
+  upload_date: true,
+  created_at: true,
+  updated_at: true
+});
+
+export const insertSalesSchemaV2 = createInsertSchema(sales_invoices_v2).omit({
   id: true,
   upload_date: true,
   created_at: true,

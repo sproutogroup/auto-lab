@@ -29,6 +29,7 @@ import {
    invoices,
   invoice_items,
   vehicle_conditions,
+  sales_invoices_v2,
  type User,
  type InsertUser,
  type Vehicle,
@@ -97,7 +98,7 @@ import { NotificationEventService } from "./services/notificationEventService";
 
 export interface IStorage {
 
-// Invoice operations
+// Purchase Invoice operations
 getInvoices(): Promise<InvoiceT[]>;
 getInvoice(id: number): Promise<InvoiceT | undefined>;
 createInvoice(invoice: InvoiceInsert): Promise<InvoiceT>;
@@ -115,6 +116,14 @@ getVehicleCondition(invoiceId: number): Promise<VehicleCondition | null>;
     id: number,
     condition: Partial<VehicleConditionInsert>
   ): Promise<VehicleCondition>;
+
+
+// Sales Invoices
+getSalesInvoicesV2(): Promise<InvoiceT[]>;
+getSalesInvoiceV2(id: number): Promise<InvoiceT | undefined>;
+createSalesInvoiceV2(invoice: InvoiceInsert): Promise<InvoiceT>;
+deleteSalesInvoiceV2(id: number): Promise<void>;
+
 
   
  // User operations
@@ -1049,6 +1058,38 @@ async createInvoice(insertInvoice: InvoiceInsert): Promise<InvoiceT> {
 async deleteInvoice(id: number): Promise<void> {
   await db.delete(invoices).where(eq(invoices.id, id));
 }
+
+ // -------------------------
+// Invoice operations
+// -------------------------
+
+async getSalesInvoicesV2(): Promise<InvoiceT[]> {
+  return await db
+    .select()
+    .from(sales_invoices_v2)
+    .orderBy(desc(sales_invoices_v2.created_at));
+}
+
+async getSalesInvoiceV2(id: number): Promise<InvoiceT | undefined> {
+  const [invoice] = await db
+    .select()
+    .from(sales_invoices_v2)
+    .where(eq(sales_invoices_v2.id, id));
+  return invoice || undefined;
+}
+
+async createSalesInvoiceV2(insertInvoice: InvoiceInsert): Promise<InvoiceT> {
+  const [created] = await db
+    .insert(sales_invoices_v2)
+    .values(insertInvoice)
+    .returning();
+  return created;
+}
+
+async deleteSalesInvoiceV2(id: number): Promise<void> {
+  await db.delete(sales_invoices_v2).where(eq(sales_invoices_v2.id, id));
+}
+
 
 
 // -------------------------
