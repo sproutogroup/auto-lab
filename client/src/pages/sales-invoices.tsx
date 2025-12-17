@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InvoiceT } from "@shared/schema";
 import { Download } from "lucide-react";
@@ -20,12 +19,9 @@ import {
  DialogDescription,
  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { FileText, Upload, Plus, Car, Trash2, Eye, Star, Activity, Calendar, ExternalLink } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { log } from "console";
-import { generateInvoicePdf } from "@/components/generateInvoicePdf";
-import { generateInvoiceExcel } from "@/components/generateInvoiceExcel";
+
 
 interface InvoiceFormData {
  invoice_no: string;
@@ -852,7 +848,41 @@ const deleteMutation = useMutation({
            {/* <td className="p-3 text-center">{invoice.balance_due}</td> */}
 
            <td className="text-center">
-            <button onClick={() => generateInvoicePdf(invoice)}>
+            <button
+             onClick={async () => {
+              try {
+               const res = await fetch("/api/invoices/generate-excel", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ invoice }),
+               });
+
+               if (!res.ok) {
+                console.error("Excel generation failed");
+                return;
+               }
+
+               // 1. Get the file
+               const blob = await res.blob();
+
+               // 2. Create object URL
+               const url = window.URL.createObjectURL(blob);
+
+               // 3. Trigger download
+               const a = document.createElement("a");
+               a.href = url;
+               a.download = `invoice-${invoice.invoice_no}.xlsx`;
+               document.body.appendChild(a);
+               a.click();
+
+               // 4. Cleanup
+               a.remove();
+               window.URL.revokeObjectURL(url);
+              } catch (err) {
+               console.error("Download Excel error:", err);
+              }
+             }}
+            >
              <Download size={20} />
             </button>
            </td>
