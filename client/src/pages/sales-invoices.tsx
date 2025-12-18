@@ -851,7 +851,7 @@ const deleteMutation = useMutation({
             <button
              onClick={async () => {
               try {
-               const res = await fetch("/api/invoices/generate-excel", {
+               const res = await fetch("/api/sales-invoices/generate-excel", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ invoice }),
