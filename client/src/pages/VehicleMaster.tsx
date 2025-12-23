@@ -392,7 +392,11 @@ export default function VehicleMaster() {
   // After SOLD, prioritize AUTOLAB before STOCK
   if (statusA === "AUTOLAB" && statusB === "STOCK") return -1;
   if (statusA === "STOCK" && statusB === "AUTOLAB") return 1;
+  
 
+  if (!a.stock_number || !b.stock_number) {
+  return 0; // safe exit → keep original order
+  }
   // Both are AUTOLAB or both are STOCK - sort by stock number (ascending)
   return a.stock_number.localeCompare(b.stock_number, undefined, {
    numeric: true,
