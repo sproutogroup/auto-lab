@@ -1852,6 +1852,18 @@ async updateVehicleCondition(
   return model;
  }
 
+ // Vehicle lookup operations
+async getVehicleByRegistration(registration: string): Promise<Vehicle | undefined> {
+  const [vehicle] = await db
+    .select()
+    .from(vehicles)
+    .where(eq(vehicles.registration, registration))
+    .limit(1);
+
+  return vehicle;
+}
+
+
  // Customer operations
  async getCustomers(): Promise<Customer[]> {
   return await db.select().from(customers).orderBy(desc(customers.created_at));

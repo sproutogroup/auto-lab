@@ -16,6 +16,7 @@ import { naturalLanguageNotificationService } from "./services/naturalLanguageNo
 import { aiBusinessIntelligenceService } from "./services/aiBusinessIntelligenceService";
 import WebSocketService, { WebSocketEvent } from "./services/websocketService";
 import logger from "./logger";
+import { vehicleInspectionUpload } from "./middleware/cloudinaryUpload";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -123,13 +124,13 @@ const salesUpload = multer({
   fileFilter,
 });
 
-const vehicleInspectionUpload = multer({
-  storage: vehicleInspectionStorageConfig,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-  },
-  fileFilter,
-});
+// const vehicleInspectionUpload = multer({
+//   storage: vehicleInspectionStorageConfig,
+//   limits: {
+//     fileSize: 10 * 1024 * 1024, // 10MB limit
+//   },
+//   fileFilter,
+// });
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Service Worker route with iOS Safari compatible headers
@@ -3749,11 +3750,363 @@ app.post(
 
 
 
+// app.post(
+//   "/api/purchase-invoices",
+//   requireAuth,
+//   vehicleInspectionUpload.single("inspectionImage"),
+//   async (req: AuthenticatedRequest, res) => {
+//     const parseJsonFields = (body: any) => {
+//       if (typeof body.items === "string") {
+//         try { body.items = JSON.parse(body.items); } catch {}
+//       }
+//       if (typeof body.vehicle_condition === "string") {
+//         try { body.vehicle_condition = JSON.parse(body.vehicle_condition); } catch {}
+//       }
+//       return body;
+//     };
+
+//     const normalizeNumberString = (v: any): number | undefined => {
+//       if (v === undefined || v === null) return undefined;
+//       if (typeof v === "number") return v;
+//       if (typeof v !== "string") return undefined;
+//       const s = v.trim();
+//       if (s === "") return undefined;
+//       const cleaned = s.replace(/[^0-9+\-.,eE]/g, "").replace(/,/g, "");
+//       const n = Number(cleaned);
+//       return Number.isFinite(n) ? n : NaN;
+//     };
+
+//     const normalizeDateString = (v: any): Date | undefined => {
+//       if (v === undefined || v === null) return undefined;
+//       if (v instanceof Date) return v;
+//       if (typeof v !== "string") return undefined;
+//       const s = v.trim();
+//       if (s === "") return undefined;
+//       const d = new Date(s);
+//       return Number.isNaN(d.getTime()) ? undefined : d;
+//     };
+
+//     try {
+//       req.body = parseJsonFields(req.body);
+
+//       const numericFields = [
+//         "mileage",
+//         "sub_total",
+//         "vat_at_20",
+//         "total",
+//         "deposit_paid",
+//         "balance_due",
+//       ];
+
+//       const dateFields = ["mot_end", "purchase_date", "collection_date"];
+
+//       const fieldErrors: Record<string, string[]> = {};
+
+//       for (const key of numericFields) {
+//         if (key in req.body) {
+//           const val = req.body[key];
+//           const n = normalizeNumberString(val);
+//           if (n === undefined) {
+//             delete req.body[key];
+//           } else if (Number.isNaN(n)) {
+//             fieldErrors[key] = [`Expected number, received invalid value (${String(val)})`];
+//           } else {
+//             req.body[key] = n;
+//           }
+//         }
+//       }
+
+//       for (const key of dateFields) {
+//         if (key in req.body) {
+//           const val = req.body[key];
+//           const d = normalizeDateString(val);
+//           if (d === undefined) {
+//             delete req.body[key];
+//           } else if (d === null) {
+//             fieldErrors[key] = [`Expected date, received invalid value (${String(val)})`];
+//           } else {
+//             req.body[key] = d;
+//           }
+//         }
+//       }
+
+//       if (Object.keys(fieldErrors).length > 0) {
+//         return res.status(400).json({
+//           message: "Validation failed",
+//           errors: {
+//             formErrors: [],
+//             fieldErrors,
+//           },
+//         });
+//       }
+
+//       const baseShape = ((insertInvoiceSchema as any).shape ?? {}) as Record<string, any>;
+
+//       const invoiceRequestSchema = z.object({
+//         ...baseShape,
+//         mileage: z.number().optional(),
+//         sub_total: z.number().optional(),
+//         vat_at_20: z.number().optional(),
+//         total: z.number().optional(),
+//         deposit_paid: z.number().optional(),
+//         balance_due: z.number().optional(),
+//         mot_end: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+//         purchase_date: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+//         collection_date: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+//       });
+
+//       const parsed = invoiceRequestSchema.parse(req.body);
+
+//       const invoicePayload: any = { ...parsed };
+
+//       // ===========================================================
+//       //                🚗 ADD INSPECTION IMAGE HANDLING
+//       // ===========================================================
+//       if (req.file) {
+//         const f = req.file as Express.Multer.File;
+
+//         // store file metadata
+//         invoicePayload.inspectionImage = {
+//           originalName: f.originalname,
+//           mimeType: f.mimetype,
+//           size: f.size,
+//           path: f.path ?? null,
+//           filename: (f as any).filename ?? null,
+//         };
+
+//         // Compute URL (prefer filename produced by multer diskStorage)
+//         const url = (f as any).filename
+//           ? `/uploads/vehicle-inspection-images/${encodeURIComponent((f as any).filename)}`
+//           : f.path ?? null;
+
+//         // set both keys so either code style works:
+//         invoicePayload.inspectionImageUrl = url;           // camelCase (existing)
+//         invoicePayload.inspection_image_url = url;         // snake_case (DB / schema)
+//       }
+
+//       // ===========================================================
+//       //                   EXISTING ATTACHMENTS
+//       // ===========================================================
+//       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+//         invoicePayload.attachments = (req.files as Express.Multer.File[]).map((f) => ({
+//           originalName: f.originalname,
+//           mimeType: f.mimetype,
+//           size: f.size,
+//           path: f.path ?? null,
+//           filename: (f as any).filename ?? null,
+//         }));
+//       }
+
+//       // DEBUG: log payload so you can confirm inspection_image_url is present
+//       console.log("About to create invoicePayload:", invoicePayload);
+
+//       // ===========================================================
+//       //                       CREATE IN DB
+//       // ===========================================================
+//       const created = await storage.createInvoice(invoicePayload);
+
+//       console.log("API - created invoice:", created?.id ?? created);
+
+//       return res.status(201).json({ success: true, invoice: created });
+//     } catch (err) {
+//       if (err instanceof z.ZodError) {
+//         return res.status(400).json({ message: "Validation failed", errors: err.flatten() });
+//       }
+//       console.error(err);
+//       return res.status(500).json({ message: "Failed to create invoice" });
+//     }
+//   }
+// );
+
+
+
+// Before cloudinary
+// app.post(
+//   "/api/purchase-invoices",
+//   requireAuth,
+//   vehicleInspectionUpload.single("inspectionImage"),
+//   async (req: AuthenticatedRequest, res) => {
+
+//     // ===========================================================
+//     //                        HELPERS
+//     // ===========================================================
+//     const parseJsonFields = (body: any) => {
+//       if (typeof body.items === "string") {
+//         try { body.items = JSON.parse(body.items); } catch {}
+//       }
+//       if (typeof body.vehicle_condition === "string") {
+//         try { body.vehicle_condition = JSON.parse(body.vehicle_condition); } catch {}
+//       }
+//       return body;
+//     };
+
+//     const normalizeNumberString = (v: any): number | undefined => {
+//       if (v === undefined || v === null) return undefined;
+//       if (typeof v === "number") return v;
+//       if (typeof v !== "string") return undefined;
+//       const s = v.trim();
+//       if (s === "") return undefined;
+//       const cleaned = s.replace(/[^0-9+\-.,eE]/g, "").replace(/,/g, "");
+//       const n = Number(cleaned);
+//       return Number.isFinite(n) ? n : NaN;
+//     };
+
+//     const normalizeDateString = (v: any): Date | undefined => {
+//       if (v === undefined || v === null) return undefined;
+//       if (v instanceof Date) return v;
+//       if (typeof v !== "string") return undefined;
+//       const s = v.trim();
+//       if (s === "") return undefined;
+//       const d = new Date(s);
+//       return Number.isNaN(d.getTime()) ? undefined : d;
+//     };
+
+//     try {
+//       // ===========================================================
+//       //                NORMALIZE REQUEST BODY
+//       // ===========================================================
+//       req.body = parseJsonFields(req.body);
+
+//       const numericFields = [
+//         "mileage",
+//         "sub_total",
+//         "vat_at_20",
+//         "total",
+//         "deposit_paid",
+//         "balance_due",
+//       ];
+
+//       const dateFields = ["mot_end", "purchase_date", "collection_date"];
+//       const fieldErrors: Record<string, string[]> = {};
+
+//       for (const key of numericFields) {
+//         if (key in req.body) {
+//           const n = normalizeNumberString(req.body[key]);
+//           if (n === undefined) delete req.body[key];
+//           else if (Number.isNaN(n)) {
+//             fieldErrors[key] = [
+//               `Expected number, received invalid value (${String(req.body[key])})`,
+//             ];
+//           } else {
+//             req.body[key] = n;
+//           }
+//         }
+//       }
+
+//       for (const key of dateFields) {
+//         if (key in req.body) {
+//           const d = normalizeDateString(req.body[key]);
+//           if (d === undefined) delete req.body[key];
+//           else req.body[key] = d;
+//         }
+//       }
+
+//       if (Object.keys(fieldErrors).length > 0) {
+//         return res.status(400).json({
+//           message: "Validation failed",
+//           errors: fieldErrors,
+//         });
+//       }
+
+//       // ===========================================================
+//       //                VALIDATE INVOICE PAYLOAD
+//       // ===========================================================
+//       const baseShape = ((insertInvoiceSchema as any).shape ?? {}) as Record<string, any>;
+
+//       const invoiceRequestSchema = z.object({
+//         ...baseShape,
+//         mileage: z.number().optional(),
+//         sub_total: z.number().optional(),
+//         vat_at_20: z.number().optional(),
+//         total: z.number().optional(),
+//         deposit_paid: z.number().optional(),
+//         balance_due: z.number().optional(),
+//         mot_end: z.date().optional(),
+//         purchase_date: z.date().optional(),
+//         collection_date: z.date().optional(),
+//       });
+
+//       const parsed = invoiceRequestSchema.parse(req.body);
+//       const invoicePayload: any = { ...parsed };
+
+//       // ===========================================================
+//       //                INSPECTION IMAGE
+//       // ===========================================================
+//       if (req.file) {
+//         const f = req.file as Express.Multer.File;
+//         const url = (f as any).filename
+//           ? `/uploads/vehicle-inspection-images/${encodeURIComponent((f as any).filename)}`
+//           : f.path ?? null;
+
+//         invoicePayload.inspection_image_url = url;
+//       }
+
+//       // ===========================================================
+//       //                CREATE INVOICE
+//       // ===========================================================
+//       const created = await storage.createInvoice(invoicePayload);
+//       console.log("Invoice created:", created.id);
+
+//       // ===========================================================
+//       //                CREATE VEHICLE (TEMP / MINIMAL)
+//       // ===========================================================
+//       try {
+//         const vehiclePayload = {
+//           registration: created.registration ?? null,
+//           make: created.make ?? null,
+//           model: created.model ?? null,
+//           colour: created.colour ?? null,
+//           mileage: created.mileage ?? null,
+
+//           chassis_number: created.chassis_no ?? null,
+//           purchase_invoice_date: created.purchase_date ?? null,
+
+//           purchase_price_total: created.total ?? null,
+//           vat: created.vat_at_20 ?? null,
+
+//           buyer: created.purchased_by ?? null,
+
+//           sales_status: "stock",        
+//           collection_status: "pending",
+//         };
+
+//         console.log("Creating vehicle from invoice:", vehiclePayload);
+//         await storage.createVehicle(vehiclePayload);
+//       } catch (vehicleErr) {
+//         // Non-blocking on purpose (temporary design)
+//         console.error("Vehicle creation failed (non-blocking):", vehicleErr);
+//       }
+
+//       return res.status(201).json({
+//         success: true,
+//         invoice: created,
+//       });
+
+//     } catch (err) {
+//       if (err instanceof z.ZodError) {
+//         return res.status(400).json({
+//           message: "Validation failed",
+//           errors: err.flatten(),
+//         });
+//       }
+//       console.error(err);
+//       return res.status(500).json({
+//         message: "Failed to create invoice",
+//       });
+//     }
+//   }
+// );
+
+
 app.post(
   "/api/purchase-invoices",
   requireAuth,
   vehicleInspectionUpload.single("inspectionImage"),
   async (req: AuthenticatedRequest, res) => {
+
+    // ===========================================================
+    //                        HELPERS
+    // ===========================================================
     const parseJsonFields = (body: any) => {
       if (typeof body.items === "string") {
         try { body.items = JSON.parse(body.items); } catch {}
@@ -3786,6 +4139,9 @@ app.post(
     };
 
     try {
+      // ===========================================================
+      //                NORMALIZE REQUEST BODY
+      // ===========================================================
       req.body = parseJsonFields(req.body);
 
       const numericFields = [
@@ -3798,17 +4154,16 @@ app.post(
       ];
 
       const dateFields = ["mot_end", "purchase_date", "collection_date"];
-
       const fieldErrors: Record<string, string[]> = {};
 
       for (const key of numericFields) {
         if (key in req.body) {
-          const val = req.body[key];
-          const n = normalizeNumberString(val);
-          if (n === undefined) {
-            delete req.body[key];
-          } else if (Number.isNaN(n)) {
-            fieldErrors[key] = [`Expected number, received invalid value (${String(val)})`];
+          const n = normalizeNumberString(req.body[key]);
+          if (n === undefined) delete req.body[key];
+          else if (Number.isNaN(n)) {
+            fieldErrors[key] = [
+              `Expected number, received invalid value (${String(req.body[key])})`,
+            ];
           } else {
             req.body[key] = n;
           }
@@ -3817,28 +4172,22 @@ app.post(
 
       for (const key of dateFields) {
         if (key in req.body) {
-          const val = req.body[key];
-          const d = normalizeDateString(val);
-          if (d === undefined) {
-            delete req.body[key];
-          } else if (d === null) {
-            fieldErrors[key] = [`Expected date, received invalid value (${String(val)})`];
-          } else {
-            req.body[key] = d;
-          }
+          const d = normalizeDateString(req.body[key]);
+          if (d === undefined) delete req.body[key];
+          else req.body[key] = d;
         }
       }
 
       if (Object.keys(fieldErrors).length > 0) {
         return res.status(400).json({
           message: "Validation failed",
-          errors: {
-            formErrors: [],
-            fieldErrors,
-          },
+          errors: fieldErrors,
         });
       }
 
+      // ===========================================================
+      //                VALIDATE INVOICE PAYLOAD
+      // ===========================================================
       const baseShape = ((insertInvoiceSchema as any).shape ?? {}) as Record<string, any>;
 
       const invoiceRequestSchema = z.object({
@@ -3849,79 +4198,85 @@ app.post(
         total: z.number().optional(),
         deposit_paid: z.number().optional(),
         balance_due: z.number().optional(),
-        mot_end: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
-        purchase_date: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
-        collection_date: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+        mot_end: z.date().optional(),
+        purchase_date: z.date().optional(),
+        collection_date: z.date().optional(),
       });
 
       const parsed = invoiceRequestSchema.parse(req.body);
-
       const invoicePayload: any = { ...parsed };
 
       // ===========================================================
-      //                🚗 ADD INSPECTION IMAGE HANDLING
+      //                INSPECTION IMAGE (CLOUDINARY)
       // ===========================================================
       if (req.file) {
-        const f = req.file as Express.Multer.File;
+        const file = req.file as any;
 
-        // store file metadata
-        invoicePayload.inspectionImage = {
-          originalName: f.originalname,
-          mimeType: f.mimetype,
-          size: f.size,
-          path: f.path ?? null,
-          filename: (f as any).filename ?? null,
-        };
+        // Cloudinary CDN URL
+        invoicePayload.inspection_image_url = file.path;
 
-        // Compute URL (prefer filename produced by multer diskStorage)
-        const url = (f as any).filename
-          ? `/uploads/vehicle-inspection-images/${encodeURIComponent((f as any).filename)}`
-          : f.path ?? null;
-
-        // set both keys so either code style works:
-        invoicePayload.inspectionImageUrl = url;           // camelCase (existing)
-        invoicePayload.inspection_image_url = url;         // snake_case (DB / schema)
+        // OPTIONAL (if you want later deletion support)
+        // invoicePayload.inspection_image_public_id = file.filename;
       }
 
       // ===========================================================
-      //                   EXISTING ATTACHMENTS
-      // ===========================================================
-      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-        invoicePayload.attachments = (req.files as Express.Multer.File[]).map((f) => ({
-          originalName: f.originalname,
-          mimeType: f.mimetype,
-          size: f.size,
-          path: f.path ?? null,
-          filename: (f as any).filename ?? null,
-        }));
-      }
-
-      // DEBUG: log payload so you can confirm inspection_image_url is present
-      console.log("About to create invoicePayload:", invoicePayload);
-
-      // ===========================================================
-      //                       CREATE IN DB
+      //                CREATE INVOICE
       // ===========================================================
       const created = await storage.createInvoice(invoicePayload);
+      console.log("Invoice created:", created.id);
 
-      console.log("API - created invoice:", created?.id ?? created);
+      // ===========================================================
+      //                CREATE VEHICLE (TEMP / MINIMAL)
+      // ===========================================================
+      try {
+        const vehiclePayload = {
+          registration: created.registration ?? null,
+          make: created.make ?? null,
+          model: created.model ?? null,
+          colour: created.colour ?? null,
+          mileage: created.mileage ?? null,
 
-      return res.status(201).json({ success: true, invoice: created });
+          chassis_number: created.chassis_no ?? null,
+          purchase_invoice_date: created.purchase_date ?? null,
+
+          purchase_price_total: created.total ?? null,
+          vat: created.vat_at_20 ?? null,
+
+          buyer: created.purchased_by ?? null,
+
+          sales_status: "stock",
+          collection_status: "on site",
+        };
+
+        console.log("Creating vehicle from invoice:", vehiclePayload);
+        await storage.createVehicle(vehiclePayload);
+      } catch (vehicleErr) {
+        // Non-blocking on purpose (temporary design)
+        console.error("Vehicle creation failed (non-blocking):", vehicleErr);
+      }
+
+      return res.status(201).json({
+        success: true,
+        invoice: created,
+      });
+
     } catch (err) {
       if (err instanceof z.ZodError) {
-        return res.status(400).json({ message: "Validation failed", errors: err.flatten() });
+        return res.status(400).json({
+          message: "Validation failed",
+          errors: err.flatten(),
+        });
       }
       console.error(err);
-      return res.status(500).json({ message: "Failed to create invoice" });
+      return res.status(500).json({
+        message: "Failed to create invoice",
+      });
     }
   }
 );
 
 
 
-// route: /api/invoices
-
-// List invoices
 app.get("/api/purchase-invoices", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const invoices = await storage.getInvoices();
@@ -4052,10 +4407,176 @@ app.get("/api/purchase-invoices/:id/vehicle-condition", requireAuth, async (req:
 
 
 
-
-
-
 // Sales Invoices
+
+
+// app.post(
+//   "/api/sales-invoices",
+//   requireAuth,
+//   vehicleInspectionUpload.single("inspectionImage"),
+//   async (req: AuthenticatedRequest, res) => {
+//     const parseJsonFields = (body: any) => {
+//       if (typeof body.items === "string") {
+//         try { body.items = JSON.parse(body.items); } catch {}
+//       }
+//       if (typeof body.vehicle_condition === "string") {
+//         try { body.vehicle_condition = JSON.parse(body.vehicle_condition); } catch {}
+//       }
+//       return body;
+//     };
+
+//     const normalizeNumberString = (v: any): number | undefined => {
+//       if (v === undefined || v === null) return undefined;
+//       if (typeof v === "number") return v;
+//       if (typeof v !== "string") return undefined;
+//       const s = v.trim();
+//       if (s === "") return undefined;
+//       const cleaned = s.replace(/[^0-9+\-.,eE]/g, "").replace(/,/g, "");
+//       const n = Number(cleaned);
+//       return Number.isFinite(n) ? n : NaN;
+//     };
+
+//     const normalizeDateString = (v: any): Date | undefined => {
+//       if (v === undefined || v === null) return undefined;
+//       if (v instanceof Date) return v;
+//       if (typeof v !== "string") return undefined;
+//       const s = v.trim();
+//       if (s === "") return undefined;
+//       const d = new Date(s);
+//       return Number.isNaN(d.getTime()) ? undefined : d;
+//     };
+
+//     try {
+//       req.body = parseJsonFields(req.body);
+
+//       const numericFields = [
+//         "mileage",
+//         "sub_total",
+//         "vat_at_20",
+//         "total",
+//         "deposit_paid",
+//         "balance_due",
+//       ];
+
+//       const dateFields = ["mot_end", "purchase_date", "collection_date"];
+
+//       const fieldErrors: Record<string, string[]> = {};
+
+//       for (const key of numericFields) {
+//         if (key in req.body) {
+//           const val = req.body[key];
+//           const n = normalizeNumberString(val);
+//           if (n === undefined) {
+//             delete req.body[key];
+//           } else if (Number.isNaN(n)) {
+//             fieldErrors[key] = [`Expected number, received invalid value (${String(val)})`];
+//           } else {
+//             req.body[key] = n;
+//           }
+//         }
+//       }
+
+//       for (const key of dateFields) {
+//         if (key in req.body) {
+//           const val = req.body[key];
+//           const d = normalizeDateString(val);
+//           if (d === undefined) {
+//             delete req.body[key];
+//           } else if (d === null) {
+//             fieldErrors[key] = [`Expected date, received invalid value (${String(val)})`];
+//           } else {
+//             req.body[key] = d;
+//           }
+//         }
+//       }
+
+//       if (Object.keys(fieldErrors).length > 0) {
+//         return res.status(400).json({
+//           message: "Validation failed",
+//           errors: {
+//             formErrors: [],
+//             fieldErrors,
+//           },
+//         });
+//       }
+
+//       const baseShape = ((insertInvoiceSchema as any).shape ?? {}) as Record<string, any>;
+
+//       const invoiceRequestSchema = z.object({
+//         ...baseShape,
+//         mileage: z.number().optional(),
+//         sub_total: z.number().optional(),
+//         vat_at_20: z.number().optional(),
+//         total: z.number().optional(),
+//         deposit_paid: z.number().optional(),
+//         balance_due: z.number().optional(),
+//         mot_end: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+//         purchase_date: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+//         collection_date: z.preprocess((v) => (v instanceof Date ? v : v), z.date().optional()),
+//       });
+
+//       const parsed = invoiceRequestSchema.parse(req.body);
+
+//       const invoicePayload: any = { ...parsed };
+
+//       // ===========================================================
+//       //                🚗 ADD INSPECTION IMAGE HANDLING
+//       // ===========================================================
+//       if (req.file) {
+//         const f = req.file as Express.Multer.File;
+
+//         // store file metadata
+//         invoicePayload.inspectionImage = {
+//           originalName: f.originalname,
+//           mimeType: f.mimetype,
+//           size: f.size,
+//           path: f.path ?? null,
+//           filename: (f as any).filename ?? null,
+//         };
+
+//         // Compute URL (prefer filename produced by multer diskStorage)
+//         const url = (f as any).filename
+//           ? `/uploads/vehicle-inspection-images/${encodeURIComponent((f as any).filename)}`
+//           : f.path ?? null;
+
+//         // set both keys so either code style works:
+//         invoicePayload.inspectionImageUrl = url;           // camelCase (existing)
+//         invoicePayload.inspection_image_url = url;         // snake_case (DB / schema)
+//       }
+
+//       // ===========================================================
+//       //                   EXISTING ATTACHMENTS
+//       // ===========================================================
+//       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+//         invoicePayload.attachments = (req.files as Express.Multer.File[]).map((f) => ({
+//           originalName: f.originalname,
+//           mimeType: f.mimetype,
+//           size: f.size,
+//           path: f.path ?? null,
+//           filename: (f as any).filename ?? null,
+//         }));
+//       }
+
+//       // DEBUG: log payload so you can confirm inspection_image_url is present
+//       console.log("About to create invoicePayload:", invoicePayload);
+
+//       // ===========================================================
+//       //                       CREATE IN DB
+//       // ===========================================================
+//       const created = await storage.createSalesInvoiceV2(invoicePayload);
+
+//       console.log("API - created invoice:", created?.id ?? created);
+
+//       return res.status(201).json({ success: true, invoice: created });
+//     } catch (err) {
+//       if (err instanceof z.ZodError) {
+//         return res.status(400).json({ message: "Validation failed", errors: err.flatten() });
+//       }
+//       console.error(err);
+//       return res.status(500).json({ message: "Failed to create invoice" });
+//     }
+//   }
+// );
 
 
 app.post(
@@ -4063,6 +4584,10 @@ app.post(
   requireAuth,
   vehicleInspectionUpload.single("inspectionImage"),
   async (req: AuthenticatedRequest, res) => {
+
+    // ===========================================================
+    //                        HELPERS
+    // ===========================================================
     const parseJsonFields = (body: any) => {
       if (typeof body.items === "string") {
         try { body.items = JSON.parse(body.items); } catch {}
@@ -4095,6 +4620,9 @@ app.post(
     };
 
     try {
+      // ===========================================================
+      //                NORMALIZE REQUEST BODY
+      // ===========================================================
       req.body = parseJsonFields(req.body);
 
       const numericFields = [
@@ -4107,7 +4635,6 @@ app.post(
       ];
 
       const dateFields = ["mot_end", "purchase_date", "collection_date"];
-
       const fieldErrors: Record<string, string[]> = {};
 
       for (const key of numericFields) {
@@ -4117,7 +4644,9 @@ app.post(
           if (n === undefined) {
             delete req.body[key];
           } else if (Number.isNaN(n)) {
-            fieldErrors[key] = [`Expected number, received invalid value (${String(val)})`];
+            fieldErrors[key] = [
+              `Expected number, received invalid value (${String(val)})`,
+            ];
           } else {
             req.body[key] = n;
           }
@@ -4130,8 +4659,6 @@ app.post(
           const d = normalizeDateString(val);
           if (d === undefined) {
             delete req.body[key];
-          } else if (d === null) {
-            fieldErrors[key] = [`Expected date, received invalid value (${String(val)})`];
           } else {
             req.body[key] = d;
           }
@@ -4148,6 +4675,9 @@ app.post(
         });
       }
 
+      // ===========================================================
+      //                VALIDATE INVOICE PAYLOAD
+      // ===========================================================
       const baseShape = ((insertInvoiceSchema as any).shape ?? {}) as Record<string, any>;
 
       const invoiceRequestSchema = z.object({
@@ -4164,16 +4694,14 @@ app.post(
       });
 
       const parsed = invoiceRequestSchema.parse(req.body);
-
       const invoicePayload: any = { ...parsed };
 
       // ===========================================================
-      //                🚗 ADD INSPECTION IMAGE HANDLING
+      //                🚗 INSPECTION IMAGE
       // ===========================================================
       if (req.file) {
         const f = req.file as Express.Multer.File;
 
-        // store file metadata
         invoicePayload.inspectionImage = {
           originalName: f.originalname,
           mimeType: f.mimetype,
@@ -4182,14 +4710,12 @@ app.post(
           filename: (f as any).filename ?? null,
         };
 
-        // Compute URL (prefer filename produced by multer diskStorage)
         const url = (f as any).filename
           ? `/uploads/vehicle-inspection-images/${encodeURIComponent((f as any).filename)}`
           : f.path ?? null;
 
-        // set both keys so either code style works:
-        invoicePayload.inspectionImageUrl = url;           // camelCase (existing)
-        invoicePayload.inspection_image_url = url;         // snake_case (DB / schema)
+        invoicePayload.inspectionImageUrl = url;
+        invoicePayload.inspection_image_url = url;
       }
 
       // ===========================================================
@@ -4205,26 +4731,82 @@ app.post(
         }));
       }
 
-      // DEBUG: log payload so you can confirm inspection_image_url is present
       console.log("About to create invoicePayload:", invoicePayload);
 
       // ===========================================================
-      //                       CREATE IN DB
+      //                       CREATE INVOICE
       // ===========================================================
       const created = await storage.createSalesInvoiceV2(invoicePayload);
+      console.log("API - created sales invoice:", created?.id ?? created);
 
-      console.log("API - created invoice:", created?.id ?? created);
+      // ===========================================================
+      //           🚗 UPDATE VEHICLE FROM SALES INVOICE
+      // ===========================================================
+      try {
+        if (created.registration) {
+          const vehicle = await storage.getVehicleByRegistration(created.registration);
 
-      return res.status(201).json({ success: true, invoice: created });
+          if (vehicle) {
+            const vehicleUpdatePayload = {
+              // lifecycle
+              sales_status: "sold",
+              sale_date: created.collection_date ?? new Date(),
+
+              // buyer
+              buyer: created.invoice_name_address ?? vehicle.buyer ?? null,
+
+              // financials
+              total_sale_price: created.total ?? null,
+              vat_payment: created.vat_at_20 ?? null,
+              cash_payment: created.deposit_paid ?? null,
+              dfc_outstanding_amount: created.balance_due ?? null,
+
+              // safe updates
+              mileage: created.mileage ?? vehicle.mileage ?? null,
+              colour: vehicle.colour ?? created.colour ?? null,
+              chassis_number: vehicle.chassis_number ?? created.chassis_no ?? null,
+
+              payment_notes: created.notes ?? null,
+            };
+
+            console.log("Updating vehicle from sales invoice:", vehicleUpdatePayload);
+            await storage.updateVehicle(vehicle.id, vehicleUpdatePayload);
+          } else {
+            console.warn(
+              "Sales invoice created but no vehicle found for registration:",
+              created.registration
+            );
+          }
+        }
+      } catch (vehicleErr) {
+        // intentionally non-blocking
+        console.error("Vehicle update failed (non-blocking):", vehicleErr);
+      }
+
+      // ===========================================================
+      //                       RESPONSE
+      // ===========================================================
+      return res.status(201).json({
+        success: true,
+        invoice: created,
+      });
+
     } catch (err) {
       if (err instanceof z.ZodError) {
-        return res.status(400).json({ message: "Validation failed", errors: err.flatten() });
+        return res.status(400).json({
+          message: "Validation failed",
+          errors: err.flatten(),
+        });
       }
+
       console.error(err);
-      return res.status(500).json({ message: "Failed to create invoice" });
+      return res.status(500).json({
+        message: "Failed to create invoice",
+      });
     }
   }
 );
+
 
 
 // List invoices

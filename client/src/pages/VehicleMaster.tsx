@@ -8,7 +8,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import VehicleModal from "@/components/VehicleModal";
 
-interface VehicleData {
+export interface VehicleData {
  id: number;
  stock_number: string;
  department: string;
@@ -369,6 +369,8 @@ export default function VehicleMaster() {
   staleTime: 0, // Force fresh data
   cacheTime: 0, // Don't cache data
  });
+
+ console.log("All vehicles data", rawVehicles)
 
  // Sort vehicles: Sold first (by sale date ascending), then Autolab (by stock number), then Stock (by stock number ascending)
  const vehicles = rawVehicles.sort((a, b) => {

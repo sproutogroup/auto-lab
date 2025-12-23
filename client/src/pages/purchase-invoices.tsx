@@ -27,7 +27,6 @@ import { FileText, Upload, Plus, Car, Trash2, Eye, Star, Activity, Calendar, Ext
 import { toast } from "@/hooks/use-toast";
 import { log } from "console";
 import { generateInvoicePdf } from "@/components/generateInvoicePdf";
-import { generateInvoiceExcel } from "@/components/generateInvoiceExcel";
 
 interface InvoiceFormData {
  invoice_no: string;

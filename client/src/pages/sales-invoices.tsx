@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InvoiceT } from "@shared/schema";
-import { Download } from "lucide-react";
+import { Download, Search } from "lucide-react";
 
 
 
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { FileText, Upload, Plus, Car, Trash2, Eye, Star, Activity, Calendar, ExternalLink } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { VehicleData } from "./VehicleMaster";
 
 
 interface InvoiceFormData {
@@ -97,18 +98,65 @@ interface Invoice extends InvoiceFormData {
 
 export default function SalesInvoices() {
  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [viewingInvoice, setViewingInvoice] = useState<InvoiceT | null>(null);
+ const [viewingInvoice, setViewingInvoice] = useState<InvoiceT | null>(null);
+ const [errorMsg, setErrorMsg] = useState("")
  
-
-
  const queryClient = useQueryClient();
 
  const { data: invoicesData = [], isLoading } = useQuery<any>({
   queryKey: ["/api/sales-invoices"],
  });
 
- 
 
+  const { data: rawVehicles = [], isLoading: isVehiclesLoading } = useQuery<VehicleData[]>({
+   queryKey: ["/api/vehicles"],
+   queryFn: async () => {
+    const res = await fetch("/api/vehicles");
+    return res.json() as Promise<VehicleData[]>;
+   },
+  });
+
+ const getDataAgainstRegistration = (registration: string): void => {
+  setErrorMsg("")
+  if (!registration) return;
+
+  const normalize = (v: string) => v.trim().toUpperCase();
+
+  const vehicle = rawVehicles.find(
+    (v) => normalize(v.registration) === normalize(registration)
+  );
+
+  if (!vehicle) {
+    console.log('Vehicle not found');
+    setErrorMsg("Vehicle not found")
+    return ;
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+
+    // vehicle details
+    registration: vehicle.registration ?? prev.registration,
+    make: vehicle.make ?? "",
+    model: vehicle.model ?? "",
+    chassis_no: vehicle.chassis_number ?? "",
+    purchased_by: vehicle.buyer ?? "",
+    colour: vehicle.colour ?? "",
+    mileage: vehicle.mileage?.toString() ?? "",
+
+    // dates (ISO → YYYY-MM-DD)
+    dor: vehicle.date_of_registration
+      ? vehicle.date_of_registration.slice(0, 10)
+      : "",
+
+    purchase_date: vehicle.purchase_invoice_date
+      ? vehicle.purchase_invoice_date.slice(0, 10)
+      : "",
+  }));
+};
+
+
+ 
  const [formData, setFormData] = useState<InvoiceFormData>({
   invoice_no: "",
   tax_point: "",
@@ -361,8 +409,8 @@ const deleteMutation = useMutation({
   <div className="p-6 space-y-6">
    <div className="flex items-center justify-between mb-6">
     <div>
-     <h1 className="text-2xl font-bold text-gray-900">Purchase Invoices</h1>
-     <p className="text-gray-600">Manage vehicle purchase invoices and inspection records</p>
+     <h1 className="text-2xl font-bold text-gray-900">Sales Invoices</h1>
+     <p className="text-gray-600">Manage vehicle sales invoices and inspection records</p>
     </div>
     <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
      <DialogTrigger asChild>
@@ -375,7 +423,7 @@ const deleteMutation = useMutation({
       <DialogHeader>
        <DialogTitle className="flex items-center space-x-2">
         <FileText className="h-5 w-5 text-red-600" />
-        <span>Purchase Invoice</span>
+        <span>Sales Invoice</span>
        </DialogTitle>
        <DialogDescription>Complete the invoice and vehicle inspection details</DialogDescription>
       </DialogHeader>
@@ -472,12 +520,22 @@ const deleteMutation = useMutation({
            onChange={e => setFormData({ ...formData, chassis_no: e.target.value })}
           />
          </div>
-         <div>
-          <Label>Registration</Label>
+         <div className="flex flex-col justify-center">
+
+          <div className="flex items-center gap-x-2">
+            <Label>Registration</Label>
           <Input
            value={formData.registration}
            onChange={e => setFormData({ ...formData, registration: e.target.value })}
           />
+    
+          <Search className="cursor-pointer" size={32} onClick={()=>{
+            getDataAgainstRegistration(formData.registration)
+          }}/>
+          </div>
+
+          {errorMsg && <span className="text-sm text-red-600">{errorMsg}</span> }
+          
          </div>
          <div>
           <Label>Purchased By</Label>
