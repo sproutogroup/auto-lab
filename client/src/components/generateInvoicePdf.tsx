@@ -244,8 +244,6 @@
 
 
 
-
-
 import { PDFDocument, rgb } from "pdf-lib";
 
 export type InvoiceApiData = {
@@ -478,25 +476,47 @@ export async function generateInvoicePdf(data: InvoiceApiData) {
     });
     console.log('Blob created:', blob.size);
 
-    // Improved download approach
-    const url = URL.createObjectURL(blob);
-    console.log('Download URL created:', url);
+    const fileName = `invoice-${data.invoice_no || "invoice"}.pdf`;
 
-    const a = document.createElement("a");
-    a.style.display = "none";
-    a.href = url;
-    a.download = `invoice-${data.invoice_no || "invoice"}.pdf`;
+    // Try multiple download methods for maximum compatibility
     
-    document.body.appendChild(a);
-    a.click();
-    
-    // Clean up after a short delay
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
+    // Method 1: Modern browsers with download attribute
+    if ('download' in document.createElement('a')) {
+      const url = URL.createObjectURL(blob);
+      console.log('Download URL created:', url);
 
-    console.log('Download triggered successfully');
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.style.display = "none";
+      
+      document.body.appendChild(a);
+      
+      // Force click with multiple attempts
+      a.click();
+      
+      setTimeout(() => {
+        a.click();
+      }, 10);
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log('Download triggered successfully');
+      }, 500);
+    }
+    // Method 2: IE/Edge legacy
+    else if (window.navigator && (window.navigator as any).msSaveOrOpenBlob) {
+      (window.navigator as any).msSaveOrOpenBlob(blob, fileName);
+      console.log('Download triggered via msSaveOrOpenBlob');
+    }
+    // Method 3: Fallback - open in new tab
+    else {
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      console.log('PDF opened in new tab');
+    }
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw error;
