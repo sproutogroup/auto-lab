@@ -403,7 +403,7 @@ export async function generateInvoicePdf(data: InvoiceApiData) {
     // 4) IMAGE (CLOUDINARY URL – NO PREFIXING)
     //
     if (data.inspection_image_url) {
-      const imageUrl = data.inspection_image_url; // already a full URL
+      const imageUrl = data.inspection_image_url; // already a full URL 
 
       const res = await fetch(imageUrl);
 
