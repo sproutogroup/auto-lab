@@ -246,8 +246,6 @@
 
 
 
-
-
 import { PDFDocument, rgb } from "pdf-lib";
 
 export type InvoiceApiData = {
@@ -298,15 +296,23 @@ const formatDate = (iso?: string | null) =>
 
 export async function generateInvoicePdf(data: InvoiceApiData) {
   try {
-    // 1) Load template PDF from /public with cache busting
-    const templateBytes = await fetch(`/invoice-template.pdf?t=${Date.now()}`, {
-      cache: "no-store"
-    }).then((res) => {
-      console.log('Fetch response:', res.status, res.ok);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch template: ${res.status}`);
-      }
-      return res.arrayBuffer();
+    // 1) Load template PDF bypassing service worker using XMLHttpRequest
+    const templateBytes = await new Promise<ArrayBuffer>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `/invoice-template.pdf?t=${Date.now()}`, true);
+      xhr.responseType = 'arraybuffer';
+      
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          console.log('XHR loaded successfully, size:', xhr.response.byteLength);
+          resolve(xhr.response);
+        } else {
+          reject(new Error(`Failed to load template: ${xhr.status}`));
+        }
+      };
+      
+      xhr.onerror = () => reject(new Error('Network error loading template'));
+      xhr.send();
     });
 
     console.log('Template loaded, size:', templateBytes.byteLength);
