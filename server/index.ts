@@ -128,7 +128,8 @@ app.use(
     ],
     connectSrc: [
      "'self'",
-     process.env.NODE_ENV === "development" ? "ws://localhost:*" : "", // For Vite HMR
+     "https://res.cloudinary.com",
+     process.env.NODE_ENV === "development" ? "ws://localhost:*" : "",
      process.env.NODE_ENV === "development" ? "http://localhost:*" : "",
      process.env.NODE_ENV === "development" ? "wss://localhost:*" : "",
      process.env.NODE_ENV === "development" ? "https://localhost:*" : "",
