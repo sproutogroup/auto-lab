@@ -48,7 +48,7 @@ const formatDate = (iso?: string | null) =>
 
 export async function generateInvoicePdf(data: InvoiceApiData) {
   // 1) Load template PDF from /public
-  const templateBytes = await fetch("/invoice-template.pdf").then(
+  const templateBytes = await fetch("/invoice-template.pdf", {cache: "no-store"}).then(
     (res) => res.arrayBuffer()
   );
   const pdfDoc = await PDFDocument.load(templateBytes);
