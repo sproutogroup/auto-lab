@@ -158,18 +158,25 @@ export default function LogisticsJobModal({
   },
  });
 
- const onSubmit = (data: any) => {
-  if (selectedVehicle) {
-   data.vehicle_id = selectedVehicle.id;
+const onSubmit = (data: any) => {
+  // Don't convert the date - API expects YYYY-MM-DD format
+  // Just ensure it's not an empty string
+  if (data.scheduled_date === "") {
+    data.scheduled_date = null;
   }
+
+  if (selectedVehicle) {
+    data.vehicle_id = selectedVehicle.id;
+  }
+
+  console.log('Submitting payload:', data); // Debug log
 
   if (isEditMode) {
-   updateJobMutation.mutate(data);
+    updateJobMutation.mutate(data);
   } else {
-   createJobMutation.mutate(data);
+    createJobMutation.mutate(data);
   }
- };
-
+};
  useEffect(() => {
   if (isOpen) {
    if (job) {
@@ -629,44 +636,43 @@ export default function LogisticsJobModal({
 
           <div className="grid grid-cols-1 gap-4">
            {/* Scheduled Date */}
-           <FormField
-            control={form.control}
-            name="scheduled_date"
-            render={({ field }) => (
-             <FormItem>
-              <FormLabel className="text-sm font-medium text-gray-700">Scheduled Date</FormLabel>
-              <FormControl>
-               <Input
-                type="date"
-                disabled={isViewMode}
-                className="border-gray-200 focus:border-orange-400 focus:ring-orange-400"
-                {...field}
-                value={
-                 field.value
-                  ? (() => {
-                     const date = new Date(field.value);
-                     const year = date.getFullYear();
-                     const month = String(date.getMonth() + 1).padStart(2, "0");
-                     const day = String(date.getDate()).padStart(2, "0");
-                     return `${year}-${month}-${day}`;
-                    })()
-                  : ""
-                }
-                onChange={e => {
-                 if (e.target.value) {
-                  const [year, month, day] = e.target.value.split("-");
-                  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-                  field.onChange(date);
-                 } else {
-                  field.onChange(null);
-                 }
-                }}
-               />
-              </FormControl>
-              <FormMessage />
-             </FormItem>
-            )}
-           />
+          {/* Scheduled Date */}
+<FormField
+  control={form.control}
+  name="scheduled_date"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel className="text-sm font-medium text-gray-700">Scheduled Date</FormLabel>
+      <FormControl>
+        <Input
+          type="date"
+          disabled={isViewMode}
+          className="border-gray-200 focus:border-orange-400 focus:ring-orange-400"
+          value={
+            field.value
+              ? (() => {
+                  // Handle both Date objects and ISO strings
+                  const date = typeof field.value === 'string' 
+                    ? new Date(field.value + 'T00:00:00') // Force local timezone interpretation
+                    : field.value;
+                  
+                  const year = date.getFullYear();
+                  const month = String(date.getMonth() + 1).padStart(2, "0");
+                  const day = String(date.getDate()).padStart(2, "0");
+                  return `${year}-${month}-${day}`;
+                })()
+              : ""
+          }
+          onChange={e => {
+            // Store as YYYY-MM-DD string (what the API expects)
+            field.onChange(e.target.value || null);
+          }}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
            {/* Estimated Duration */}
            <FormField

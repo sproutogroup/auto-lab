@@ -1380,12 +1380,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/jobs", async (req, res) => {
     try {
-      // Helper function to convert date strings to Date objects
-      const parseDate = (dateStr: string | null | undefined): Date | null => {
-        if (!dateStr || dateStr === "") return null;
-        const date = new Date(dateStr);
-        return isNaN(date.getTime()) ? null : date;
-      };
+
+          // Helper function to convert date strings to Date objects
+          const parseDate = (dateStr: string | null | undefined): Date | null => {
+      if (!dateStr || dateStr === "") return null;
+
+      // Expect YYYY-MM-DD only
+      const [year, month, day] = dateStr.split("-").map(Number);
+
+      if (!year || !month || !day) return null;
+
+      // Create date in UTC to avoid timezone shifts
+      return new Date(Date.UTC(year, month - 1, day));
+    };
 
       // Clean the request body - handle date and cost conversions
       const cleanedBody = { ...req.body };

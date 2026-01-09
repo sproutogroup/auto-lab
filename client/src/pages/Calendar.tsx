@@ -32,12 +32,20 @@ export default function Calendar() {
  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
  const [modalMode, setModalMode] = useState<"create" | "edit" | "view">("create");
 
+
  const { data: jobs = [], isLoading } = useQuery<Job[]>({
   queryKey: ["/api/jobs"],
  });
 
+ console.log("jobssss", jobs)
+
  const { data: vehicles = [] } = useQuery({
   queryKey: ["/api/vehicles"],
+ });
+
+ // ✅ ADDED (nothing else changed)
+ const { data: users = [] } = useQuery({
+  queryKey: ["/api/users"],
  });
 
  const { data: jobStats = {} } = useQuery<{
@@ -55,6 +63,19 @@ export default function Calendar() {
   const vehicle = vehicles.find((v: any) => v.id === job.vehicle_id);
   return vehicle?.registration || job.job_number;
  };
+
+ // ✅ ADDED (safe helper)
+ const getStaffName = (userId: number | null) => {
+
+  console.log("firedddddddd")
+  if (!userId || !Array.isArray(users)) return "Unassigned";
+  const user = users.find((u: any) => u.id === userId);
+
+  console.log("useerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", user)
+  return user ? `${user.first_name} ${user.last_name}` : "Unassigned";
+ };
+
+ console.log()
 
  const navigateMonth = (direction: "prev" | "next") => {
   const newDate = new Date(currentDate);
@@ -76,12 +97,10 @@ export default function Calendar() {
 
   const days = [];
 
-  // Add empty cells for days before the first day of the month
   for (let i = 0; i < startingDayOfWeek; i++) {
    days.push(null);
   }
 
-  // Add all days of the month
   for (let day = 1; day <= daysInMonth; day++) {
    days.push(new Date(year, month, day));
   }
@@ -89,15 +108,26 @@ export default function Calendar() {
   return days;
  };
 
- const getJobsForDate = (date: Date | null) => {
-  if (!date) return [];
-  const dateStr = date.toISOString().split("T")[0];
-  return jobs.filter((job: Job) => {
-   if (!job.scheduled_date) return false;
-   const jobDate = new Date(job.scheduled_date).toISOString().split("T")[0];
-   return jobDate === dateStr;
-  });
- };
+ const toLocalDateOnly = (d: Date) =>
+ new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+
+const getJobsForDate = (date: Date | null) => {
+ console.log("calendar date", date?.toDateString());
+
+ if (!date) return [];
+
+ const target = toLocalDateOnly(date);
+
+ return jobs.filter((job: Job) => {
+  if (!job.scheduled_date) return false;
+
+  const jobDate = toLocalDateOnly(new Date(job.scheduled_date));
+
+  return jobDate.getTime() === target.getTime();
+ });
+};
+
 
  const handleDateClick = (date: Date) => {
   setSelectedDate(date);
@@ -251,91 +281,110 @@ export default function Calendar() {
       <CardHeader className="p-3 lg:p-6">
        <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2 lg:space-x-4">
-         <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigateMonth("prev")}
-          className="h-12 lg:h-auto px-3 lg:px-4 text-base lg:text-sm"
-         >
-          ←
-         </Button>
+         <Button variant="outline" size="sm" onClick={() => navigateMonth("prev")}>←</Button>
          <h2 className="text-lg lg:text-xl font-semibold">
           {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
          </h2>
-         <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigateMonth("next")}
-          className="h-12 lg:h-auto px-3 lg:px-4 text-base lg:text-sm"
-         >
-          →
-         </Button>
+         <Button variant="outline" size="sm" onClick={() => navigateMonth("next")}>→</Button>
         </div>
-        <Button
-         variant="outline"
-         size="sm"
-         onClick={() => setCurrentDate(new Date())}
-         className="h-12 lg:h-auto px-3 lg:px-4 text-base lg:text-sm"
-        >
+        <Button variant="outline" size="sm" onClick={() => setCurrentDate(new Date())}>
          Today
         </Button>
        </div>
       </CardHeader>
+
       <CardContent className="p-3 lg:p-6">
        <div className="grid grid-cols-7 gap-1 lg:gap-2">
-        {/* Day headers */}
         {DAYS.map(day => (
          <div key={day} className="p-2 text-center text-xs lg:text-sm font-medium text-gray-500 border-b">
           {day}
          </div>
         ))}
 
-        {/* Calendar days */}
         {days.map((day, index) => {
-         const dayJobs = getJobsForDate(day);
-         const isToday = day && day.toDateString() === new Date().toDateString();
+  const dayJobs = getJobsForDate(day);
+  const isToday = day && day.toDateString() === new Date().toDateString();
+  const hasJobs = dayJobs.length > 0; // Check if date has jobs
 
-         return (
-          <div
-           key={index}
-           className={`min-h-[60px] lg:min-h-[120px] p-1 border border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
-            isToday ? "bg-red-50 border-red-200" : ""
-           } ${!day ? "bg-gray-50" : ""}`}
-           onClick={() => day && handleDateClick(day)}
-          >
-           {day && (
-            <>
-             <div
-              className={`text-xs lg:text-sm font-medium mb-1 ${isToday ? "text-red-600" : "text-gray-900"}`}
-             >
+  return (
+    <div
+      key={index}
+      className={`min-h-[60px] lg:min-h-[120px] p-1 border transition-colors ${
+        isToday 
+          ? "bg-red-50 border-red-300 ring-2 ring-red-400" 
+          : hasJobs 
+            ? "bg-blue-50 border-blue-200 hover:bg-blue-100" 
+            : "border-gray-100 hover:bg-gray-50"
+      } ${!day ? "bg-gray-50" : "cursor-pointer"}`}
+      onClick={() => day && handleDateClick(day)}
+    >
+      {day && (
+        <>
+          <div className="flex items-center justify-between mb-1">
+            <div className={`text-xs lg:text-sm font-medium ${
+              isToday 
+                ? "text-red-600 font-bold" 
+                : hasJobs 
+                  ? "text-blue-700 font-semibold" 
+                  : "text-gray-900"
+            }`}>
               {day.getDate()}
-             </div>
-             <div className="space-y-1 lg:space-y-2">
-              {dayJobs.slice(0, 2).map((job: Job) => (
-               <div
-                key={job.id}
-                className={`p-1 rounded text-xs border-l-2 cursor-pointer hover:shadow-sm transition-shadow ${getStatusColor(job.job_status)} ${getPriorityColor(job.job_priority)}`}
-                onClick={e => {
-                 e.stopPropagation();
-                 handleJobClick(job);
-                }}
-               >
-                <div className="flex items-center gap-1">
-                 {getJobTypeIcon(job.job_type)}
-                 <span className="truncate font-medium">{getVehicleRegistration(job)}</span>
-                </div>
-                <div className="truncate lg:block hidden">{job.job_type}</div>
-               </div>
-              ))}
-              {dayJobs.length > 2 && (
-               <div className="text-xs text-gray-500 pl-1">+{dayJobs.length - 2} more</div>
-              )}
-             </div>
-            </>
-           )}
+            </div>
+            
+            {/* Job count badge */}
+            {hasJobs && (
+              <div className={`text-[10px] lg:text-xs px-1.5 py-0.5 rounded-full font-bold ${
+                isToday 
+                  ? "bg-red-600 text-white" 
+                  : "bg-blue-600 text-white"
+              }`}>
+                {dayJobs.length}
+              </div>
+            )}
           </div>
-         );
-        })}
+
+          <div className="space-y-1 lg:space-y-2">
+            {dayJobs.slice(0, 2).map((job: Job) => {
+              return (
+                <div
+                  key={job.id}
+                  className={`p-1 rounded text-xs border-l-2 cursor-pointer hover:shadow-sm transition-shadow
+                    ${getStatusColor(job.job_status)}
+                    ${getPriorityColor(job.job_priority)}
+                    ${job.assigned_to_id ? "ring-2 ring-blue-400 bg-blue-50" : ""}
+                  `}
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleJobClick(job);
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    {getJobTypeIcon(job.job_type)}
+                    <span className="truncate font-medium">{getVehicleRegistration(job)}</span>
+                  </div>
+
+                  {/* Staff name */}
+                  {job.assigned_to_id !== null && (
+                    <div className="flex items-center gap-1 mt-0.5 text-[10px] text-blue-700 font-semibold truncate">
+                      <User className="h-3 w-3" />
+                      {getStaffName(job.assigned_to_id)}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {dayJobs.length > 2 && (
+              <div className="text-xs text-gray-500 pl-1 font-medium">
+                +{dayJobs.length - 2} more
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+})}
        </div>
       </CardContent>
      </Card>
